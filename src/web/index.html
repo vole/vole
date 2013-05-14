@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Vole</title>
+  <meta name="description" content="Vole is a peer-to-peer social network">
+  <link rel="icon" href="/img/favicon.png" type="image/png" />
+</head>
+<body>
+  <h1>Vole</h1>
+  <div id="ember-container"></div>
+
+  <script type="text/x-handlebars" data-template-name="todos">
+    <ul>
+      {{#each content}}
+        <li>{{title}}</li>
+      {{/each}}
+    </ul>
+  </script>
+
+  <script src="/js/vendor/jquery.min.js"></script>
+  <script src="/js/vendor/handlebars.min.js"></script>
+  <script src="/js/vendor/ember.js"></script>
+  <script src="/js/vole.js"></script>
+</body>
+</html>
