@@ -32,7 +32,24 @@ func getAllPosts() string {
   out += strings.Join(posts, ",")
   out += `] }`
 
-  fmt.Println(out)
+  //fmt.Println(out)
+
+//   out = `{ "posts": [{
+//   "id": 1,
+//   "title": "post number 1",
+//   "user": "billy"
+// }
+// ,{
+//   "id": 2,
+//   "title": "post number 2",
+//   "user": "billy"
+// }
+// ,{
+//   "id": 3,
+//   "title": "post number 3",
+//   "user": "billy"
+// }]}`
+
   return out
 }
 

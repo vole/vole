@@ -8,71 +8,29 @@
   window.App = App;
 
   //-------------------------
+  // Store
+  //-------------------------
+  App.Store = DS.Store.extend({
+    revision: 12,
+    adapter: DS.RESTAdapter
+  });
+
+  DS.RESTAdapter.reopen({
+    namespace: 'api'
+  });
+
+  //-------------------------
   // Models
   //-------------------------
-  App.PostModel = Ember.Object.extend({
-    title: '',
-    date: '',
-    text: '',
-    user: ''
+  App.Post = DS.Model.extend({
+    title: DS.attr('string'),
+    user: DS.attr('string')
   });
 
-  App.UserModel = Ember.Object.extend({
-    user: '',
-    display_name: ''
+  App.User = DS.Model.extend({
+    user: DS.attr('string'),
+    display_name: DS.attr('string')
   });
-
-  //-------------------------
-  // Stores
-  //-------------------------
-  App.PostsStore = Ember.Object.extend({
-    posts: [],
-
-    all: function() {
-      return this.get('posts');
-    }.property('posts'),
-
-    findAll: function() {
-      var self = this;
-      var request = $.ajax('/api/posts');
-
-      request.done(function(data, textStatus, jqXHR) {
-        if (jqXHR.status === 200) {
-          var items = self.get('posts');
-          items.slice(0,0);
-          data.posts.map(function(post) {
-            items.pushObject(App.PostModel.create(post));
-          });
-        }
-      });
-      request.fail(function(jqXHR, textStatus, errorThrown) {
-        throw new Error('Unable to load posts: ' + textStatus);
-      });
-      return this.get('posts');
-    }
-  });
-  App.postsStore = App.PostsStore.create();
-
-  App.UsersStore = Ember.Object.extend({
-    users: [],
-    my_user: [],
-
-    findMyUser: function() {
-      var self = this;
-      var request = $.ajax('/api/my_user');
-
-      request.done(function(data, textStatus, jqXHR) {
-        if (jqXHR.status === 200) {
-          self.get('my_user').pushObject(App.UserModel.create(data.users[0]));
-        }
-      });
-      request.fail(function(jqXHR, textStatus, errorThrown) {
-        throw new Error('Unable to load my user: ' + textStatus);
-      });
-      return this.get('my_user');
-    }
-  });
-  App.usersStore = App.UsersStore.create();
 
   //-------------------------
   // Views
@@ -107,8 +65,8 @@
 
   App.ProfileRoute = Ember.Route.extend({
     setupController: function(controller) {
-      controller.set('my_user', App.usersStore.findMyUser());
-      controller.set('posts', App.postsStore.findAll());
+      //controller.set('my_user', App.usersStore.findMyUser());
+      controller.set('posts', App.Post.find());
     }
   })
 
