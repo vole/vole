@@ -2,28 +2,71 @@ package main
 
 import (
   "net/http"
-  "path/filepath"
   "fmt"
-  "os"
   "strings"
   "io/ioutil"
 )
 
-func restHandler(w http.ResponseWriter, r *http.Request) {
-  todos := make([]string, 0);
+func getAllPosts() string {
+  posts := make([]string, 0);
 
-  filepath.Walk("./data", func(path string, info os.FileInfo, err error) error {
-    if strings.HasPrefix(path, "data/todo-") {
-      json, err := ioutil.ReadFile(path)
+  users_info, _ := ioutil.ReadDir("./data/users")
+
+  for _, user_info := range users_info {
+    fmt.Println(string(user_info.Name()))
+    posts_dir := "./data/users/" + string(user_info.Name()) + "/v1/posts"
+    posts_info, _ := ioutil.ReadDir(posts_dir)
+
+    for _, post_info := range posts_info {
+      post_path := posts_dir + "/" + string(post_info.Name())
+      fmt.Println(post_path)
+
+      post_data, err := ioutil.ReadFile(post_path)
       if err == nil {
-        todos = append(todos, string(json))
+        posts = append(posts, string(post_data))
       }
     }
-    return nil
-  })
+  }
+
   out := `{ "posts": [`
-  out += strings.Join(todos, ",")
+  out += strings.Join(posts, ",")
   out += `] }`
+
+  fmt.Println(out)
+  return out
+}
+
+func getMyUser() string {
+  name := "";
+  data, err := ioutil.ReadFile("data/my_user")
+  if err == nil {
+    name = strings.TrimSpace(string(data))
+    fmt.Println("found my user: " + name)
+
+    // Load the user's profile json.
+    profile := ""
+    profile_data, profile_err := ioutil.ReadFile("data/users/" + name + "/v1/user/" + name)
+
+    if profile_err == nil {
+      profile = strings.TrimSpace(string(profile_data))
+    } else {
+      fmt.Println(profile_err)
+    }
+
+    return `{ "users": [` + profile + `] }`
+  }
+  fmt.Println(err)
+  return ""
+}
+
+func jsonHandler(w http.ResponseWriter, r *http.Request) {
+  out := ""
+  switch r.URL.Path {
+    case "/api/posts":
+      out = getAllPosts()
+    case "/api/my_user":
+      out = getMyUser()
+  }
 
   w.Header().Set("Content-Type", "application/json")
   fmt.Fprintf(w, out)
@@ -37,7 +80,7 @@ func main() {
       http.NotFound(w, r)
     }
   })
-  http.HandleFunc("/rest/", restHandler)
+  http.HandleFunc("/api/", jsonHandler)
   http.Handle("/js/", http.StripPrefix("/js", http.FileServer(http.Dir("./js/"))))
   http.Handle("/css/", http.StripPrefix("/css", http.FileServer(http.Dir("./css/"))))
   http.Handle("/img/", http.StripPrefix("/img", http.FileServer(http.Dir("./img/"))))
