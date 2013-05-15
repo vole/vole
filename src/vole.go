@@ -56,7 +56,7 @@ func getAllPosts(ctx *web.Context) string {
 }
 
 func getMyUser(ctx *web.Context) string {
-  ctx.ContentType("json")
+  ctx.SetHeader("Content-Type", "application/json", true)
 
   name := "";
   data, err := ioutil.ReadFile("data/my_user")
