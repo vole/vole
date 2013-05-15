@@ -21,7 +21,7 @@ func restHandler(w http.ResponseWriter, r *http.Request) {
     }
     return nil
   })
-  out := `{ "todos": [`
+  out := `{ "posts": [`
   out += strings.Join(todos, ",")
   out += `] }`
 
