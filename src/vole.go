@@ -1,14 +1,16 @@
 package main
 
 import (
-  "net/http"
   "fmt"
   "strings"
   "io/ioutil"
+  "github.com/hoisie/web"
 )
 
-func getAllPosts() string {
-  posts := make([]string, 0);
+func getAllPosts(ctx *web.Context) string {
+  ctx.SetHeader("Content-Type", "application/json", true)
+
+  posts := make([]string, 0)
 
   users_info, _ := ioutil.ReadDir("./data/users")
 
@@ -53,7 +55,9 @@ func getAllPosts() string {
   return out
 }
 
-func getMyUser() string {
+func getMyUser(ctx *web.Context) string {
+  ctx.ContentType("json")
+
   name := "";
   data, err := ioutil.ReadFile("data/my_user")
   if err == nil {
@@ -76,30 +80,8 @@ func getMyUser() string {
   return ""
 }
 
-func jsonHandler(w http.ResponseWriter, r *http.Request) {
-  out := ""
-  switch r.URL.Path {
-    case "/api/posts":
-      out = getAllPosts()
-    case "/api/my_user":
-      out = getMyUser()
-  }
-
-  w.Header().Set("Content-Type", "application/json")
-  fmt.Fprintf(w, out)
-}
-
 func main() {
-  http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-    if r.URL.Path == "/" {
-      http.ServeFile(w, r, "./web/index.html")
-    } else {
-      http.NotFound(w, r)
-    }
-  })
-  http.HandleFunc("/api/", jsonHandler)
-  http.Handle("/js/", http.StripPrefix("/js", http.FileServer(http.Dir("./js/"))))
-  http.Handle("/css/", http.StripPrefix("/css", http.FileServer(http.Dir("./css/"))))
-  http.Handle("/img/", http.StripPrefix("/img", http.FileServer(http.Dir("./img/"))))
-  http.ListenAndServe(":6789", nil)
+  web.Get("/api/posts", getAllPosts)
+  web.Get("/api/my_user", getMyUser)
+  web.Run("0.0.0.0:6789")
 }
