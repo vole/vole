@@ -2,6 +2,7 @@ package main
 
 import (
   "fmt"
+  "flag"
   "strings"
   "io/ioutil"
   "github.com/hoisie/web"
@@ -81,7 +82,10 @@ func getMyUser(ctx *web.Context) string {
 }
 
 func main() {
+  var port = flag.String("port", "6789", "Port on which to run the web server.")
+  flag.Parse()
+
   web.Get("/api/posts", getAllPosts)
   web.Get("/api/my_user", getMyUser)
-  web.Run("0.0.0.0:6789")
+  web.Run("0.0.0.0:" + *port)
 }
