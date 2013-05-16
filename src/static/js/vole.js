@@ -42,30 +42,47 @@
   App.ProfileController = Ember.ObjectController.extend({
     posts: [],
     my_user: [],
+    my_user_name: '',
 
     myPosts: function() {
       var my_user = this.get('my_user');
-      var my_user_name = '';
-      if (my_user.length > 0) {
-        my_user_name = my_user.objectAt(0).get('user');
+      if (my_user.get('length') > 0) {
+        this.set('my_user_name', my_user.objectAt(0).get('user'));
       }
-
-      return this.get('posts').filterProperty('user', my_user_name);
+      return this.get('posts').filterProperty('user', this.get('my_user_name'));
     }.property('my_user.@each.user', 'posts.@each'),
+  });
 
-  })
+  App.IndexController = Ember.ObjectController.extend({
+    posts: [],
+    new_post: 'hello',
+
+    createNewPost: function() {
+      var newpost = App.Post.createRecord({
+        user: 'mark',
+        title: this.get('new_post')
+      });
+      newpost.get('transaction').commit();
+    }
+  });
 
   //-------------------------
   // Router
   //-------------------------
   App.Router.map(function() {
-    this.resource("index", {path: "/"});
-    this.resource("profile", {path: "/profile"});
+    this.resource('index', {path: '/'});
+    this.resource('profile', {path: '/profile'});
   });
 
   App.ProfileRoute = Ember.Route.extend({
     setupController: function(controller) {
-      //controller.set('my_user', App.usersStore.findMyUser());
+      controller.set('my_user', App.User.find());
+      controller.set('posts', App.Post.find());
+    }
+  });
+
+  App.IndexRoute = Ember.Route.extend({
+    setupController: function(controller) {
       controller.set('posts', App.Post.find());
     }
   })

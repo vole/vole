@@ -7,8 +7,28 @@
   <link rel="icon" href="/img/favicon.png" type="image/png" />
 </head>
 <body>
-  <h1>Vole</h1>
   <div id="ember-container"></div>
+
+  <script type="text/x-handlebars" data-template-name="application">
+    <h1>Vole</h1>
+    <ul>
+      <li>{{#linkTo "index"}}Home{{/linkTo}}</li>
+      <li>{{#linkTo "profile"}}Profile{{/linkTo}}</li>
+    </ul>
+
+    {{outlet}}
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="index">
+    {{view Ember.TextField valueBinding="new_post"}}
+    <button {{action "createNewPost"}}>Post</button>
+
+    <ul>
+      {{#each posts}}
+        <li>{{title}}</li>
+      {{/each}}
+    </ul>
+  </script>
 
   <script type="text/x-handlebars" data-template-name="profile">
     <ul>
