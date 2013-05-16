@@ -1,14 +1,34 @@
 package main
 
 import (
-  "net/http"
+  "os"
   "fmt"
+  "flag"
   "strings"
   "io/ioutil"
+  "time"
+  "github.com/vole/web"
+  "github.com/nu7hatch/gouuid"
 )
 
-func getAllPosts() string {
-  posts := make([]string, 0);
+/**
+ *
+ * import "vole/db"
+ *
+ * db.findPosts(group)
+ * db.findUsers(group)
+ *
+ * db.findUser(group, KEY)
+ * db.findPost(group, GUID)
+ *
+ * db.savePost(group, post)
+ *
+ */
+
+func getAllPosts(ctx *web.Context) string {
+  ctx.SetHeader("Content-Type", "application/json", true)
+
+  posts := make([]string, 0)
 
   users_info, _ := ioutil.ReadDir("./data/users")
 
@@ -32,28 +52,35 @@ func getAllPosts() string {
   out += strings.Join(posts, ",")
   out += `] }`
 
-  //fmt.Println(out)
-
-//   out = `{ "posts": [{
-//   "id": 1,
-//   "title": "post number 1",
-//   "user": "billy"
-// }
-// ,{
-//   "id": 2,
-//   "title": "post number 2",
-//   "user": "billy"
-// }
-// ,{
-//   "id": 3,
-//   "title": "post number 3",
-//   "user": "billy"
-// }]}`
-
   return out
 }
 
-func getMyUser() string {
+func savePost(ctx *web.Context) string {
+  data, err := ioutil.ReadFile("data/my_user")
+  if err != nil {
+    ctx.Abort(500, "Couldn't determine current user.")
+  }
+
+  body, err := ioutil.ReadAll(ctx.Request.Body);
+
+  user := strings.TrimSpace(string(data))
+
+  ts := time.Now().UnixNano()
+  uuid, _ := uuid.NewV4()
+  filename := fmt.Sprintf("%d-post-%s", ts, uuid)
+
+  file, err := os.Create("data/users/" + user + "/v1/posts/" + filename)
+  if err != nil {
+    ctx.Abort(500, "Unable to create file.")
+  }
+
+  file.Write(body)
+  return "OK"
+}
+
+func getMyUser(ctx *web.Context) string {
+  ctx.SetHeader("Content-Type", "application/json", true)
+
   name := "";
   data, err := ioutil.ReadFile("data/my_user")
   if err == nil {
@@ -76,30 +103,14 @@ func getMyUser() string {
   return ""
 }
 
-func jsonHandler(w http.ResponseWriter, r *http.Request) {
-  out := ""
-  switch r.URL.Path {
-    case "/api/posts":
-      out = getAllPosts()
-    case "/api/my_user":
-      out = getMyUser()
-  }
-
-  w.Header().Set("Content-Type", "application/json")
-  fmt.Fprintf(w, out)
-}
-
 func main() {
-  http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-    if r.URL.Path == "/" {
-      http.ServeFile(w, r, "./web/index.html")
-    } else {
-      http.NotFound(w, r)
-    }
-  })
-  http.HandleFunc("/api/", jsonHandler)
-  http.Handle("/js/", http.StripPrefix("/js", http.FileServer(http.Dir("./js/"))))
-  http.Handle("/css/", http.StripPrefix("/css", http.FileServer(http.Dir("./css/"))))
-  http.Handle("/img/", http.StripPrefix("/img", http.FileServer(http.Dir("./img/"))))
-  http.ListenAndServe(":6789", nil)
+  var port = flag.String("port", "6789", "Port on which to run the web server.")
+  flag.Parse()
+
+  web.Get("/api/posts", getAllPosts)
+  web.Get("/api/my_user", getMyUser)
+
+  web.Post("/api/posts", savePost)
+
+  web.Run("0.0.0.0:" + *port)
 }
