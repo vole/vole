@@ -61,38 +61,29 @@ func savePost(ctx *web.Context) string {
   if err != nil {
     ctx.Abort(500, "Couldn't determine current user.")
   }
-  //var jsonBlob = []byte(`{"post":{"title":"hello","user":"mark"}}`)
 
   body, err := ioutil.ReadAll(ctx.Request.Body);
 
-  var post interface{}
-  err = json.Unmarshal(body, &post)
-  if err != nil {
-    fmt.Println("error:", err)
-  }
+  var post Post
+  json.Unmarshal(body, &post)
 
   user := strings.TrimSpace(string(data))
-
   ts := time.Now().UnixNano()
   uuid, _ := uuid.NewV4()
-  filename := fmt.Sprintf("%d-post-%s", ts, uuid)
 
+  filename := fmt.Sprintf("%d-post-%s", ts, uuid)
   file, err := os.Create("data/users/" + user + "/v1/posts/" + filename)
   if err != nil {
     ctx.Abort(500, "Unable to create file.")
   }
 
-  m := post.(map[string]interface{})
+  post.Post.Uuid = fmt.Sprintf("%s", uuid)
 
-  m["post"] = "dkjfbsdjf"
+  postBodyJson, _ := json.Marshal(post.Post)
+  postJson, _ := json.Marshal(post)
 
-  ohnoes = m.(map[string]interface{})
-
-  lol, _ := json.Marshal(post)
-  fmt.Printf("%+v", string(lol))
-
-  file.Write(lol)
-  return string(lol)
+  file.Write(postBodyJson)
+  return string(postJson)
 }
 
 func getMyUser(ctx *web.Context) string {
@@ -118,6 +109,16 @@ func getMyUser(ctx *web.Context) string {
   }
   fmt.Println(err)
   return ""
+}
+
+type Post struct {
+  Post PostBody `json:"post"`
+}
+
+type PostBody struct {
+  Uuid string `json:"uuid"`
+  Title string `json:"title"`
+  User string `json:"user"`
 }
 
 func main() {
