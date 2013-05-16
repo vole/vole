@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"fmt"
+	"github.com/petar/GoLLRB/llrb"
 	"github.com/vole/web"
 	"io/ioutil"
 )
@@ -11,6 +13,16 @@ var port = flag.String("port", "6789", "Port on which to run the web server.")
 
 func main() {
 	flag.Parse()
+
+	// tree := GlobalPostTree()
+	// tree.AscendGreaterOrEqual(tree.Min(), func(item llrb.Item) bool {
+	// 	i, ok := item.(llrb.Int)
+	// 	if !ok {
+	// 		return false
+	// 	}
+	// 	fmt.Println(int(i))
+	// 	return true
+	// })
 
 	web.Get("/api/posts", func(ctx *web.Context) string {
 		ctx.ContentType("json")

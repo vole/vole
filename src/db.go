@@ -2,11 +2,11 @@ package main
 
 import (
 	"encoding/json"
-	"os"
-	// "github.com/petar/GoLLRB/llrb"
 	"fmt"
 	"github.com/nu7hatch/gouuid"
+	"github.com/petar/GoLLRB/llrb"
 	"io/ioutil"
+	"os"
 	"path"
 	"runtime"
 	"strings"
@@ -41,6 +41,7 @@ type Post struct {
 	Title   string `json:"title"`
 	User    string `json:"user"`
 	Created int64  `json:"created"`
+	llrb.Item
 }
 
 type PostContainer struct {
@@ -77,6 +78,10 @@ func (post *Post) Save() error {
 
 func (post *Post) FileName() string {
 	return fmt.Sprintf("%d-post-%s", post.Created, post.Uuid)
+}
+
+func (post *Post) Less(than llrb.Item) bool {
+	return post.Created < than.(*Post).Created
 }
 
 func PostFromJson(rawJson []byte) *Post {
@@ -187,4 +192,41 @@ func CurrentUser() (*User, error) {
 	}
 
 	return UserFromJson(data), nil
+}
+
+/**
+ * Trees
+ */
+
+func GlobalPostTree() *llrb.LLRB {
+	tree := llrb.New()
+
+	users, _ := ReadDir(DIR, "users")
+
+	for _, user := range users {
+		dir := path.Join(DIR, "users", user.Name(), VERSION, "posts")
+
+		files, err := ReadDir(dir)
+		if err != nil {
+			continue
+		}
+
+		for _, post := range files {
+			data, err := ReadFile(dir, post.Name())
+
+			if err != nil {
+				continue
+			}
+
+			tree.InsertNoReplace(PostFromJson(data))
+		}
+	}
+
+	tree.AscendGreaterOrEqual(tree.Min(), func(item llrb.Item) bool {
+		post, _ := item.(*Post)
+		fmt.Printf("%+v\n", post)
+		return true
+	})
+
+	return tree
 }
