@@ -222,11 +222,5 @@ func GlobalPostTree() *llrb.LLRB {
 		}
 	}
 
-	tree.AscendGreaterOrEqual(tree.Min(), func(item llrb.Item) bool {
-		post, _ := item.(*Post)
-		fmt.Printf("%+v\n", post)
-		return true
-	})
-
 	return tree
 }

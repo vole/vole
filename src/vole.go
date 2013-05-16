@@ -15,12 +15,10 @@ func main() {
 	flag.Parse()
 
 	// tree := GlobalPostTree()
+
 	// tree.AscendGreaterOrEqual(tree.Min(), func(item llrb.Item) bool {
-	// 	i, ok := item.(llrb.Int)
-	// 	if !ok {
-	// 		return false
-	// 	}
-	// 	fmt.Println(int(i))
+	// 	post, _ := item.(*Post)
+	// 	fmt.Printf("%+v\n", post)
 	// 	return true
 	// })
 
