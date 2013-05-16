@@ -108,7 +108,7 @@ func main() {
   flag.Parse()
 
   web.Get("/api/posts", getAllPosts)
-  web.Get("/api/my_user", getMyUser)
+  web.Get("/api/users", getMyUser)
 
   web.Post("/api/posts", savePost)
 
