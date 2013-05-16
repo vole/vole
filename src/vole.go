@@ -9,6 +9,7 @@ import (
   "time"
   "github.com/vole/web"
   "github.com/nu7hatch/gouuid"
+  "encoding/json"
 )
 
 /**
@@ -60,8 +61,15 @@ func savePost(ctx *web.Context) string {
   if err != nil {
     ctx.Abort(500, "Couldn't determine current user.")
   }
+  //var jsonBlob = []byte(`{"post":{"title":"hello","user":"mark"}}`)
 
   body, err := ioutil.ReadAll(ctx.Request.Body);
+
+  var post interface{}
+  err = json.Unmarshal(body, &post)
+  if err != nil {
+    fmt.Println("error:", err)
+  }
 
   user := strings.TrimSpace(string(data))
 
@@ -74,8 +82,17 @@ func savePost(ctx *web.Context) string {
     ctx.Abort(500, "Unable to create file.")
   }
 
-  file.Write(body)
-  return "OK"
+  m := post.(map[string]interface{})
+
+  m["post"] = "dkjfbsdjf"
+
+  ohnoes = m.(map[string]interface{})
+
+  lol, _ := json.Marshal(post)
+  fmt.Printf("%+v", string(lol))
+
+  file.Write(lol)
+  return string(lol)
 }
 
 func getMyUser(ctx *web.Context) string {
