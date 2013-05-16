@@ -1,12 +1,29 @@
 package main
 
 import (
+  "os"
   "fmt"
   "flag"
   "strings"
   "io/ioutil"
-  "github.com/hoisie/web"
+  "time"
+  "github.com/vole/web"
+  "github.com/nu7hatch/gouuid"
 )
+
+/**
+ *
+ * import "vole/db"
+ *
+ * db.findPosts(group)
+ * db.findUsers(group)
+ *
+ * db.findUser(group, KEY)
+ * db.findPost(group, GUID)
+ *
+ * db.savePost(group, post)
+ *
+ */
 
 func getAllPosts(ctx *web.Context) string {
   ctx.SetHeader("Content-Type", "application/json", true)
@@ -35,25 +52,30 @@ func getAllPosts(ctx *web.Context) string {
   out += strings.Join(posts, ",")
   out += `] }`
 
-  //fmt.Println(out)
-
-//   out = `{ "posts": [{
-//   "id": 1,
-//   "title": "post number 1",
-//   "user": "billy"
-// }
-// ,{
-//   "id": 2,
-//   "title": "post number 2",
-//   "user": "billy"
-// }
-// ,{
-//   "id": 3,
-//   "title": "post number 3",
-//   "user": "billy"
-// }]}`
-
   return out
+}
+
+func savePost(ctx *web.Context) string {
+  data, err := ioutil.ReadFile("data/my_user")
+  if err != nil {
+    ctx.Abort(500, "Couldn't determine current user.")
+  }
+
+  body, err := ioutil.ReadAll(ctx.Request.Body);
+
+  user := strings.TrimSpace(string(data))
+
+  ts := time.Now().UnixNano()
+  uuid, _ := uuid.NewV4()
+  filename := fmt.Sprintf("%d-post-%s", ts, uuid)
+
+  file, err := os.Create("data/users/" + user + "/v1/posts/" + filename)
+  if err != nil {
+    ctx.Abort(500, "Unable to create file.")
+  }
+
+  file.Write(body)
+  return "OK"
 }
 
 func getMyUser(ctx *web.Context) string {
@@ -87,5 +109,8 @@ func main() {
 
   web.Get("/api/posts", getAllPosts)
   web.Get("/api/my_user", getMyUser)
+
+  web.Post("/api/posts", savePost)
+
   web.Run("0.0.0.0:" + *port)
 }
