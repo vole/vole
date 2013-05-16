@@ -3,8 +3,6 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"fmt"
-	"github.com/petar/GoLLRB/llrb"
 	"github.com/vole/web"
 	"io/ioutil"
 )
