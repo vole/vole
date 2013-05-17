@@ -3,7 +3,7 @@ package db
 import (
   "encoding/json"
   "fmt"
-  "github.com/nu7hatch/gouuid"
+  "github.com/vole/gouuid"
   "io/ioutil"
   "os"
   "path"
