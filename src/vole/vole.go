@@ -13,14 +13,6 @@ var port = flag.String("port", "6789", "Port on which to run the web server.")
 func main() {
   flag.Parse()
 
-  // tree := GlobalPostTree()
-
-  // tree.AscendGreaterOrEqual(tree.Min(), func(item llrb.Item) bool {
-  // 	post, _ := item.(*Post)
-  // 	fmt.Printf("%+v\n", post)
-  // 	return true
-  // })
-
   web.Get("/api/posts", func(ctx *web.Context) string {
     ctx.ContentType("json")
 
