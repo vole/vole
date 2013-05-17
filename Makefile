@@ -1,3 +1,3 @@
 all:
 	go install vole
-	vole
+	./bin/vole
