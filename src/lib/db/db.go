@@ -56,6 +56,18 @@ type PostCollection struct {
   Posts []Post `json:"posts"`
 }
 
+func (collection *PostCollection) Len() int {
+  return len(collection.Posts)
+}
+
+func (collection *PostCollection) Less(i, j int) bool {
+  return collection.Posts[i].Created < collection.Posts[j].Created
+}
+
+func (collection *PostCollection) Swap(i, j int) {
+  collection.Posts[i], collection.Posts[j] = collection.Posts[j], collection.Posts[i]
+}
+
 func (post *Post) Save() error {
   if post.Uuid == "" {
     uuid, _ := uuid.NewV4()

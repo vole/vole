@@ -6,6 +6,7 @@ import (
   "github.com/vole/web"
   "io/ioutil"
   "lib/db"
+  "sort"
 )
 
 var port = flag.String("port", "6789", "Port on which to run the web server.")
@@ -20,6 +21,8 @@ func main() {
     if err != nil {
       ctx.Abort(500, "Error loading posts.")
     }
+
+    sort.Sort(posts)
 
     postsJson, err := json.Marshal(*posts)
     if err != nil {
