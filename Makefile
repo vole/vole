@@ -1,2 +1,3 @@
 all:
-	go run src/vole/vole.go
+	go install vole
+	vole
