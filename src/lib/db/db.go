@@ -17,7 +17,7 @@ const VERSION = "v1"
 
 var DIR = func() string {
   _, filename, _, _ := runtime.Caller(1)
-  return path.Join(path.Dir(filename), "data")
+  return path.Join(path.Dir(filename), "../../data")
 }()
 
 func ReadFile(args ...string) ([]byte, error) {
