@@ -1,6 +1,6 @@
 .DS_Store
-bin/vole
-vole
-pkg
+/bin/vole
+/vole
+/pkg
 *.o
 *.a
