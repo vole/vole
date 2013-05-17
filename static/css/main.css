@@ -1,4 +1,12 @@
 
+.navbar-inner {
+  padding-top: 1em;
+}
+
+#new-post {
+  width: auto;
+}
+
 ul.posts {
   list-style: none;
   margin: 0;

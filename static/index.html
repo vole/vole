@@ -39,7 +39,7 @@
     <div class="navbar">
       <div class="navbar-inner">
         <form class="navbar-form">
-          {{view Ember.TextField valueBinding="new_post"}}
+          {{view Ember.TextArea id="new-post" rows="4" cols="50" valueBinding="new_post"}}
           <button {{action "createNewPost"}} class="btn">Post</button>
         </form>
       </div>
