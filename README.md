@@ -6,6 +6,8 @@ Vole is a web application for sharing words, pictures and videos securely and pr
 Running
 -------
 
+    export GOPATH=<this dir>
+    export PATH=$PATH:$GOPATH/bin
     make
 
     In your browser, navigate to http://localhost:6789
