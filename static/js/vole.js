@@ -24,7 +24,8 @@
   //-------------------------
   App.Post = DS.Model.extend({
     title: DS.attr('string'),
-    user: DS.attr('string')
+    user: DS.attr('string'),
+    created: DS.attr('string')
   });
 
   App.User = DS.Model.extend({
@@ -57,7 +58,7 @@
     posts: [],
     my_user: [],
     my_user_name: '',
-    new_post: 'hello',
+    new_post: '',
 
     createNewPost: function() {
       var my_user = this.get('my_user');

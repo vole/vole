@@ -1,0 +1,31 @@
+
+ul.posts {
+  list-style: none;
+  margin: 0;
+}
+
+  ul.posts li {
+    padding: 10px 5px;
+    border-bottom: 1px solid #EEE;
+  }
+
+  ul.posts li:hover {
+    background-color: #EFEFEF;
+  }
+
+    ul.posts li span.user {
+      font-weight: bold;
+      padding: 0 10px 0 0;
+      display: inline-block;
+      width: 75px;
+    }
+
+    ul.posts li span.user:after {
+      content: ": ";
+    }
+
+    ul.posts li span.time {
+      display: inline-block;
+      float: right;
+      color: #CCC;
+    }

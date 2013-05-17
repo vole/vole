@@ -15,13 +15,14 @@ import (
 const VERSION = "v1"
 
 var DIR = func() string {
-  dir := "./"
+  dir := "."
   user, err := osuser.Current()
 
   if err == nil {
-    dir = user.HomeDir + "/Vole"
+    dir = user.HomeDir
   }
-  return dir
+
+  return path.Join(dir, "Vole")
 }()
 
 func ReadFile(args ...string) ([]byte, error) {

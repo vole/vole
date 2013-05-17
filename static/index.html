@@ -5,28 +5,53 @@
   <title>Vole</title>
   <meta name="description" content="Vole is a peer-to-peer social network">
   <link rel="icon" href="/img/favicon.png" type="image/png" />
-  <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="/css/vendor/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="/css/main.css" />
 </head>
 <body>
   <div id="ember-container"></div>
 
   <script type="text/x-handlebars" data-template-name="application">
-    <h1>Vole</h1>
-    <ul>
-      <li>{{#linkTo "index"}}Home{{/linkTo}}</li>
-      <li>{{#linkTo "profile"}}Profile{{/linkTo}}</li>
-    </ul>
-
-    {{outlet}}
+    <header>
+      <div class="navbar">
+        <div class="navbar-inner">
+          <a class="brand" href="#">Vole</a>
+        </div>
+      </div>
+    </header>
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span2">
+          <ul class="nav nav-list well">
+            <li class="nav-header">Menu</li>
+            <li>{{#linkTo "index"}}Home{{/linkTo}}</li>
+            <li>{{#linkTo "profile"}}Profile{{/linkTo}}</li>
+          </ul>
+        </div>
+        <div class="span10">
+          {{outlet}}
+        </div>
+      </div>
+    </div>
   </script>
 
   <script type="text/x-handlebars" data-template-name="index">
-    {{view Ember.TextField valueBinding="new_post"}}
-    <button {{action "createNewPost"}}>Post</button>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <form class="navbar-form">
+          {{view Ember.TextField valueBinding="new_post"}}
+          <button {{action "createNewPost"}} class="btn">Post</button>
+        </form>
+      </div>
+    </div>
 
-    <ul>
+    <ul class="posts">
       {{#each posts}}
-        <li>{{title}}</li>
+        <li>
+          <span class="user">{{user}}</span>
+          {{title}}
+          <span class="time">{{created}}</span>
+        </li>
       {{/each}}
     </ul>
   </script>
@@ -34,7 +59,11 @@
   <script type="text/x-handlebars" data-template-name="profile">
     <ul>
       {{#each myPosts}}
-        <li>{{title}}</li>
+        <li>
+          <span class="user">{{user}}</span>
+          {{title}}
+          <span class="time">{{created}}</span>
+        </li>
       {{/each}}
     </ul>
   </script>
