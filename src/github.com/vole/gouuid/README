@@ -1,0 +1,42 @@
+Pure Go UUID implementation
+===========================
+
+This package provides immutable UUID structs and the functions
+NewV3, NewV4, NewV5 and Parse() for generating versions 3, 4
+and 5 UUIDs as specified in RFC 4122.
+
+Installation
+------------
+Use the `goinstall` tool:
+
+	$ goinstall github.com/nu7hatch/gouuid
+
+... or install it manually:
+
+	$ git clone git://github.com/nu7hatch/gouuid.git
+	$ cd gouuid
+	$ make install
+
+Usage
+-----
+
+	package main
+
+	import uuid "github.com/nu7hatch/gouuid"
+
+	func main() {
+	    // generating v4
+	    u4, _ := uuid.NewV4()
+	
+	    // generating v5 (or v3...)
+	    u5, _ := uuid.NewV5(uuid.NamespaceURL, "nu7hat.ch")
+ 	
+	    // parsing
+	    u, _ := uuid.ParseHex("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
+	}
+
+Copyright
+---------
+Copyright (C) 2011 by Krzysztof Kowalik <chris@nu7hat.ch>
+
+See COPYING file for details.
