@@ -1,2 +1,2 @@
 all:
-	go run src/vole.go src/db.go
+	go run src/vole/vole.go

@@ -5,6 +5,7 @@ import (
   "flag"
   "github.com/vole/web"
   "io/ioutil"
+  "lib/db"
 )
 
 var port = flag.String("port", "6789", "Port on which to run the web server.")
@@ -23,7 +24,7 @@ func main() {
   web.Get("/api/posts", func(ctx *web.Context) string {
     ctx.ContentType("json")
 
-    posts, err := GetPosts()
+    posts, err := db.GetPosts()
     if err != nil {
       ctx.Abort(500, "Error loading posts.")
     }
@@ -39,12 +40,12 @@ func main() {
   web.Get("/api/users", func(ctx *web.Context) string {
     ctx.ContentType("json")
 
-    user, err := CurrentUser()
+    user, err := db.CurrentUser()
     if err != nil {
       ctx.Abort(500, "Error loading user.")
     }
 
-    collection := NewUserCollection([]User{*user})
+    collection := db.NewUserCollection([]db.User{*user})
 
     userJson, err := json.Marshal(collection)
     if err != nil {
@@ -60,7 +61,7 @@ func main() {
       ctx.Abort(500, "Error reading request body.")
     }
 
-    container := PostContainerFromJson(body)
+    container := db.PostContainerFromJson(body)
 
     err = (*container).Post.Save()
     if err != nil {
