@@ -6,8 +6,8 @@ import (
   "github.com/vole/gouuid"
   "io/ioutil"
   "os"
+  osuser "os/user"
   "path"
-  "runtime"
   "strings"
   "time"
 )
@@ -15,8 +15,13 @@ import (
 const VERSION = "v1"
 
 var DIR = func() string {
-  _, filename, _, _ := runtime.Caller(1)
-  return path.Join(path.Dir(filename), "../../data")
+  dir := "./"
+  user, err := osuser.Current()
+
+  if err == nil {
+    dir = user.HomeDir + "/Vole"
+  }
+  return dir
 }()
 
 func ReadFile(args ...string) ([]byte, error) {
