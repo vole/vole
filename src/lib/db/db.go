@@ -42,7 +42,7 @@ func Create(args ...string) (*os.File, error) {
  */
 
 type Post struct {
-  Uuid    string `json:"uuid"`
+  Id    string `json:"id"`
   Title   string `json:"title"`
   User    string `json:"user"`
   Created int64  `json:"created"`
@@ -69,9 +69,9 @@ func (collection *PostCollection) Swap(i, j int) {
 }
 
 func (post *Post) Save() error {
-  if post.Uuid == "" {
+  if post.Id == "" {
     uuid, _ := uuid.NewV4()
-    post.Uuid = fmt.Sprintf("%s", uuid)
+    post.Id = fmt.Sprintf("%s", uuid)
   }
 
   if post.Created == 0 {
@@ -93,7 +93,7 @@ func (post *Post) Save() error {
 }
 
 func (post *Post) FileName() string {
-  return fmt.Sprintf("%d-post-%s", post.Created, post.Uuid)
+  return fmt.Sprintf("%d-post-%s", post.Created, post.Id)
 }
 
 func PostFromJson(rawJson []byte) *Post {
