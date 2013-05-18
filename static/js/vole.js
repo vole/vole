@@ -75,7 +75,7 @@
   App.UsersController = Ember.ArrayController.extend({
     // This is set to a FilteredRecordArray by the router. Just use the
     // first object in the array.
-    myUser: null
+    myUser: []
   });
 
   App.PostsController = Ember.ArrayController.extend({
@@ -88,9 +88,7 @@
           return this.get('content').filterProperty('user', filterUser);
         }
       }
-      else {
-        return this.get('content');
-      }
+      return this.get('content');
     }.property('content.[]', 'filterByUser.[]')
   });
 
@@ -117,7 +115,7 @@
   App.IndexRoute = Ember.Route.extend({
     setupController: function(controller) {
       var postsController = controller.get('controllers.posts');
-      postsController.set('filterByUser.[]', []);
+      postsController.set('filterByUser', []);
     }
   });
 
@@ -125,7 +123,7 @@
     setupController: function(controller) {
       var postsController = controller.get('controllers.posts');
       var usersController = controller.get('controllers.users');
-      postsController.set('filterByUser.[]', usersController.get('myUser.firstObject'));
+      postsController.set('filterByUser', usersController.get('myUser'));
     },
   });
 
