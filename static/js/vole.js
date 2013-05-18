@@ -129,6 +129,9 @@
     }
   });
 
+  //-------------------------
+  // Handlebars
+  //-------------------------
   Ember.Handlebars.registerBoundHelper('nanoDate', function(value, options) {
     var escaped = Handlebars.Utils.escapeExpression(value);
     var ms = Math.round(escaped / Math.pow(10, 6));
