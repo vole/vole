@@ -25,8 +25,14 @@
           <ul class="nav nav-list well">
             <li class="nav-header">Menu</li>
             <li>{{#linkTo "index"}}Home{{/linkTo}}</li>
-            <li>{{#linkTo "profile"}}Profile{{/linkTo}}</li>
+            <li>{{#linkTo "profile"}}My profile{{/linkTo}}</li>
           </ul>
+
+          {{#if controllers.users.myUser.firstObject.user}}
+            <div class="nav well">
+              Hi, {{controllers.users.myUser.firstObject.user}}!
+            </div>
+          {{/if}}
         </div>
         <div class="span10">
           {{outlet}}
