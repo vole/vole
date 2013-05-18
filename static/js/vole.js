@@ -24,8 +24,7 @@
   App.Post = DS.Model.extend({
     title: DS.attr('string'),
     user: DS.attr('string'),
-    created: DS.attr('string'),
-    created_pretty: DS.attr('string')
+    created: DS.attr('string')
   });
 
   App.User = DS.Model.extend({
