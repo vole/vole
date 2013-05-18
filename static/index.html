@@ -45,20 +45,18 @@
       </div>
     </div>
 
-    <ul class="posts">
-      {{#each posts}}
-        <li>
-          <span class="user">{{user}}</span>
-          {{title}}
-          <span class="time">{{created_pretty}}</span>
-        </li>
-      {{/each}}
-    </ul>
+    <h4>All posts</h4>
+    {{view "App.PostsView" controllerBinding="controllers.posts"}}
   </script>
 
   <script type="text/x-handlebars" data-template-name="profile">
+    <h4>My posts</h4>
+    {{view "App.PostsView" controllerBinding="controllers.posts"}}
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="posts">
     <ul class="posts">
-      {{#each myPosts}}
+      {{#each filteredPosts}}
         <li>
           <span class="user">{{user}}</span>
           {{title}}

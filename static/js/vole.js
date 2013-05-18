@@ -4,7 +4,6 @@
     LOG_TRANSITIONS: true,
     rootElement: '#ember-container'
   });
-  //Ember.LOG_BINDINGS = true;
   window.App = App;
 
   //-------------------------
@@ -30,49 +29,70 @@
   });
 
   App.User = DS.Model.extend({
+    key: DS.attr('string'),
+    hash: DS.attr('string'),
     user: DS.attr('string'),
-    display_name: DS.attr('string')
+    display_name: DS.attr('string'),
+    is_my_user: DS.attr('boolean')
   });
 
   //-------------------------
   // Views
   //-------------------------
+  App.PostsView = Ember.View.extend({
+    templateName: 'posts'
+  });
 
   //-------------------------
   // Controllers
   //-------------------------
-  App.ProfileController = Ember.ObjectController.extend({
-    posts: [],
-    my_user: [],
-    my_user_name: '',
-
-    myPosts: function() {
-      var my_user = this.get('my_user');
-      if (my_user.get('length') > 0) {
-        this.set('my_user_name', my_user.objectAt(0).get('user'));
-      }
-      return this.get('posts').filterProperty('user', this.get('my_user_name'));
-    }.property('my_user.@each.user', 'posts.@each'),
+  App.ApplicationController = Ember.Controller.extend({
+    needs: ['posts', 'users']
   });
 
-  App.IndexController = Ember.ObjectController.extend({
-    posts: [],
-    my_user: [],
-    my_user_name: '',
+  App.IndexController = Ember.Controller.extend({
+    needs: ['posts', 'users'],
     new_post: '',
 
     createNewPost: function() {
-      var my_user = this.get('my_user');
-      if (my_user.get('length') > 0) {
-        this.set('my_user_name', my_user.objectAt(0).get('user'));
-      }
+      var self = this;
+      var my_user = this.get('controllers.users.myUser.firstObject.user');
 
       var newpost = App.Post.createRecord({
-        user: this.get('my_user_name'),
+        user: my_user,
         title: this.get('new_post')
+      });
+      newpost.on('didCreate', function() {
+        self.set('new_post', '');
       });
       newpost.get('transaction').commit();
     }
+  });
+
+  App.ProfileController = Ember.Controller.extend({
+    needs: ['posts', 'users'],
+  });
+
+  App.UsersController = Ember.ArrayController.extend({
+    // This is set to a FilteredRecordArray by the router. Just use the
+    // first object in the array.
+    myUser: null
+  });
+
+  App.PostsController = Ember.ArrayController.extend({
+    filterByUser: [],
+
+    filteredPosts: function() {
+      if (this.get('filterByUser.length') > 0) {
+        var filterUser = this.get('filterByUser.firstObject.user');
+        if (filterUser) {
+          return this.get('content').filterProperty('user', filterUser);
+        }
+      }
+      else {
+        return this.get('content');
+      }
+    }.property('content.[]', 'filterByUser.[]')
   });
 
   //-------------------------
@@ -83,18 +103,32 @@
     this.resource('profile', {path: '/profile'});
   });
 
-  App.ProfileRoute = Ember.Route.extend({
+  App.ApplicationRoute = Ember.Route.extend({
     setupController: function(controller) {
-      controller.set('my_user', App.User.find());
-      controller.set('posts', App.Post.find());
+      controller.set('controllers.posts.content', App.Post.find());
+      controller.set('controllers.users.content', App.User.find());
+      controller.set('controllers.users.myUser', App.User.filter(function(user) {
+        if (user.get('is_my_user')) {
+          return true;
+        }
+      }));
     }
   });
 
   App.IndexRoute = Ember.Route.extend({
     setupController: function(controller) {
-      controller.set('my_user', App.User.find());
-      controller.set('posts', App.Post.find());
+      var postsController = controller.get('controllers.posts');
+      postsController.set('filterByUser.[]', []);
     }
-  })
+  });
+
+  App.ProfileRoute = Ember.Route.extend({
+    setupController: function(controller) {
+      var postsController = controller.get('controllers.posts');
+      var usersController = controller.get('controllers.users');
+      postsController.set('filterByUser.[]', usersController.get('myUser.firstObject'));
+    },
+  });
+
 
 })(jQuery, Ember);

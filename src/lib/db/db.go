@@ -10,6 +10,7 @@ import (
   "path"
   "strings"
   "time"
+  "errors"
 )
 
 const VERSION = "v1"
@@ -97,15 +98,19 @@ func (post *Post) FileName() string {
   return fmt.Sprintf("%d-post-%s", post.Created, post.Id)
 }
 
-func PostFromJson(rawJson []byte) *Post {
+func PostFromJson(rawJson []byte) (*Post, error) {
   var post Post
   json.Unmarshal(rawJson, &post)
+
+  if post.Id == "" {
+    return nil, errors.New("Unable to use this file")
+  }
 
   // Format the timestamp nicely for output.
   t := time.Unix(0, post.Created)
   post.CreatedPretty = t.Format(time.RFC850)
 
-  return &post
+  return &post, nil
 }
 
 func PostContainerFromJson(rawJson []byte) *PostContainer {
@@ -149,7 +154,13 @@ func GetPosts() (*PostCollection, error) {
         continue
       }
 
-      posts = append(posts, *PostFromJson(data))
+      postData, err := PostFromJson(data)
+
+      if err != nil {
+        continue
+      }
+
+      posts = append(posts, *postData)
     }
   }
 
@@ -165,6 +176,7 @@ type User struct {
   Hash        string `json:"hash"`
   User        string `json:"user"`
   DisplayName string `json:"display_name"`
+  IsMyUser    bool `json:"is_my_user"`
 }
 
 type UserCollection struct {
@@ -178,6 +190,7 @@ type UserContainer struct {
 func UserFromJson(rawJson []byte) *User {
   var user User
   json.Unmarshal(rawJson, &user)
+  user.IsMyUser = true
   return &user
 }
 
