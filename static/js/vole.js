@@ -1,9 +1,11 @@
 (function ($, Ember) {
   var cl = console.log.bind(console);
+
   var App = Ember.Application.create({
     LOG_TRANSITIONS: true,
     rootElement: '#ember-container'
   });
+
   //Ember.LOG_BINDINGS = true;
   window.App = App;
 
@@ -51,7 +53,7 @@
         this.set('my_user_name', my_user.objectAt(0).get('user'));
       }
       return this.get('posts').filterProperty('user', this.get('my_user_name'));
-    }.property('my_user.@each.user', 'posts.@each'),
+    }.property('my_user.@each.user', 'posts.@each')
   });
 
   App.IndexController = Ember.ObjectController.extend({
@@ -94,6 +96,12 @@
       controller.set('my_user', App.User.find());
       controller.set('posts', App.Post.find());
     }
-  })
+  });
+
+  Ember.Handlebars.registerBoundHelper('nanoDate', function(value, options) {
+    var escaped = Handlebars.Utils.escapeExpression(value);
+    var ms = Math.round(escaped / Math.pow(10, 6));
+    return new Handlebars.SafeString(moment(ms).fromNow());
+  });
 
 })(jQuery, Ember);
