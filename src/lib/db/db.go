@@ -47,7 +47,6 @@ type Post struct {
   Title   string `json:"title"`
   User    string `json:"user"`
   Created int64  `json:"created"`
-  CreatedPretty string `json:"created_pretty"`
 }
 
 type PostContainer struct {
@@ -105,10 +104,6 @@ func PostFromJson(rawJson []byte) (*Post, error) {
   if post.Id == "" {
     return nil, errors.New("Unable to use this file")
   }
-
-  // Format the timestamp nicely for output.
-  t := time.Unix(0, post.Created)
-  post.CreatedPretty = t.Format(time.RFC850)
 
   return &post, nil
 }
