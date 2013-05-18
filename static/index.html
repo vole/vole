@@ -56,7 +56,7 @@
   </script>
 
   <script type="text/x-handlebars" data-template-name="profile">
-    <h4>My posts</h4>
+    <h4>{{controllers.users.myUser.firstObject.display_name}}</h4>
     {{view "App.PostsView" controllerBinding="controllers.posts"}}
   </script>
 
