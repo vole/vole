@@ -25,8 +25,14 @@
           <ul class="nav nav-list well">
             <li class="nav-header">Menu</li>
             <li>{{#linkTo "index"}}Home{{/linkTo}}</li>
-            <li>{{#linkTo "profile"}}Profile{{/linkTo}}</li>
+            <li>{{#linkTo "profile"}}My profile{{/linkTo}}</li>
           </ul>
+
+          {{#if controllers.users.myUser.firstObject.user}}
+            <div class="nav well">
+              Hi, {{controllers.users.myUser.firstObject.user}}!
+            </div>
+          {{/if}}
         </div>
         <div class="span10">
           {{outlet}}
@@ -39,28 +45,24 @@
     <div class="navbar">
       <div class="navbar-inner">
         <form class="navbar-form">
-          {{view Ember.TextField valueBinding="new_post"}}
+          {{view Ember.TextArea id="new-post" rows="4" cols="50" valueBinding="new_post"}}
           <button {{action "createNewPost"}} class="btn">Post</button>
         </form>
       </div>
     </div>
 
-    <ul class="posts">
-      {{#each posts}}
-        <li>
-          <span class="user">{{user}}</span>
-          {{title}}
-          <span class="time">
-            {{nanoDate created}}
-          </span>
-        </li>
-      {{/each}}
-    </ul>
+    <h4>All posts</h4>
+    {{view "App.PostsView" controllerBinding="controllers.posts"}}
   </script>
 
   <script type="text/x-handlebars" data-template-name="profile">
+    <h4>{{controllers.users.myUser.firstObject.display_name}}</h4>
+    {{view "App.PostsView" controllerBinding="controllers.posts"}}
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="posts">
     <ul class="posts">
-      {{#each myPosts}}
+      {{#each filteredPosts}}
         <li>
           <span class="user">{{user}}</span>
           {{title}}
