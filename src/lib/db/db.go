@@ -239,7 +239,7 @@ func GetUsers() (*UserCollection, error) {
 
     user, err := UserFromJson(data)
 
-    user.IsMyUser = (user.Key == currentUser.Key)
+    user.IsMyUser = (user.User == currentUser.User)
 
     collection = append(collection, *user)
   }
