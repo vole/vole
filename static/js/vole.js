@@ -128,7 +128,7 @@
   App.ApplicationRoute = Ember.Route.extend({
     setupController: function(controller) {
       controller.set('controllers.posts.content', App.Post.find());
-      controller.set('controllers.users.myUser', App.User.find({'isMyUser': true}));
+      controller.set('controllers.users.myUser', App.User.find({'is_my_user': true}));
     }
   });
 
