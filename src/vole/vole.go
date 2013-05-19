@@ -79,6 +79,27 @@ func main() {
     return string(usersJson)
   })
 
+  web.Post("/api/users", func(ctx *web.Context) string {
+    body, err := ioutil.ReadAll(ctx.Request.Body)
+    if err != nil {
+      ctx.Abort(500, "Error reading request body.")
+    }
+
+    container := db.UserContainerFromJson(body)
+
+    err = (*container).User.Save()
+    if err != nil {
+      ctx.Abort(500, "Error saving user.")
+    }
+
+    containerJson, err := json.Marshal(*container)
+    if err != nil {
+      ctx.Abort(500, "Error marshalling user.")
+    }
+
+    return string(containerJson)
+  })
+
   web.Post("/api/posts", func(ctx *web.Context) string {
     body, err := ioutil.ReadAll(ctx.Request.Body)
     if err != nil {
