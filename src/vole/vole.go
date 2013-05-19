@@ -5,6 +5,7 @@ import (
   "flag"
   "github.com/vole/web"
   "io/ioutil"
+  "lib/config"
   "lib/db"
   "sort"
 )
@@ -13,6 +14,22 @@ var port = flag.String("port", "6789", "Port on which to run the web server.")
 
 func main() {
   flag.Parse()
+
+  config, err := config.Load()
+  if err != nil {
+    panic(err)
+  }
+
+  web.Get("/api/config", func(ctx *web.Context) string {
+    ctx.ContentType("json")
+
+    configJson, err := json.Marshal(config)
+    if err != nil {
+      ctx.Abort(500, "Error marshalling config.")
+    }
+
+    return string(configJson)
+  })
 
   web.Get("/api/posts", func(ctx *web.Context) string {
     ctx.ContentType("json")
