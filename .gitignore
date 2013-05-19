@@ -4,3 +4,4 @@
 /pkg
 *.o
 *.a
+config.yaml

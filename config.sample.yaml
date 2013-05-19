@@ -1,0 +1,9 @@
+# Vole Configuration File
+---
+
+install:
+  dir: ~/Vole
+
+ui:
+  reverse: false
+
