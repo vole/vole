@@ -2,6 +2,7 @@ package db
 
 import (
   "encoding/json"
+  "errors"
   "fmt"
   "github.com/vole/gouuid"
   "io/ioutil"
@@ -10,7 +11,6 @@ import (
   "path"
   "strings"
   "time"
-  "errors"
 )
 
 const VERSION = "v1"
@@ -43,7 +43,7 @@ func Create(args ...string) (*os.File, error) {
  */
 
 type Post struct {
-  Id    string `json:"id"`
+  Id      string `json:"id"`
   Title   string `json:"title"`
   User    string `json:"user"`
   Created int64  `json:"created"`
@@ -171,7 +171,7 @@ type User struct {
   Hash        string `json:"hash"`
   User        string `json:"user"`
   DisplayName string `json:"display_name"`
-  IsMyUser    bool `json:"is_my_user"`
+  IsMyUser    bool   `json:"is_my_user"`
 }
 
 type UserCollection struct {
@@ -182,11 +182,10 @@ type UserContainer struct {
   User User `json:"user"`
 }
 
-func UserFromJson(rawJson []byte) *User {
+func UserFromJson(rawJson []byte) (*User, error) {
   var user User
   json.Unmarshal(rawJson, &user)
-  user.IsMyUser = true
-  return &user
+  return &user, nil
 }
 
 func NewUser(user string, displayName string) *User {
@@ -217,5 +216,33 @@ func CurrentUser() (*User, error) {
     return nil, err
   }
 
-  return UserFromJson(data), nil
+  user, err := UserFromJson(data)
+  if err != nil {
+    return nil, errors.New("No current user.")
+  }
+
+  user.IsMyUser = true
+  return user, nil
+}
+
+func GetUsers() (*UserCollection, error) {
+  collection := make([]User, 0)
+
+  currentUser, _ := CurrentUser()
+  users, _ := ReadDir(DIR, "users")
+
+  for _, dir := range users {
+    data, err := ReadFile(DIR, "users", dir.Name(), VERSION, "user", dir.Name())
+    if err != nil {
+      continue
+    }
+
+    user, err := UserFromJson(data)
+
+    user.IsMyUser = (user.User == currentUser.User)
+
+    collection = append(collection, *user)
+  }
+
+  return &UserCollection{collection}, nil
 }
