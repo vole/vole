@@ -1,0 +1,8 @@
+{
+  "install" : {
+    "dir": "~/Vole"
+  },
+  "ui" : {
+    "reverse" : false
+  }
+}

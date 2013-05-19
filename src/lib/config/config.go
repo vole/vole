@@ -1,9 +1,9 @@
 package config
 
 import (
+  "encoding/json"
   "errors"
   "io/ioutil"
-  "launchpad.net/goyaml"
 )
 
 type Config struct {
@@ -19,14 +19,14 @@ type Config struct {
 func Load() (*Config, error) {
   config := Config{}
 
-  file, err := ioutil.ReadFile("config.yaml")
+  file, err := ioutil.ReadFile("config.json")
   if err != nil {
-    return nil, errors.New("Unable to open config.yaml. Make sure you copy config.sample.yaml to config.yaml.")
+    return nil, errors.New("Unable to open config.json. Make sure you copy config.sample.json to config.json.")
   }
 
-  err = goyaml.Unmarshal(file, &config)
+  err = json.Unmarshal(file, &config)
   if err != nil {
-    return nil, errors.New("Unable to parse config.yaml.")
+    return nil, errors.New("Unable to parse config.json.")
   }
 
   return &config, nil
