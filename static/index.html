@@ -42,6 +42,7 @@
   </script>
 
   <script type="text/x-handlebars" data-template-name="index">
+    <h4>All posts</h4>
     {{#if myUser.isLoaded}}
       {{#if myUser.length}}
         <div class="navbar">
@@ -55,7 +56,6 @@
       {{/if}}
     {{/if}}
 
-    <h4>All posts</h4>
     {{view "App.PostsView" controllerBinding="controllers.posts"}}
   </script>
 
@@ -74,7 +74,7 @@
           <div>
             <span>Display name:</span>{{view Ember.TextField valueBinding="newUserDisplayName"}}
           </div>
-          <button {{action "createNew"}} class="btn" {{bindAttr disabled=createButtonDisabled}}>Create</button>
+          <button {{action "createNew"}} class="btn" {{bindAttr disabled="createButtonDisabled"}}>Create</button>
         </div>
       {{/if}}
     {{else}}
