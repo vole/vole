@@ -4,3 +4,5 @@
 /pkg
 *.o
 *.a
+config.json
+
