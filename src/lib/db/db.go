@@ -171,7 +171,31 @@ type User struct {
   Hash        string `json:"hash"`
   User        string `json:"user"`
   DisplayName string `json:"display_name"`
-  IsMyUser    bool   `json:"is_my_user"`
+  IsMyUser    bool   `json:"is_my_user,omitempty"`
+}
+
+func (user *User) Save() error {
+  user.IsMyUser = false
+
+  rawJson, err := json.Marshal(*user)
+  if err != nil {
+    return err
+  }
+
+  dir := path.Join(DIR, "users", user.User, VERSION, "user")
+
+  userDirErr := os.MkdirAll(dir, 0755)
+  if userDirErr != nil {
+    return err
+  }
+
+  file, err := Create(dir, user.User)
+  if err != nil {
+    return err
+  }
+
+  file.Write(rawJson)
+  return nil
 }
 
 type UserCollection struct {
@@ -186,6 +210,12 @@ func UserFromJson(rawJson []byte) (*User, error) {
   var user User
   json.Unmarshal(rawJson, &user)
   return &user, nil
+}
+
+func UserContainerFromJson(rawJson []byte) *UserContainer {
+  var container UserContainer
+  json.Unmarshal(rawJson, &container)
+  return &container
 }
 
 func NewUser(user string, displayName string) *User {
