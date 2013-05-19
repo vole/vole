@@ -33,8 +33,8 @@
     key: DS.attr('string'),
     hash: DS.attr('string'),
     user: DS.attr('string'),
-    display_name: DS.attr('string'),
-    is_my_user: DS.attr('boolean')
+    displayName: DS.attr('string'),
+    isMyUser: DS.attr('boolean')
   });
 
   //-------------------------
@@ -53,25 +53,48 @@
 
   App.IndexController = Ember.Controller.extend({
     needs: ['posts', 'users'],
-    new_post: '',
+    myUserBinding: 'controllers.users.myUser',
+    newPostTitle: '',
 
     createNewPost: function() {
       var self = this;
-      var my_user = this.get('controllers.users.myUser.firstObject.user');
+      var myUser = this.get('controllers.users.myUser.firstObject.user');
 
-      var newpost = App.Post.createRecord({
-        user: my_user,
-        title: this.get('new_post')
+      var newPost = App.Post.createRecord({
+        user: myUser,
+        title: this.get('newPostTitle')
       });
-      newpost.on('didCreate', function() {
-        self.set('new_post', '');
+      newPost.on('didCreate', function() {
+        self.set('newPostTitle', '');
       });
-      newpost.get('transaction').commit();
+      newPost.get('transaction').commit();
     }
   });
 
   App.ProfileController = Ember.Controller.extend({
-    needs: ['posts', 'users']
+    needs: ['posts', 'users'],
+    myUserBinding: 'controllers.users.myUser',
+    newUserName: '',
+    newUserDisplayName: '',
+
+    // Helper to disable the button when the fields are not filled.
+    createButtonDisabled: function() {
+      return this.get('newUserName.length') === 0 || this.get('newUserDisplayName.length') === 0;
+    }.property('newUserName', 'newUserDisplayName'),
+
+    createNew: function() {
+      var self = this;
+
+      var newUser = App.User.createRecord({
+        user: this.get('newUserName'),
+        displayName: this.get('newUserDisplayName'),
+        isMyUser: true
+      });
+      newUser.on('didCreate', function() {
+        cl('created!');
+      });
+      newUser.get('transaction').commit();
+    }
   });
 
   App.UsersController = Ember.ArrayController.extend({
@@ -105,12 +128,7 @@
   App.ApplicationRoute = Ember.Route.extend({
     setupController: function(controller) {
       controller.set('controllers.posts.content', App.Post.find());
-      controller.set('controllers.users.content', App.User.find());
-      controller.set('controllers.users.myUser', App.User.filter(function(user) {
-        if (user.get('is_my_user')) {
-          return true;
-        }
-      }));
+      controller.set('controllers.users.myUser', App.User.find({'isMyUser': true}));
     }
   });
 
