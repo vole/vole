@@ -185,7 +185,6 @@ type UserContainer struct {
 func UserFromJson(rawJson []byte) (*User, error) {
   var user User
   json.Unmarshal(rawJson, &user)
-  user.IsMyUser = true
   return &user, nil
 }
 
@@ -217,12 +216,19 @@ func CurrentUser() (*User, error) {
     return nil, err
   }
 
-  return UserFromJson(data)
+  user, err := UserFromJson(data)
+  if err != nil {
+    return nil, errors.New("No current user.")
+  }
+
+  user.IsMyUser = true
+  return user, nil
 }
 
 func GetUsers() (*UserCollection, error) {
   collection := make([]User, 0)
 
+  currentUser, _ := CurrentUser()
   users, _ := ReadDir(DIR, "users")
 
   for _, dir := range users {
@@ -232,6 +238,8 @@ func GetUsers() (*UserCollection, error) {
     }
 
     user, err := UserFromJson(data)
+
+    user.IsMyUser = (user.Key == currentUser.Key)
 
     collection = append(collection, *user)
   }

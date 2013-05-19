@@ -37,14 +37,15 @@ func main() {
 
     var collection *db.UserCollection
 
-    _, isMyUser := ctx.Params["is_my_user"]
+    _, isMyUserFilter := ctx.Params["is_my_user"]
 
-    if isMyUser {
-      user, err := db.CurrentUser()
-      if err != nil {
-        ctx.Abort(500, "Error loading user.")
+    if isMyUserFilter {
+      currentUser, _ := db.CurrentUser()
+      if currentUser != nil {
+        collection = db.NewUserCollection([]db.User{*currentUser})
+      } else {
+        collection = db.NewUserCollection([]db.User{})
       }
-      collection = db.NewUserCollection([]db.User{*user})
     } else {
       users, err := db.GetUsers()
       if err != nil {
