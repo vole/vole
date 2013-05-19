@@ -167,11 +167,46 @@ func GetPosts() (*PostCollection, error) {
  */
 
 type User struct {
+  Id          string `json:"id"`
   Key         string `json:"key"`
   Hash        string `json:"hash"`
   User        string `json:"user"`
   DisplayName string `json:"display_name"`
-  IsMyUser    bool   `json:"is_my_user"`
+  IsMyUser    bool   `json:"is_my_user,omitempty"`
+}
+
+func (user *User) Save() error {
+  user.IsMyUser = false
+
+  if user.Id == "" {
+    uuid, _ := uuid.NewV4()
+    user.Id = fmt.Sprintf("%s", uuid)
+  }
+
+  rawJson, err := json.Marshal(*user)
+  if err != nil {
+    return err
+  }
+
+  dir := path.Join(DIR, "users", user.User, VERSION)
+
+  userDirErr := os.MkdirAll(path.Join(dir, "user"), 0755)
+  if userDirErr != nil {
+    return err
+  }
+
+  postsDirErr := os.MkdirAll(path.Join(dir, "posts"), 0755)
+  if postsDirErr != nil {
+    return err
+  }
+
+  file, err := Create(dir, "user", user.User)
+  if err != nil {
+    return err
+  }
+
+  file.Write(rawJson)
+  return nil
 }
 
 type UserCollection struct {
@@ -186,6 +221,12 @@ func UserFromJson(rawJson []byte) (*User, error) {
   var user User
   json.Unmarshal(rawJson, &user)
   return &user, nil
+}
+
+func UserContainerFromJson(rawJson []byte) *UserContainer {
+  var container UserContainer
+  json.Unmarshal(rawJson, &container)
+  return &container
 }
 
 func NewUser(user string, displayName string) *User {
