@@ -167,6 +167,7 @@ func GetPosts() (*PostCollection, error) {
  */
 
 type User struct {
+  Id          string `json:"id"`
   Key         string `json:"key"`
   Hash        string `json:"hash"`
   User        string `json:"user"`
@@ -177,19 +178,29 @@ type User struct {
 func (user *User) Save() error {
   user.IsMyUser = false
 
+  if user.Id == "" {
+    uuid, _ := uuid.NewV4()
+    user.Id = fmt.Sprintf("%s", uuid)
+  }
+
   rawJson, err := json.Marshal(*user)
   if err != nil {
     return err
   }
 
-  dir := path.Join(DIR, "users", user.User, VERSION, "user")
+  dir := path.Join(DIR, "users", user.User, VERSION)
 
-  userDirErr := os.MkdirAll(dir, 0755)
+  userDirErr := os.MkdirAll(path.Join(dir, "user"), 0755)
   if userDirErr != nil {
     return err
   }
 
-  file, err := Create(dir, user.User)
+  postsDirErr := os.MkdirAll(path.Join(dir, "posts"), 0755)
+  if postsDirErr != nil {
+    return err
+  }
+
+  file, err := Create(dir, "user", user.User)
   if err != nil {
     return err
   }
