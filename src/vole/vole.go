@@ -35,19 +35,30 @@ func main() {
   web.Get("/api/users", func(ctx *web.Context) string {
     ctx.ContentType("json")
 
-    user, err := db.CurrentUser()
-    if err != nil {
-      ctx.Abort(500, "Error loading user.")
+    var collection *db.UserCollection
+
+    _, isMyUser := ctx.Params["is_my_user"]
+
+    if isMyUser {
+      user, err := db.CurrentUser()
+      if err != nil {
+        ctx.Abort(500, "Error loading user.")
+      }
+      collection = db.NewUserCollection([]db.User{*user})
+    } else {
+      users, err := db.GetUsers()
+      if err != nil {
+        ctx.Abort(500, "Error loading users.")
+      }
+      collection = users
     }
 
-    collection := db.NewUserCollection([]db.User{*user})
-
-    userJson, err := json.Marshal(collection)
+    usersJson, err := json.Marshal(collection)
     if err != nil {
-      ctx.Abort(500, "Error marshalling user.")
+      ctx.Abort(500, "Error marshalling users.")
     }
 
-    return string(userJson)
+    return string(usersJson)
   })
 
   web.Post("/api/posts", func(ctx *web.Context) string {
