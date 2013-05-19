@@ -38,6 +38,20 @@ func Create(args ...string) (*os.File, error) {
   return os.Create(path.Join(args...))
 }
 
+func Write(path string, data []byte) error {
+  file, err := os.Create(path)
+  if err != nil {
+    return err
+  }
+
+  _, err = file.Write(data)
+  if err != nil {
+    return err
+  }
+
+  return file.Close()
+}
+
 /**
  * Posts
  */
@@ -84,13 +98,9 @@ func (post *Post) Save() error {
     return err
   }
 
-  file, err := Create(DIR, "users", post.User, VERSION, "posts", post.FileName())
-  if err != nil {
-    return err
-  }
+  filePath := path.Join(DIR, "users", post.User, VERSION, "posts", post.FileName())
 
-  file.Write(rawJson)
-  return nil
+  return Write(filePath, rawJson)
 }
 
 func (post *Post) FileName() string {
@@ -200,13 +210,7 @@ func (user *User) Save() error {
     return err
   }
 
-  file, err := Create(dir, "user", user.User)
-  if err != nil {
-    return err
-  }
-
-  file.Write(rawJson)
-  return nil
+  return Write(path.Join(dir, "user", user.User), rawJson)
 }
 
 type UserCollection struct {
