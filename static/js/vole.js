@@ -167,4 +167,6 @@
     return new Handlebars.SafeString(moment(ms).fromNow());
   });
 
+  $('.time').moment({ frequency: 5000 });
+
 })(jQuery, Ember);
