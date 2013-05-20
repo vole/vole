@@ -74,6 +74,7 @@
   App.ProfileController = Ember.Controller.extend({
     needs: ['posts', 'users'],
     myUserBinding: 'controllers.users.myUser',
+    filterByUserBinding: 'controllers.posts.filterByUser',
     newUserName: '',
     newUserDisplayName: '',
 
@@ -91,7 +92,10 @@
         isMyUser: true
       });
       newUser.on('didCreate', function() {
-        cl('created!');
+        self.set('myUser', App.User.filter(function(user) {
+          return user.get('isMyUser') === true;
+        }));
+        self.set('filterByUser', self.get('myUser'));
       });
       newUser.get('transaction').commit();
     }

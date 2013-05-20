@@ -83,17 +83,27 @@
   </script>
 
   <script type="text/x-handlebars" data-template-name="posts">
-    <ul class="posts">
-      {{#each filteredPosts}}
-        <li>
-          <span class="user">{{unbound user}}</span>
-          {{unbound title}}
-          <span class="time">
-            {{nanoDate created}}
-          </span>
-        </li>
-      {{/each}}
-    </ul>
+    {{#if length}}
+      {{#if filteredPosts}}
+        <ul class=  "posts">
+          {{#each filteredPosts}}
+            <li>
+              <span class="user">{{unbound user}}</span>
+              {{unbound title}}
+              <span class="time">
+                {{nanoDate created}}
+              </span>
+            </li>
+          {{/each}}
+        </ul>
+      {{else}}
+        <div>
+          You haven't posted anything yet.
+        </div>
+      {{/if}}
+    {{else}}
+      Loading...
+    {{/if}}
   </script>
 
   <script src="/js/vendor/jquery.min.js"></script>
