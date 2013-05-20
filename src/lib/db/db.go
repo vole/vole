@@ -188,6 +188,7 @@ type User struct {
 func (user *User) Save() error {
   user.IsMyUser = false
 
+  // Generate a UUID if one doesn't exist.
   if user.Id == "" {
     uuid, _ := uuid.NewV4()
     user.Id = fmt.Sprintf("%s", uuid)
@@ -200,17 +201,31 @@ func (user *User) Save() error {
 
   dir := path.Join(DIR, "users", user.User, VERSION)
 
+  // Create the user's user directory.
   userDirErr := os.MkdirAll(path.Join(dir, "user"), 0755)
   if userDirErr != nil {
     return err
   }
 
+  // Create the user's posts directory.
   postsDirErr := os.MkdirAll(path.Join(dir, "posts"), 0755)
   if postsDirErr != nil {
-    return err
+    return postsDirErr
   }
 
-  return Write(path.Join(dir, "user", user.User), rawJson)
+  // Save the user's data.
+  saveError := Write(path.Join(dir, "user", user.User), rawJson)
+  if saveError != nil {
+    return saveError
+  }
+
+  // Update the my_user file to point to the user.
+  myUserError := Write(path.Join(DIR, "my_user"), []byte(user.User))
+  if myUserError != nil {
+    return myUserError
+  }
+
+  return nil
 }
 
 type UserCollection struct {
