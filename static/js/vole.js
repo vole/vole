@@ -26,7 +26,7 @@
   App.Post = DS.Model.extend({
     title: DS.attr('string'),
     user: DS.attr('string'),
-    created: DS.attr('string')
+    created: DS.attr('number')
   });
 
   App.User = DS.Model.extend({
@@ -109,15 +109,17 @@
 
   App.PostsController = Ember.ArrayController.extend({
     filterByUser: [],
+    sortProperties: ['created'],
+    sortAscending: false,
 
     filteredPosts: function() {
       if (this.get('filterByUser.length') > 0) {
         var filterUser = this.get('filterByUser.firstObject.user');
         if (filterUser) {
-          return this.get('content').filterProperty('user', filterUser);
+          return this.get('arrangedContent').filterProperty('user', filterUser);
         }
       }
-      return this.get('content');
+      return this.get('arrangedContent');
     }.property('content.[]', 'filterByUser.[]')
   });
 
