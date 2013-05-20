@@ -220,12 +220,7 @@ func (user *User) Save() error {
   }
 
   // Update the my_user file to point to the user.
-  myUserError := Write(path.Join(DIR, "my_user"), []byte(user.User))
-  if myUserError != nil {
-    return myUserError
-  }
-
-  return nil
+  return Write(path.Join(DIR, "my_user"), []byte(user.User))
 }
 
 type UserCollection struct {
