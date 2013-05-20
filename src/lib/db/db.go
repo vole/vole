@@ -76,7 +76,7 @@ func (collection *PostCollection) Len() int {
 }
 
 func (collection *PostCollection) Less(i, j int) bool {
-  return collection.Posts[i].Created < collection.Posts[j].Created
+  return collection.Posts[i].Created > collection.Posts[j].Created
 }
 
 func (collection *PostCollection) Swap(i, j int) {

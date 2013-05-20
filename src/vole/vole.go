@@ -92,6 +92,8 @@ func main() {
       ctx.Abort(500, "Error saving user.")
     }
 
+    (*container).User.IsMyUser = true
+
     containerJson, err := json.Marshal(*container)
     if err != nil {
       ctx.Abort(500, "Error marshalling user.")
