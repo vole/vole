@@ -38,6 +38,20 @@ func Create(args ...string) (*os.File, error) {
   return os.Create(path.Join(args...))
 }
 
+func Write(path string, data []byte) error {
+  file, err := os.Create(path)
+  if err != nil {
+    return err
+  }
+
+  _, err = file.Write(data)
+  if err != nil {
+    return err
+  }
+
+  return file.Close()
+}
+
 /**
  * Posts
  */
@@ -84,13 +98,9 @@ func (post *Post) Save() error {
     return err
   }
 
-  file, err := Create(DIR, "users", post.User, VERSION, "posts", post.FileName())
-  if err != nil {
-    return err
-  }
+  filePath := path.Join(DIR, "users", post.User, VERSION, "posts", post.FileName())
 
-  file.Write(rawJson)
-  return nil
+  return Write(filePath, rawJson)
 }
 
 func (post *Post) FileName() string {
@@ -178,6 +188,7 @@ type User struct {
 func (user *User) Save() error {
   user.IsMyUser = false
 
+  // Generate a UUID if one doesn't exist.
   if user.Id == "" {
     uuid, _ := uuid.NewV4()
     user.Id = fmt.Sprintf("%s", uuid)
@@ -190,23 +201,26 @@ func (user *User) Save() error {
 
   dir := path.Join(DIR, "users", user.User, VERSION)
 
+  // Create the user's user directory.
   userDirErr := os.MkdirAll(path.Join(dir, "user"), 0755)
   if userDirErr != nil {
     return err
   }
 
+  // Create the user's posts directory.
   postsDirErr := os.MkdirAll(path.Join(dir, "posts"), 0755)
   if postsDirErr != nil {
-    return err
+    return postsDirErr
   }
 
-  file, err := Create(dir, "user", user.User)
-  if err != nil {
-    return err
+  // Save the user's data.
+  saveError := Write(path.Join(dir, "user", user.User), rawJson)
+  if saveError != nil {
+    return saveError
   }
 
-  file.Write(rawJson)
-  return nil
+  // Update the my_user file to point to the user.
+  return Write(path.Join(DIR, "my_user"), []byte(user.User))
 }
 
 type UserCollection struct {
@@ -280,7 +294,7 @@ func GetUsers() (*UserCollection, error) {
 
     user, err := UserFromJson(data)
 
-    user.IsMyUser = (user.User == currentUser.User)
+    user.IsMyUser = (currentUser != nil && user.User == currentUser.User)
 
     collection = append(collection, *user)
   }
