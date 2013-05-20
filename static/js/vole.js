@@ -135,6 +135,11 @@
     setupController: function(controller) {
       controller.set('controllers.posts.content', App.Post.find());
       controller.set('controllers.users.myUser', App.User.find({'is_my_user': true}));
+      var refreshUI = function() {
+        App.Post.find();
+        setTimeout(refreshUI, 1000);
+      };
+      setTimeout(refreshUI, 5000);
     }
   });
 
