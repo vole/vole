@@ -105,12 +105,12 @@
   App.ApplicationRoute = Ember.Route.extend({
     setupController: function(controller) {
       controller.set('controllers.posts.content', App.Post.find());
-      controller.set('controllers.users.content', App.User.find());
-      controller.set('controllers.users.myUser', App.User.filter(function(user) {
-        if (user.get('is_my_user')) {
-          return true;
-        }
-      }));
+      controller.set('controllers.users.myUser', App.User.find({'is_my_user': true}));
+      var refreshUI = function() {
+        App.Post.find();
+        setTimeout(refreshUI, 1000);
+      };
+      setTimeout(refreshUI, 5000);
     }
   });
 
