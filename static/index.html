@@ -42,36 +42,68 @@
   </script>
 
   <script type="text/x-handlebars" data-template-name="index">
-    <div class="navbar">
-      <div class="navbar-inner">
-        <form class="navbar-form">
-          {{view Ember.TextArea id="new-post" rows="4" cols="50" valueBinding="new_post"}}
-          <button {{action "createNewPost"}} class="btn">Post</button>
-        </form>
-      </div>
-    </div>
-
     <h4>All posts</h4>
+    {{#if myUser.isLoaded}}
+      {{#if myUser.length}}
+        <div class="navbar">
+          <div class="navbar-inner">
+            <form class="navbar-form">
+              {{view Ember.TextArea id="new-post" rows="4" cols="50" valueBinding="newPostTitle"}}
+              <button {{action "createNewPost"}} class="btn">Post</button>
+            </form>
+          </div>
+        </div>
+      {{/if}}
+    {{/if}}
+
     {{view "App.PostsView" controllerBinding="controllers.posts"}}
   </script>
 
   <script type="text/x-handlebars" data-template-name="profile">
-    <h4>{{controllers.users.myUser.firstObject.display_name}}</h4>
-    {{view "App.PostsView" controllerBinding="controllers.posts"}}
+    {{#if myUser.isLoaded}}
+      {{#if myUser.length}}
+        <h4>{{myUser.firstObject.displayName}}</h4>
+        {{view "App.PostsView" controllerBinding="controllers.posts"}}
+      {{else}}
+        <h4>User not found</h4>
+        <div>Vole could not find your user profile. Would you like to create a new one?</div>
+        <div>
+          <div>
+            <span>User name:</span>{{view Ember.TextField valueBinding="newUserName"}}
+          </div>
+          <div>
+            <span>Display name:</span>{{view Ember.TextField valueBinding="newUserDisplayName"}}
+          </div>
+          <button {{action "createNew"}} class="btn" {{bindAttr disabled="createButtonDisabled"}}>Create</button>
+        </div>
+      {{/if}}
+    {{else}}
+      Loading...
+    {{/if}}
   </script>
 
   <script type="text/x-handlebars" data-template-name="posts">
-    <ul class="posts">
-      {{#each filteredPosts}}
-        <li>
-          <span class="user">{{user}}</span>
-          {{title}}
-          <span class="time">
-            {{nanoDate created}}
-          </span>
-        </li>
-      {{/each}}
-    </ul>
+    {{#if length}}
+      {{#if filteredPosts}}
+        <ul class=  "posts">
+          {{#each filteredPosts}}
+            <li>
+              <span class="user">{{unbound user}}</span>
+              {{unbound title}}
+              <span class="time">
+                {{nanoDate created}}
+              </span>
+            </li>
+          {{/each}}
+        </ul>
+      {{else}}
+        <div>
+          You haven't posted anything yet.
+        </div>
+      {{/if}}
+    {{else}}
+      Loading...
+    {{/if}}
   </script>
 
   <script src="/js/vendor/jquery.min.js"></script>
