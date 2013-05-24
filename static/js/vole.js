@@ -173,6 +173,16 @@
     return new Handlebars.SafeString(moment(ms).fromNow());
   });
 
+  Ember.Handlebars.registerBoundHelper('colorNumber', function(value, options) {
+    // djb2 hash: http://www.cse.yorku.ca/~oz/hash.html
+    var hash = 5381;
+    for (i = 0; i < value.length; i++) {
+      hash = ((hash << 5) + hash) + value.charCodeAt(i);
+    }
+
+    return Math.abs(hash) % 30;
+  });
+
   Ember.Handlebars.registerBoundHelper('enrich', function(value, options) {
     var escaped = Handlebars.Utils.escapeExpression(value);
     var rUrl = /\(?\b(?:(http|https|ftp):\/\/)+((?:www.)?[a-zA-Z0-9\-\.]+[\.][a-zA-Z]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?(?=[\s\/,\.\)])([\/]{1}[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]\(\)]*))?([\#][^\s\n]*)?\)?/ig;
