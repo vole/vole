@@ -42,17 +42,17 @@
   </script>
 
   <script type="text/x-handlebars" data-template-name="index">
-    <h4>All posts</h4>
+    <h3>All posts</h3>
     {{#if myUser.isLoaded}}
       {{#if myUser.length}}
-        <div class="navbar">
-          <div class="navbar-inner">
-            <form class="navbar-form">
-              {{view Ember.TextArea id="new-post" rows="4" cols="50" valueBinding="newPostTitle"}}
+        <form>
+          {{view Ember.TextArea id="new-post" rows="4" cols="50" valueBinding="newPostTitle"}}
+          <div class="control-group">
+            <div class="controls">
               <button {{action "createNewPost"}} class="btn">Post</button>
-            </form>
+            </div>
           </div>
-        </div>
+        </form>
       {{/if}}
     {{/if}}
 
@@ -88,7 +88,9 @@
         <ul class=  "posts">
           {{#each filteredPosts}}
             <li>
-              <span class="user">{{unbound user}}</span>
+              <span class="user" colornumber="{{unbound colorNumber user}}">
+                {{unbound user}}
+              </span>
               {{unbound title}}
               <span class="time" data-time="{{unbound created}}">
                 {{unbound nanoDate created}}

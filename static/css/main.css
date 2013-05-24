@@ -37,3 +37,35 @@ ul.posts {
       float: right;
       color: #CCC;
     }
+
+[colornumber='0'] { color: #cb5d5a; }
+[colornumber='1'] { color: #a3bf75; }
+[colornumber='2'] { color: #9b85b3; }
+[colornumber='3'] { color: #C083F2; }
+[colornumber='4'] { color: #8bd3e5; }
+[colornumber='5'] { color: #f4a36c; }
+[colornumber='6'] { color: #75ade1; }
+[colornumber='7'] { color: #ffbfbd; }
+[colornumber='8'] { color: #b2cc00; }
+[colornumber='9'] { color: #96ff00; }
+[colornumber='10'] { color: #05ffaa; }
+[colornumber='11'] { color: #ffe982; }
+[colornumber='12'] { color: #aadeff; }
+[colornumber='13'] { color: #36ff15; }
+[colornumber='14'] { color: #ff6076; }
+[colornumber='15'] { color: #8e908f; }
+[colornumber='16'] { color: #706616; }
+[colornumber='17'] { color: #46799c; }
+[colornumber='18'] { color: #80372e; }
+[colornumber='19'] { color: #8F478E; }
+[colornumber='20'] { color: #5b9e4c; }
+[colornumber='21'] { color: #13826c; }
+[colornumber='22'] { color: #b13637; }
+[colornumber='23'] { color: #e45d59; }
+[colornumber='24'] { color: #1b51ae; }
+[colornumber='25'] { color: #4855ac; }
+[colornumber='26'] { color: #7f1d86; }
+[colornumber='27'] { color: #73643f; }
+[colornumber='28'] { color: #0b9578; }
+[colornumber='29'] { color: #569c96; }
+[colornumber='30'] { color: #08465f; }

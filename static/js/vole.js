@@ -167,6 +167,16 @@
     return new Handlebars.SafeString(moment(ms).fromNow());
   });
 
+  Ember.Handlebars.registerBoundHelper('colorNumber', function(value, options) {
+    // djb2 hash: http://www.cse.yorku.ca/~oz/hash.html
+    var hash = 5381;
+    for (i = 0; i < value.length; i++) {
+      hash = ((hash << 5) + hash) + value.charCodeAt(i);
+    }
+
+    return Math.abs(hash) % 30;
+  });
+
   $('.time').moment({ frequency: 5000 });
 
 })(jQuery, Ember);
