@@ -5,6 +5,7 @@ import (
   "errors"
   "fmt"
   "github.com/vole/gouuid"
+  "github.com/vole/gravatar"
   "io/ioutil"
   "os"
   osuser "os/user"
@@ -180,9 +181,11 @@ type User struct {
   Id          string `json:"id"`
   Key         string `json:"key"`
   Hash        string `json:"hash"`
+  Email       string `json:"email"`
   User        string `json:"user"`
   DisplayName string `json:"display_name"`
   IsMyUser    bool   `json:"is_my_user,omitempty"`
+  Gravatar    string `json:"gravatar"`
 }
 
 func (user *User) Save() error {
@@ -192,6 +195,12 @@ func (user *User) Save() error {
   if user.Id == "" {
     uuid, _ := uuid.NewV4()
     user.Id = fmt.Sprintf("%s", uuid)
+  }
+
+  if user.Email != "" {
+    emailHash := gravatar.EmailHash(user.Email)
+    url := gravatar.GetAvatarURL("https", emailHash, gravatar.DefaultMonster, 256)
+    user.Gravatar = url.String()
   }
 
   rawJson, err := json.Marshal(*user)
