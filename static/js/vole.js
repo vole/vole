@@ -32,9 +32,11 @@
   App.User = DS.Model.extend({
     key: DS.attr('string'),
     hash: DS.attr('string'),
+    email: DS.attr('string'),
     user: DS.attr('string'),
     displayName: DS.attr('string'),
-    isMyUser: DS.attr('boolean')
+    isMyUser: DS.attr('boolean'),
+    gravatar: DS.attr('string')
   });
 
   //-------------------------
@@ -77,6 +79,7 @@
     filterByUserBinding: 'controllers.posts.filterByUser',
     newUserName: '',
     newUserDisplayName: '',
+    newEmail: '',
 
     // Helper to disable the button when the fields are not filled.
     createButtonDisabled: function() {
@@ -89,14 +92,17 @@
       var newUser = App.User.createRecord({
         user: this.get('newUserName'),
         displayName: this.get('newUserDisplayName'),
-        isMyUser: true
+        isMyUser: true,
+        email: this.get('newEmail')
       });
+
       newUser.on('didCreate', function() {
         self.set('myUser', App.User.filter(function(user) {
           return user.get('isMyUser') === true;
         }));
         self.set('filterByUser', self.get('myUser'));
       });
+
       newUser.get('transaction').commit();
     }
   });

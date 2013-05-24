@@ -62,20 +62,40 @@
   <script type="text/x-handlebars" data-template-name="profile">
     {{#if myUser.isLoaded}}
       {{#if myUser.length}}
-        <h4>{{myUser.firstObject.displayName}}</h4>
+        <h3>{{myUser.firstObject.displayName}}</h3>
+        {{#if myUser.firstObject.gravatar}}
+          <img src="{{unbound myUser.firstObject.gravatar}}" />
+        {{/if}}
         {{view "App.PostsView" controllerBinding="controllers.posts"}}
       {{else}}
-        <h4>User not found</h4>
-        <div>Vole could not find your user profile. Would you like to create a new one?</div>
-        <div>
-          <div>
-            <span>User name:</span>{{view Ember.TextField valueBinding="newUserName"}}
+        <h3>User not found</h3>
+        <p>Vole could not find your user profile. Would you like to create a new one?</p>
+        <form class="form-horizontal">
+          <div class="control-group">
+            <label class="control-label">User name:</label>
+            <div class="controls">
+              {{view Ember.TextField valueBinding="newUserName"}}
+            </div>
           </div>
-          <div>
-            <span>Display name:</span>{{view Ember.TextField valueBinding="newUserDisplayName"}}
+          <div class="control-group">
+            <label class="control-label">Display name:</label>
+            <div class="controls">
+              {{view Ember.TextField valueBinding="newUserDisplayName"}}
+            </div>
           </div>
-          <button {{action "createNew"}} class="btn" {{bindAttr disabled="createButtonDisabled"}}>Create</button>
-        </div>
+          <div class="control-group">
+            <label class="control-label">Email (for gravatar):</label>
+            <div class="controls">
+              {{view Ember.TextField valueBinding="newEmail"}}
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="controls">
+              <button {{action "createNew"}} class="btn" {{bindAttr disabled="createButtonDisabled"}}>Create</button>
+            </div>
+          </div>
+        </form>
+
       {{/if}}
     {{else}}
       Loading...
@@ -108,7 +128,7 @@
 
   <script src="/js/vendor/jquery.min.js"></script>
   <script src="/js/vendor/moment.min.js"></script>
-  <script src="/js/jquery.moment.js"></script>
+  <script src="/js/plugins/jquery.moment.js"></script>
   <script src="/js/vendor/bootstrap.min.js"></script>
   <script src="/js/vendor/handlebars.js"></script>
   <script src="/js/vendor/ember-latest.js"></script>
