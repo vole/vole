@@ -171,12 +171,24 @@
     var escaped = Handlebars.Utils.escapeExpression(value);
     var rUrl = /\(?\b(?:(http|https|ftp):\/\/)+((?:www.)?[a-zA-Z0-9\-\.]+[\.][a-zA-Z]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?(?=[\s\/,\.\)])([\/]{1}[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]\(\)]*))?([\#][^\s\n]*)?\)?/ig;
     var matches = escaped.match(rUrl);
+
     if (matches) {
-      var a = $('<div />').append(
-        $('<a />', { href : matches[0] }).text(matches[0])
-      ).html();
-      escaped = escaped.replace(matches[0], a);
+      var outer = $('<div />');
+      var link = $('<a />', {
+        href : matches[0],
+        target : '_blank'
+      });
+
+      if (/\.(jpg|gif|png)$/.test(matches[0])) {
+        link.html($('<img />', { src : matches[0] }));
+      }
+      else {
+        link.text(matches[0]);
+      }
+
+      escaped = escaped.replace(matches[0], outer.append(link).html());
     }
+
     return new Handlebars.SafeString(escaped);
   });
 

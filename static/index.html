@@ -89,7 +89,9 @@
           {{#each filteredPosts}}
             <li>
               <span class="user">{{unbound user}}</span>
-              {{unbound enrich title}}
+              <span class="post">
+                {{unbound enrich title}}
+              </span>
               <span class="time" data-time="{{unbound created}}">
                 {{unbound nanoDate created}}
               </span>

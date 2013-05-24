@@ -37,3 +37,12 @@ ul.posts {
       float: right;
       color: #CCC;
     }
+
+      span.post {
+        line-height: 2em;
+      }
+
+        span.post img {
+          max-width: 256px;
+          max-height: 256px;
+        }
