@@ -25,7 +25,7 @@ ul.posts {
       font-weight: bold;
       padding: 0 10px 0 0;
       display: inline-block;
-      width: 75px;
+      width: 80px;
     }
 
     ul.posts li span.user:after {

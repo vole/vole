@@ -167,6 +167,19 @@
     return new Handlebars.SafeString(moment(ms).fromNow());
   });
 
+  Ember.Handlebars.registerBoundHelper('enrich', function(value, options) {
+    var escaped = Handlebars.Utils.escapeExpression(value);
+    var rUrl = /\(?\b(?:(http|https|ftp):\/\/)+((?:www.)?[a-zA-Z0-9\-\.]+[\.][a-zA-Z]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?(?=[\s\/,\.\)])([\/]{1}[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]\(\)]*))?([\#][^\s\n]*)?\)?/ig;
+    var matches = escaped.match(rUrl);
+    if (matches) {
+      var a = $('<div />').append(
+        $('<a />', { href : matches[0] }).text(matches[0])
+      ).html();
+      escaped = escaped.replace(matches[0], a);
+    }
+    return new Handlebars.SafeString(escaped);
+  });
+
   $('.time').moment({ frequency: 5000 });
 
 })(jQuery, Ember);
