@@ -15,6 +15,7 @@ ul.posts {
   ul.posts li {
     padding: 10px 5px;
     border-bottom: 1px solid #EEE;
+    line-height: 2em;
   }
 
   ul.posts li:hover {
@@ -24,8 +25,9 @@ ul.posts {
     ul.posts li span.user {
       font-weight: bold;
       padding: 0 10px 0 0;
-      display: inline-block;
-      width: 75px;
+      display: block;
+      float: left;
+      width: 80px;
     }
 
     ul.posts li span.user:after {
@@ -37,3 +39,8 @@ ul.posts {
       float: right;
       color: #CCC;
     }
+
+      span.post img {
+        max-width: 128px;
+        max-height: 128px;
+      }
