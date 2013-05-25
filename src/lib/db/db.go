@@ -60,7 +60,7 @@ func Write(path string, data []byte) error {
 type Post struct {
   Id      string `json:"id"`
   Title   string `json:"title"`
-  User    string `json:"user"`
+  UserId  string `json:"user_id"`
   Created int64  `json:"created"`
 }
 
@@ -99,7 +99,7 @@ func (post *Post) Save() error {
     return err
   }
 
-  filePath := path.Join(DIR, "users", post.User, VERSION, "posts", post.FileName())
+  filePath := path.Join(DIR, "users", post.Name + "-" + post.UserId, VERSION, "posts", post.FileName())
 
   return Write(filePath, rawJson)
 }
@@ -179,11 +179,8 @@ func GetPosts() (*PostCollection, error) {
 
 type User struct {
   Id          string `json:"id"`
-  Key         string `json:"key"`
-  Hash        string `json:"hash"`
+  Name        string `json:"name"`
   Email       string `json:"email"`
-  User        string `json:"user"`
-  DisplayName string `json:"display_name"`
   IsMyUser    bool   `json:"is_my_user,omitempty"`
   Gravatar    string `json:"gravatar"`
 }
