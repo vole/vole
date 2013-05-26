@@ -21,7 +21,7 @@ type Post struct {
   // when the post is marshaled.
   UserId       string `json:"user_id,omitempty"`
   UserName     string `json:"user_name,omitempty"`
-  UserAvatar string `json:"user_avatar,omitempty"`
+  UserAvatar   string `json:"user_avatar,omitempty"`
 
   // Properties that are only used by the backend and thus don't have
   // to be marshaled to JSON for either the frontend or disk.

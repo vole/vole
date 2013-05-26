@@ -16,7 +16,7 @@ type User struct {
   // Properties that should be saved to disk.
   Id           string `json:"id"`
   Name         string `json:"name"`
-  Avatar     string `json:"avatar"`
+  Avatar       string `json:"avatar"`
 
   // Properties that are used by Vole backend and frontend, but not saved to disk.
   IsMyUser     bool   `json:"is_my_user,omitempty"`
