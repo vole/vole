@@ -1,6 +1,6 @@
 
 body {
-  background-color: #222;
+
 }
 
 .main h3 {
@@ -80,4 +80,13 @@ ul.posts {
 
 .footer-links li:first-child {
   padding-left: 0;
+}
+
+.post {
+  border-top: 1px #f2f2f2 solid;
+  padding: 10px 0 10px 0;
+}
+
+.user {
+  font-weight: bold;
 }

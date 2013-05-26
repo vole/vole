@@ -186,7 +186,9 @@
       });
 
       if (/\.(jpg|gif|png)$/.test(matches[0])) {
-        link.html($('<img />', { src : matches[0] }));
+        var image = $('<img />', { src : matches[0] });
+        image.addClass('img-rounded');
+        link.html(image);
       }
       else {
         link.text(matches[0]);

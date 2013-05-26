@@ -19,9 +19,9 @@
         </div>
       </div>
     </header>
-    <div class="container-fluid">
-      <div class="row-fluid">
-        <div class="span2">
+    <div class="container">
+      <div class="row">
+        <div class="span3">
           <ul class="nav nav-list well">
             {{#if controllers.users.myUser.firstObject.user}}
               <li class="nav-header">
@@ -34,7 +34,7 @@
             <li>{{#linkTo "profile"}}My profile{{/linkTo}}</li>
           </ul>
         </div>
-        <div class="span10 main">
+        <div class="span8 main">
           {{outlet}}
         </div>
       </div>
@@ -95,12 +95,18 @@
   <script type="text/x-handlebars" data-template-name="profile">
     {{#if myUser.isLoaded}}
       {{#if myUser.length}}
-        <h3 class="well">
-          {{myUser.firstObject.displayName}}
-        </h3>
-        {{#if myUser.firstObject.gravatar}}
-          <img src="{{unbound myUser.firstObject.gravatar}}" />
-        {{/if}}
+        <div class="well clearfix">
+          <div class="pull-left">
+            <h3>
+              {{myUser.firstObject.displayName}}
+            </h3>
+          </div>
+          <div class="pull-right">
+            {{#if myUser.firstObject.gravatar}}
+              <img class="img-rounded" src="{{unbound myUser.firstObject.gravatar}}" height="100" width="100" />
+            {{/if}}
+          </div>
+        </div>
         {{view "App.PostsView" controllerBinding="controllers.posts"}}
       {{else}}
         <h3>User not found</h3>
@@ -140,19 +146,25 @@
   <script type="text/x-handlebars" data-template-name="posts">
     {{#if length}}
       {{#if filteredPosts}}
-        <ul class=  "posts">
+        <div class="posts">
           {{#each filteredPosts}}
-            <li>
-              <span class="user">{{unbound user}}</span>
-              <span class="post">
-                {{unbound enrich title}}
-              </span>
-              <span class="time" data-time="{{unbound created}}">
-                {{unbound nanoDate created}}
-              </span>
-            </li>
+            <div class="post row">
+              <div class="span1">
+                <span class="user">{{unbound user}}</span>
+              </div>
+              <div class="span6">
+                <span>
+                  {{unbound enrich title}}
+                </span>
+              </div>
+              <div class="span1 pull-right">
+                <small class="time" data-time="{{unbound created}}">
+                  {{unbound nanoDate created}}
+                </small>
+              </div>
+            </div>
           {{/each}}
-        </ul>
+        </div>
       {{else}}
         <div>
           No posts found.
