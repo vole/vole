@@ -5,6 +5,7 @@ import (
   "sort"
   "strings"
   "errors"
+  "encoding/json"
 )
 
 /**
@@ -13,6 +14,29 @@ import (
 type UserStore struct {
   Path       string
   Version    string
+}
+
+/**
+ * GetEmpty()
+ *
+ * Return an empty user struct.
+ */
+func (userStore *UserStore) GetEmptyUser() *User {
+  return new(User)
+}
+
+/**
+ * NewUserFromContainerJson()
+ *
+ * Called by POST requests from the frontend.
+ */
+func (userStore *UserStore) NewUserFromContainerJson(rawJson []byte) (*User, error) {
+  var container UserContainer
+  if err := json.Unmarshal(rawJson, &container); err != nil {
+    return nil, err
+  }
+  user := userStore.NewUser(container.User.Name, container.User.Email)
+  return user, nil
 }
 
 /**

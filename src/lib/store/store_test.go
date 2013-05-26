@@ -3,7 +3,6 @@ package store
 import (
   "testing"
   "strings"
-  //"fmt"
   "os"
   osuser "os/user"
   "path"
@@ -77,6 +76,9 @@ func TestSaveUser(t *testing.T) {
 
   if err := user.Save(); err != nil {
     t.Error(err)
+  }
+  if user.IsMyUser != true {
+    t.Error("After saving a new user, ismyuser must be true")
   }
   assertFileOrDir(t, path.Join(userStore.Path, "users", user.Name + "_" + user.Id, userStore.Version))
 }
@@ -188,7 +190,7 @@ func TestGetUserPosts(t *testing.T) {
   }
 }
 
-func TestGetAllUsersPosts(t *testing.T) {
+func TestGetAllPosts(t *testing.T) {
   users, err := userStore.GetUsers()
   if err != nil {
     t.Error(err)
@@ -218,11 +220,49 @@ func TestGetAllUsersPosts(t *testing.T) {
   }
 }
 
+func TestSaveUserFromJson(t *testing.T) {
+  rawJson := []byte(`{"user":{"name":"json_user","avatar":null,"is_my_user":true,"email":"json_user@example.com"}}`)
+  user, err := userStore.NewUserFromContainerJson(rawJson)
+  if err != nil {
+    t.Error(err)
+  }
 
+  if len(user.Id) != 36 {
+    t.Error("UUID wasn't set to a 36 character string")
+  }
+  if user.Name != "json_user" {
+    t.Error("Name was not 'json_user'")
+  }
+  if user.Email != "json_user@example.com" {
+    t.Error("Email was not json_user@example.com'")
+  }
 
+  if err := user.Save(); err != nil {
+    t.Error(err)
+  }
+  assertFileOrDir(t, path.Join(userStore.Path, "users", user.Name + "_" + user.Id, userStore.Version))
 
+  container := user.Container()
+  userJson, err := container.Json()
+  if err != nil {
+    t.Error("Unable to access container json")
+  }
+  if len(userJson) < 10 {
+    t.Error("Json string suspiciously short")
+  }
+}
 
+func TestCreatePostFromJson(t *testing.T) {
+  user, _ := userStore.GetMyUser()
+  rawJson := []byte(`{"post":{"title":"This is a test post","created":null,"user_id":null,"user_name":null,"user_avatar":null}}`)
 
+  post, err := user.NewPostFromContainerJson(rawJson)
+  if err != nil {
+    t.Error(err)
+  }
 
-
-
+  if err := post.Save(); err != nil {
+    t.Logf("%+v", post)
+    t.Error(err)
+  }
+}

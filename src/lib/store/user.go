@@ -16,21 +16,17 @@ type User struct {
   // Properties that should be saved to disk.
   Id           string `json:"id"`
   Name         string `json:"name"`
-  Email        string `json:"email"`
   Avatar     string `json:"avatar"`
 
   // Properties that are used by Vole backend and frontend, but not saved to disk.
   IsMyUser     bool   `json:"is_my_user,omitempty"`
+  Email        string `json:"email,omitempty"`
 
   // Properties that are only used by the backend and thus don't have
   // to be marshaled to JSON for either the frontend or disk.
   DirName      string `json:"-"`
   FullPath     string `json:"-"`
   UserJsonPath string `json:"-"`
-}
-
-type UserCollection struct {
-  Users []User `json:"users"`
 }
 
 /**
@@ -66,7 +62,7 @@ func (user *User) InitNew(name, email, storePath, version string) {
 /**
  * InitFromJson(json)
  *
- * Initialize this user from json.
+ * Initialize this user from json loaded from disk.
  */
 func (user *User) InitFromJson(rawJson []byte, subDir string, storePath string, version string) error {
   if err := json.Unmarshal(rawJson, user); err != nil {
@@ -111,12 +107,32 @@ func (user *User) Save() error {
 
   // Before marshaling JSON for saving to disk, we set all properties
   // that should not be saved to empty, so they are ignored by marshaller.
-  user.IsMyUser = false
+  userClone := *user
+  userClone.IsMyUser = false
+  userClone.Email = ""
 
-  rawJson, err := json.Marshal(*user)
+  rawJson, err := json.Marshal(userClone)
   if err != nil {
     return err
   }
 
-  return Write(user.UserJsonPath, rawJson)
+  return Write(userClone.UserJsonPath, rawJson)
+}
+
+/**
+ * Collection()
+ *
+ * Return a user collection wrapping this user.
+ */
+func (user *User) Collection() *UserCollection {
+  return &UserCollection{[]User{*user}}
+}
+
+/**
+ * Container()
+ *
+ * Return a user container wrapping this user.
+ */
+func (user *User) Container() *UserContainer {
+  return &UserContainer{*user}
 }

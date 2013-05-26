@@ -28,22 +28,6 @@ type Post struct {
   FullPath     string `json:"-"`
 }
 
-type PostCollection struct {
-  Posts []Post `json:"posts"`
-}
-
-func (collection *PostCollection) Len() int {
-  return len(collection.Posts)
-}
-
-func (collection *PostCollection) Less(i, j int) bool {
-  return collection.Posts[i].Created > collection.Posts[j].Created
-}
-
-func (collection *PostCollection) Swap(i, j int) {
-  collection.Posts[i], collection.Posts[j] = collection.Posts[j], collection.Posts[i]
-}
-
 /**
  * InitNew()
  *
@@ -72,7 +56,7 @@ func (post *Post) InitNew(title, userPath, userId, userName, userAvatar string) 
 /**
  * InitFromJson()
  *
- * Initialize a new post from json data
+ * Initialize a new post from json data from disk.
  */
 func (post *Post) InitFromJson(rawJson []byte, fullPath string, userId string, userName string, userAvatar string) error {
   if err := json.Unmarshal(rawJson, post); err != nil {
@@ -93,14 +77,24 @@ func (post *Post) InitFromJson(rawJson []byte, fullPath string, userId string, u
 func (post *Post) Save() error {
   // Before marshaling JSON for saving to disk, we set all properties
   // that should not be saved to empty, so they are ignored by marshaller.
-  post.UserId = ""
-  post.UserName = ""
-  post.UserAvatar = ""
+  postClone := *post
+  postClone.UserId = ""
+  postClone.UserName = ""
+  postClone.UserAvatar = ""
 
-  rawJson, err := json.Marshal(*post)
+  rawJson, err := json.Marshal(postClone)
   if err != nil {
     return err
   }
 
-  return Write(post.FullPath, rawJson)
+  return Write(postClone.FullPath, rawJson)
+}
+
+/**
+ * Container()
+ *
+ * Return a post container wrapping this post.
+ */
+func (post *Post) Container() *PostContainer {
+  return &PostContainer{*post}
 }

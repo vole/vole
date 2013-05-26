@@ -63,8 +63,8 @@
     {{#if myUser.isLoaded}}
       {{#if myUser.length}}
         <h3>{{myUser.firstObject.name}}</h3>
-        {{#if myUser.firstObject.gravatar}}
-          <img src="{{unbound myUser.firstObject.gravatar}}" />
+        {{#if myUser.firstObject.avatar}}
+          <img src="{{unbound myUser.firstObject.avatar}}" />
         {{/if}}
         {{view "App.PostsView" controllerBinding="controllers.posts"}}
       {{else}}
@@ -78,7 +78,7 @@
             </div>
           </div>
           <div class="control-group">
-            <label class="control-label">Email (for gravatar):</label>
+            <label class="control-label">Email (for Gravatar):</label>
             <div class="controls">
               {{view Ember.TextField valueBinding="newEmail"}}
             </div>
@@ -99,10 +99,11 @@
   <script type="text/x-handlebars" data-template-name="posts">
     {{#if length}}
       {{#if filteredPosts}}
-        <ul class=  "posts">
+        <ul class="posts">
           {{#each filteredPosts}}
             <li>
-              <span class="user">{{unbound user}}</span>
+              <span class="user">{{unbound userName}}</span>
+              <img src="{{unbound userAvatar}}" width="75" height="75" />
               <span class="post">
                 {{unbound enrich title}}
               </span>

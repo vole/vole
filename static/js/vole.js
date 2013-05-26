@@ -25,15 +25,17 @@
   //-------------------------
   App.Post = DS.Model.extend({
     title: DS.attr('string'),
-    user: DS.attr('string'),
-    created: DS.attr('number')
+    created: DS.attr('number'),
+    userId: DS.attr('string'),
+    userName: DS.attr('string'),
+    userAvatar: DS.attr('string')
   });
 
   App.User = DS.Model.extend({
     name: DS.attr('string'),
-    email: DS.attr('string'),
+    avatar: DS.attr('string'),
     isMyUser: DS.attr('boolean'),
-    gravatar: DS.attr('string')
+    email: DS.attr('string')
   });
 
   //-------------------------
@@ -115,9 +117,10 @@
 
     filteredPosts: function() {
       if (this.get('filterByUser.length') > 0) {
-        var filterUser = this.get('filterByUser.firstObject.user');
-        if (filterUser) {
-          return this.get('arrangedContent').filterProperty('user', filterUser);
+        var filterUserId = this.get('filterByUser.firstObject.id');
+        cl(filterUserId);
+        if (filterUserId) {
+          return this.get('arrangedContent').filterProperty('userId', filterUserId);
         }
       }
       return this.get('arrangedContent');
@@ -138,7 +141,7 @@
       controller.set('controllers.users.myUser', App.User.find({'is_my_user': true}));
       var refreshUI = function() {
         App.Post.find();
-        setTimeout(refreshUI, 1000);
+        //setTimeout(refreshUI, 1000);
       };
       setTimeout(refreshUI, 5000);
     }

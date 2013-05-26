@@ -8,7 +8,22 @@ import (
   "strings"
   "path"
   "errors"
+  "encoding/json"
 )
+
+/**
+ * NewPostFromContainerJson()
+ *
+ * Called by POST requests from the frontend.
+ */
+func (user *User) NewPostFromContainerJson(rawJson []byte) (*Post, error) {
+  var container PostContainer
+  if err := json.Unmarshal(rawJson, &container); err != nil {
+    return nil, err
+  }
+  post := user.NewPost(container.Post.Title)
+  return post, nil
+}
 
 /**
  * NewPost(title)
