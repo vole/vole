@@ -1,7 +1,7 @@
 Testing
 -------
 
-To run tests, execute `go test lib/store` from the root of the Vole project. For verbose runs use the `-v` flag.
+To run tests, execute `go test -v lib/store` from the root of the Vole project.
 
 Go cheat sheet
 --------------
