@@ -118,7 +118,6 @@
     filteredPosts: function() {
       if (this.get('filterByUser.length') > 0) {
         var filterUserId = this.get('filterByUser.firstObject.id');
-        cl(filterUserId);
         if (filterUserId) {
           return this.get('arrangedContent').filterProperty('userId', filterUserId);
         }
