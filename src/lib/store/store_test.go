@@ -63,7 +63,6 @@ func TestCreateUser(t *testing.T) {
   if !strings.Contains(user.UserJsonPath, user.Name + "_" + user.Id) {
     t.Error("User json path location not set correctly")
   }
-  //t.Log(user)
 }
 
 func TestSaveUser(t *testing.T) {
