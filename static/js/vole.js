@@ -25,18 +25,17 @@
   //-------------------------
   App.Post = DS.Model.extend({
     title: DS.attr('string'),
-    user: DS.attr('string'),
-    created: DS.attr('number')
+    created: DS.attr('number'),
+    userId: DS.attr('string'),
+    userName: DS.attr('string'),
+    userAvatar: DS.attr('string')
   });
 
   App.User = DS.Model.extend({
-    key: DS.attr('string'),
-    hash: DS.attr('string'),
-    email: DS.attr('string'),
-    user: DS.attr('string'),
-    displayName: DS.attr('string'),
+    name: DS.attr('string'),
+    avatar: DS.attr('string'),
     isMyUser: DS.attr('boolean'),
-    gravatar: DS.attr('string')
+    email: DS.attr('string')
   });
 
   //-------------------------
@@ -77,23 +76,21 @@
     needs: ['posts', 'users'],
     myUserBinding: 'controllers.users.myUser',
     filterByUserBinding: 'controllers.posts.filterByUser',
-    newUserName: '',
-    newUserDisplayName: '',
+    newName: '',
     newEmail: '',
 
     // Helper to disable the button when the fields are not filled.
     createButtonDisabled: function() {
-      return this.get('newUserName.length') === 0 || this.get('newUserDisplayName.length') === 0;
-    }.property('newUserName', 'newUserDisplayName'),
+      return this.get('newName.length') === 0;
+    }.property('newName'),
 
     createNew: function() {
       var self = this;
 
       var newUser = App.User.createRecord({
-        user: this.get('newUserName'),
-        displayName: this.get('newUserDisplayName'),
-        isMyUser: true,
-        email: this.get('newEmail')
+        name: this.get('newName'),
+        email: this.get('newEmail'),
+        isMyUser: true
       });
 
       newUser.on('didCreate', function() {
@@ -120,9 +117,9 @@
 
     filteredPosts: function() {
       if (this.get('filterByUser.length') > 0) {
-        var filterUser = this.get('filterByUser.firstObject.user');
-        if (filterUser) {
-          return this.get('arrangedContent').filterProperty('user', filterUser);
+        var filterUserId = this.get('filterByUser.firstObject.id');
+        if (filterUserId) {
+          return this.get('arrangedContent').filterProperty('userId', filterUserId);
         }
       }
       return this.get('arrangedContent');
