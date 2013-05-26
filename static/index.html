@@ -23,34 +23,67 @@
       <div class="row-fluid">
         <div class="span2">
           <ul class="nav nav-list well">
-            <li class="nav-header">Menu</li>
+            {{#if controllers.users.myUser.firstObject.user}}
+              <li class="nav-header">
+                Hi, {{controllers.users.myUser.firstObject.user}}!
+              </li>
+            {{else}}
+              <li class="nav-header">Menu</li>
+            {{/if}}
             <li>{{#linkTo "index"}}Home{{/linkTo}}</li>
             <li>{{#linkTo "profile"}}My profile{{/linkTo}}</li>
           </ul>
-
-          {{#if controllers.users.myUser.firstObject.user}}
-            <div class="nav well">
-              Hi, {{controllers.users.myUser.firstObject.user}}!
-            </div>
-          {{/if}}
         </div>
-        <div class="span10">
+        <div class="span10 main">
           {{outlet}}
         </div>
       </div>
     </div>
+    <footer class="footer">
+      <div class="container">
+        <p>
+          Code licensed under
+          <a href="http://www.debian.org/legal/licenses/mit" target="_blank">MIT</a>
+        </p>
+        <ul class="footer-links">
+          <li><a href="http://vole.cc/">Site</a></li>
+          <li class="muted">·</li>
+          <li><a href="https://github.com/vole/vole/issues">Issues</a></li>
+        </ul>
+      </div>
+    </footer>
   </script>
 
   <script type="text/x-handlebars" data-template-name="index">
-    <h4>All posts</h4>
+    <h3 class="well">
+      All Posts
+
+      <a href="#new-post" role="button" class="btn btn-primary pull-right" data-toggle="modal">
+        New Post
+        <i class="icon-share icon-white"></i>
+      </a>
+    </h3>
+
     {{#if myUser.isLoaded}}
       {{#if myUser.length}}
-        <div class="navbar">
-          <div class="navbar-inner">
-            <form class="navbar-form">
-              {{view Ember.TextArea id="new-post" rows="4" cols="50" valueBinding="newPostTitle"}}
-              <button {{action "createNewPost"}} class="btn">Post</button>
+        <div id="new-post" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="new-post-label" aria-hidden="true">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="new-post-label">New Post</h3>
+          </div>
+          <div class="modal-body">
+            <form class="form-horizontal">
+              <div class="control-group">
+                <label class="control-label">Text:</label>
+                <div class="controls">
+                  {{view Ember.TextArea id="new-post" rows="3" cols="50" valueBinding="newPostTitle"}}
+                </div>
+              </div>
             </form>
+          </div>
+          <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            <button {{action "createNewPost"}} class="btn btn-primary" data-dismiss="modal">Post</button>
           </div>
         </div>
       {{/if}}
@@ -62,7 +95,9 @@
   <script type="text/x-handlebars" data-template-name="profile">
     {{#if myUser.isLoaded}}
       {{#if myUser.length}}
-        <h3>{{myUser.firstObject.displayName}}</h3>
+        <h3 class="well">
+          {{myUser.firstObject.displayName}}
+        </h3>
         {{#if myUser.firstObject.gravatar}}
           <img src="{{unbound myUser.firstObject.gravatar}}" />
         {{/if}}

@@ -1,6 +1,10 @@
 
-.navbar-inner {
-  padding-top: 1em;
+body {
+  background-color: #222;
+}
+
+.main h3 {
+  margin-top: 0;
 }
 
 #new-post {
@@ -10,12 +14,16 @@
 ul.posts {
   list-style: none;
   margin: 0;
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-radius: 4px;
 }
 
   ul.posts li {
     padding: 10px 5px;
-    border-bottom: 1px solid #EEE;
+    border-bottom: 1px solid #DDD;
     line-height: 2em;
+    cursor: pointer;
   }
 
   ul.posts li:hover {
@@ -43,4 +51,33 @@ ul.posts {
       span.post img {
         max-width: 128px;
         max-height: 128px;
+        padding: 5px;
+        border: 1px solid #CCC;
+        border-radius: 4px;
       }
+
+.footer {
+  text-align: center;
+  padding: 30px 0;
+  margin-top: 20px;
+  border-top: 1px solid #e5e5e5;
+  background-color: #f5f5f5;
+}
+
+.footer p {
+  margin-bottom: 0;
+  color: #777;
+}
+
+.footer-links {
+  margin: 10px 0;
+}
+
+.footer-links li {
+  display: inline;
+  padding: 0 2px;
+}
+
+.footer-links li:first-child {
+  padding-left: 0;
+}
