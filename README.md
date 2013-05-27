@@ -5,6 +5,50 @@ Vole is a web application for sharing words, pictures and videos securely and pr
 
 [http://vole.cc](http://vole.cc)
 
+Getting started
+---------------
+
+Currently we are pre-release, so there are no builds available. The following steps are for interested developers.
+
+* Compile and run the Go backend. See [contributing](https://github.com/vole/vole/blob/master/CONTRIBUTING.md).
+* Open a web browser and go to [http://localhost:6789](http://localhost:6789).
+* Click 'My Profile'
+* Enter your name. Enter your Gravatar email (optional).
+* Click 'Home'
+* Post something.
+
+Sharing and following
+---------------------
+
+Start by installing [Bittorrent Sync](http://labs.bittorrent.com/experiments/sync.html).
+
+Following and sharing is currently manual however we'd like to automate it as soon as Bittorrent Sync releases a build that supports command-line control.
+
+Following others
+----------------
+
+* Grab the read-only ID of the person you want to follow. A directory is in progress at [vole.cc](http://vole.cc). Why not start with Vole Team updates? Our key is RA32XLBBHXMWMECGJAJSJMMPQ3Z2ZGR7K.
+* Find the Vole `users` directory. Unless you changed the defaults, it will be in `~/Vole/users`.
+* Create a new directory, you can name it whatever you like.
+* In BitTorrent Sync, add this new folder as a shared folder. [Instructions](http://labs.bittorrent.com/experiments/sync/get-started.html) are available on their site.
+* You should receive notification that the folder has sync'd.
+* In your browser, see the new posts appear.
+
+Sharing your posts
+------------------
+
+Find your own user directory, for example, if you created a profile named 'Chuck':
+
+    /home/chuck/Vole/users/Chuck_9674e8e8-7c7a-41e6-52ed-51a3f7969812
+
+* In Bittorrent Sync, add this folder as a shared folder.
+* In the folder options, grab the read-only key. This is the key that you can share to others so they can follow your posts.
+
+Profile site
+------------
+
+We plan on allowing people to claim their names on vole.cc and store their keys along with their profile, making it much easier to find people who are posting publicly.
+
 Technology
 ----------
 

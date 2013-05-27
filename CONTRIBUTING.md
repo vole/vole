@@ -1,15 +1,17 @@
 Building
 --------
 
+Compiling and building Vole requires Go version 1.1+. Download it from [http://golang.org/](http://golang.org/).
+
+To grab the latest development version of Vole and run it:
+
     git clone https://github.com/vole/vole.git
     cd vole
     export GOPATH=`pwd`
     export PATH=$PATH:$GOPATH/bin
-    make
+    go run src/vole/vole.go
 
-In your browser, navigate to http://localhost:6789
-
-
+In your browser, navigate to http://localhost:6789.
 
 Testing
 -------
