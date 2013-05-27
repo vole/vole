@@ -20,7 +20,7 @@ var DIR = func() string {
   if err == nil {
     dir = user.HomeDir
   }
-  return path.Join(dir, "VoleTest")
+  return path.Join(dir, "Vole")
 }()
 
 var userStore = &store.UserStore{
