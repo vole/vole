@@ -1,16 +1,32 @@
 package main
 
 import (
+  //"fmt"
   "encoding/json"
   "flag"
   "github.com/vole/web"
+  osuser "os/user"
+  "path"
   "io/ioutil"
   "lib/config"
-  "lib/db"
-  "sort"
+  "lib/store"
 )
 
 var port = flag.String("port", "6789", "Port on which to run the web server.")
+
+var DIR = func() string {
+  dir := "."
+  user, err := osuser.Current()
+  if err == nil {
+    dir = user.HomeDir
+  }
+  return path.Join(dir, "Vole")
+}()
+
+var userStore = &store.UserStore{
+  Path: DIR,
+  Version: "v1",
+}
 
 func main() {
   flag.Parse()
@@ -34,49 +50,46 @@ func main() {
   web.Get("/api/posts", func(ctx *web.Context) string {
     ctx.ContentType("json")
 
-    posts, err := db.GetPosts()
+    allPosts, err := userStore.GetPosts()
     if err != nil {
       ctx.Abort(500, "Error loading posts.")
     }
 
-    sort.Sort(posts)
-
-    postsJson, err := json.Marshal(*posts)
+    postsJson, err := allPosts.Json()
     if err != nil {
-      ctx.Abort(500, "Error marshalling posts.")
+      ctx.Abort(500, "Error getting posts as json.")
     }
 
-    return string(postsJson)
+    return postsJson
   })
 
   web.Get("/api/users", func(ctx *web.Context) string {
     ctx.ContentType("json")
 
-    var collection *db.UserCollection
-
     _, isMyUserFilter := ctx.Params["is_my_user"]
 
+    var users *store.UserCollection
+
     if isMyUserFilter {
-      currentUser, _ := db.CurrentUser()
-      if currentUser != nil {
-        collection = db.NewUserCollection([]db.User{*currentUser})
+      myUser, _ := userStore.GetMyUser()
+      if myUser != nil {
+        users = myUser.Collection()
       } else {
-        collection = db.NewUserCollection([]db.User{})
+        users = store.GetEmptyUserCollection()
       }
     } else {
-      users, err := db.GetUsers()
+      users, err = userStore.GetUsers()
       if err != nil {
-        ctx.Abort(500, "Error loading users.")
+        ctx.Abort(500, "Error loading all users.")
       }
-      collection = users
     }
 
-    usersJson, err := json.Marshal(collection)
+    usersJson, err := users.Json()
     if err != nil {
-      ctx.Abort(500, "Error marshalling users.")
+      ctx.Abort(500, "Error getting users as json.")
     }
 
-    return string(usersJson)
+    return usersJson
   })
 
   web.Post("/api/users", func(ctx *web.Context) string {
@@ -84,22 +97,23 @@ func main() {
     if err != nil {
       ctx.Abort(500, "Error reading request body.")
     }
-
-    container := db.UserContainerFromJson(body)
-
-    err = (*container).User.Save()
+    user, err := userStore.NewUserFromContainerJson(body)
     if err != nil {
-      ctx.Abort(500, "Error saving user.")
+      ctx.Abort(500, "Invalid JSON")
+    }
+    if err := user.Save(); err != nil {
+      ctx.Abort(500, "Error saving user")
+    }
+    if err := userStore.SetMyUser(user); err != nil {
+      ctx.Abort(500, "Error setting my user")
     }
 
-    (*container).User.IsMyUser = true
-
-    containerJson, err := json.Marshal(*container)
+    container := user.Container()
+    userJson, err := container.Json()
     if err != nil {
-      ctx.Abort(500, "Error marshalling user.")
+      ctx.Abort(500, "Could not create container")
     }
-
-    return string(containerJson)
+    return userJson
   })
 
   web.Post("/api/posts", func(ctx *web.Context) string {
@@ -108,19 +122,23 @@ func main() {
       ctx.Abort(500, "Error reading request body.")
     }
 
-    container := db.PostContainerFromJson(body)
-
-    err = (*container).Post.Save()
+    user, err := userStore.GetMyUser()
     if err != nil {
-      ctx.Abort(500, "Error saving post.")
+      ctx.Abort(500, "Error reading my user when posting.")
     }
-
-    containerJson, err := json.Marshal(*container)
+    post, err := user.NewPostFromContainerJson(body)
     if err != nil {
-      ctx.Abort(500, "Error marshalling post.")
+      ctx.Abort(500, "Invalid JSON")
     }
-
-    return string(containerJson)
+    if err := post.Save(); err != nil {
+      ctx.Abort(500, "Error saving post")
+    }
+    container := post.Container()
+    postJson, err := container.Json()
+    if err != nil {
+      ctx.Abort(500, "Could not create container")
+    }
+    return postJson
   })
 
   web.Run("0.0.0.0:" + *port)

@@ -23,9 +23,9 @@
       <div class="row">
         <div class="span3">
           <ul class="nav nav-list well">
-            {{#if controllers.users.myUser.firstObject.user}}
+            {{#if controllers.users.myUser.firstObject.name}}
               <li class="nav-header">
-                Hi, {{controllers.users.myUser.firstObject.user}}!
+                Hi, {{controllers.users.myUser.firstObject.name}}!
               </li>
             {{else}}
               <li class="nav-header">Menu</li>
@@ -98,34 +98,28 @@
         <div class="well clearfix">
           <div class="pull-left">
             <h3>
-              {{myUser.firstObject.displayName}}
+              {{myUser.firstObject.name}}
             </h3>
           </div>
           <div class="pull-right">
-            {{#if myUser.firstObject.gravatar}}
-              <img class="img-rounded" src="{{unbound myUser.firstObject.gravatar}}" height="100" width="100" />
+            {{#if myUser.firstObject.avatar}}
+              <img class="img-rounded" src="{{unbound myUser.firstObject.avatar}}" height="100" width="100" />
             {{/if}}
           </div>
         </div>
         {{view "App.PostsView" controllerBinding="controllers.posts"}}
       {{else}}
-        <h3>User not found</h3>
+        <h3>Profile not found</h3>
         <p>Vole could not find your user profile. Would you like to create a new one?</p>
         <form class="form-horizontal">
           <div class="control-group">
-            <label class="control-label">User name:</label>
+            <label class="control-label">Name:</label>
             <div class="controls">
-              {{view Ember.TextField valueBinding="newUserName"}}
+              {{view Ember.TextField valueBinding="newName"}}
             </div>
           </div>
           <div class="control-group">
-            <label class="control-label">Display name:</label>
-            <div class="controls">
-              {{view Ember.TextField valueBinding="newUserDisplayName"}}
-            </div>
-          </div>
-          <div class="control-group">
-            <label class="control-label">Email (for gravatar):</label>
+            <label class="control-label">Email (for Gravatar):</label>
             <div class="controls">
               {{view Ember.TextField valueBinding="newEmail"}}
             </div>
@@ -150,7 +144,8 @@
           {{#each filteredPosts}}
             <div class="post row">
               <div class="span1">
-                <span class="user">{{unbound user}}</span>
+                <span class="user">{{unbound userName}}</span>
+                <img src="{{unbound userAvatar}}" width="75" height="75" />
               </div>
               <div class="span6">
                 <span>
