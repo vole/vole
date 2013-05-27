@@ -29,7 +29,7 @@ Following others
 
 * Grab the read-only ID of the person you want to follow. A directory is in progress at [vole.cc](http://vole.cc). Why not start with Vole Team updates? Our key is RA32XLBBHXMWMECGJAJSJMMPQ3Z2ZGR7K.
 * Find the Vole `users` directory. Unless you changed the defaults, it will be in `~/Vole/users`.
-* Create a new directory, you can name it whatever you like.
+* Create a new directory in `~/Vole/users`, you can name it whatever you like.
 * In BitTorrent Sync, add this new folder as a shared folder. [Instructions](http://labs.bittorrent.com/experiments/sync/get-started.html) are available on their site.
 * You should receive notification that the folder has sync'd.
 * In your browser, see the new posts appear.
