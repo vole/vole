@@ -50,9 +50,10 @@ func main() {
   web.Get("/api/posts", func(ctx *web.Context) string {
     ctx.ContentType("json")
 
+    var allPosts *store.PostCollection
     allPosts, err := userStore.GetPosts()
     if err != nil {
-      ctx.Abort(500, "Error loading posts.")
+      allPosts = store.GetEmptyPostCollection()
     }
 
     postsJson, err := allPosts.Json()

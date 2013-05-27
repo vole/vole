@@ -38,3 +38,12 @@ func (collection *PostCollection) Json() (string, error) {
   }
   return string(out), nil
 }
+
+/**
+ * GetEmptyPostCollection()
+ *
+ * Return an empty collection.
+ */
+func GetEmptyPostCollection() *PostCollection {
+  return &PostCollection{[]Post{}}
+}

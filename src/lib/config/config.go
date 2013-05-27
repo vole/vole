@@ -4,6 +4,7 @@ import (
   "encoding/json"
   "errors"
   "io/ioutil"
+  "fmt"
 )
 
 type Config struct {
@@ -19,9 +20,13 @@ type Config struct {
 func Load() (*Config, error) {
   config := Config{}
 
+  var file []byte
   file, err := ioutil.ReadFile("config.json")
   if err != nil {
-    return nil, errors.New("Unable to open config.json. Make sure you copy config.sample.json to config.json.")
+    file, err = ioutil.ReadFile("config.sample.json")
+    if err != nil {
+      fmt.Println("Can't find config.json, reading default config.")
+    }
   }
 
   err = json.Unmarshal(file, &config)
