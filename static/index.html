@@ -28,9 +28,9 @@
             <li>{{#linkTo "profile"}}My profile{{/linkTo}}</li>
           </ul>
 
-          {{#if controllers.users.myUser.firstObject.user}}
+          {{#if controllers.users.myUser.firstObject.name}}
             <div class="nav well">
-              Hi, {{controllers.users.myUser.firstObject.user}}!
+              Hi, {{controllers.users.myUser.firstObject.name}}!
             </div>
           {{/if}}
         </div>
@@ -62,29 +62,23 @@
   <script type="text/x-handlebars" data-template-name="profile">
     {{#if myUser.isLoaded}}
       {{#if myUser.length}}
-        <h3>{{myUser.firstObject.displayName}}</h3>
-        {{#if myUser.firstObject.gravatar}}
-          <img src="{{unbound myUser.firstObject.gravatar}}" />
+        <h3>{{myUser.firstObject.name}}</h3>
+        {{#if myUser.firstObject.avatar}}
+          <img src="{{unbound myUser.firstObject.avatar}}" />
         {{/if}}
         {{view "App.PostsView" controllerBinding="controllers.posts"}}
       {{else}}
-        <h3>User not found</h3>
+        <h3>Profile not found</h3>
         <p>Vole could not find your user profile. Would you like to create a new one?</p>
         <form class="form-horizontal">
           <div class="control-group">
-            <label class="control-label">User name:</label>
+            <label class="control-label">Name:</label>
             <div class="controls">
-              {{view Ember.TextField valueBinding="newUserName"}}
+              {{view Ember.TextField valueBinding="newName"}}
             </div>
           </div>
           <div class="control-group">
-            <label class="control-label">Display name:</label>
-            <div class="controls">
-              {{view Ember.TextField valueBinding="newUserDisplayName"}}
-            </div>
-          </div>
-          <div class="control-group">
-            <label class="control-label">Email (for gravatar):</label>
+            <label class="control-label">Email (for Gravatar):</label>
             <div class="controls">
               {{view Ember.TextField valueBinding="newEmail"}}
             </div>
@@ -105,10 +99,11 @@
   <script type="text/x-handlebars" data-template-name="posts">
     {{#if length}}
       {{#if filteredPosts}}
-        <ul class=  "posts">
+        <ul class="posts">
           {{#each filteredPosts}}
             <li>
-              <span class="user">{{unbound user}}</span>
+              <span class="user">{{unbound userName}}</span>
+              <img src="{{unbound userAvatar}}" width="75" height="75" />
               <span class="post">
                 {{unbound enrich title}}
               </span>
