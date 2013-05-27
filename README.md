@@ -22,14 +22,14 @@ Sharing and following
 
 Start by installing [Bittorrent Sync](http://labs.bittorrent.com/experiments/sync.html).
 
-Following and sharing is currently manual however we'd like to automate it as soon as Bittorrent Sync releases a build that supports command-line control.
+Following and sharing currently involves manually setting up folders, however we'd like to automate it as soon as Bittorrent Sync releases a build that supports command-line control.
 
 Following others
 ----------------
 
 * Grab the read-only ID of the person you want to follow. A directory is in progress at [vole.cc](http://vole.cc). Why not start with Vole Team updates? Our key is RA32XLBBHXMWMECGJAJSJMMPQ3Z2ZGR7K.
-* Find the Vole `users` directory. Unless you changed the defaults, it will be in `~/Vole/users`.
-* Create a new directory in `~/Vole/users`, you can name it whatever you like.
+* Find the Vole `users` folder. Unless you changed the defaults, it will be in `~/Vole/users`.
+* Create a new folder in `~/Vole/users`, you can name it whatever you like.
 * In BitTorrent Sync, add this new folder as a shared folder. [Instructions](http://labs.bittorrent.com/experiments/sync/get-started.html) are available on their site.
 * You should receive notification that the folder has sync'd.
 * In your browser, see the new posts appear.
@@ -37,7 +37,7 @@ Following others
 Sharing your posts
 ------------------
 
-Find your own user directory, for example, if you created a profile named 'Chuck':
+Find your own user folder, for example, if you created a profile named 'Chuck':
 
     /home/chuck/Vole/users/Chuck_9674e8e8-7c7a-41e6-52ed-51a3f7969812
 
