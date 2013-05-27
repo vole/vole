@@ -43,7 +43,7 @@ func (user *User) InitNew(name, email, storePath, version string) {
   gravatarUrl := ""
   if email != "" {
     emailHash := gravatar.EmailHash(email)
-    url := gravatar.GetAvatarURL("https", emailHash, gravatar.DefaultMonster, 256)
+    url := gravatar.GetAvatarURL("https", emailHash, gravatar.DefaultMysteryMan, 256)
     gravatarUrl = url.String()
   }
 
