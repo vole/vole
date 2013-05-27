@@ -52,8 +52,12 @@ func main() {
 
     var allPosts *store.PostCollection
     allPosts, err := userStore.GetPosts()
-    if err != nil {
-      allPosts = store.GetEmptyPostCollection()
+    if err != nil || len(allPosts.Posts) < 1 {
+      // Return a welcome post.
+      post := &store.Post{}
+      post.InitNew("Welcome to Vole. To start, create a new profile", "none", "none", "Welcome", "")
+      post.Id = "none"
+      allPosts = post.Collection()
     }
 
     postsJson, err := allPosts.Json()
