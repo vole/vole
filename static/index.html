@@ -9,60 +9,57 @@
   <link rel="stylesheet" type="text/css" href="/css/main.css" />
 </head>
 <body>
-  <div id="ember-container"></div>
+  <div id="ember-container" class="container"></div>
 
   <script type="text/x-handlebars" data-template-name="application">
-    <header>
-      <div class="navbar">
-        <div class="navbar-inner">
-          <a class="brand" href="#">Vole</a>
+    <header id="main-nav">
+      <div class="row">
+        <div class="span2 offset1">
+          <a href="#"><h2 id="logo">Vole</h2></a>
+        </div>
+        <div class="span7">
+          {{#if controllers.users.myUser.firstObject.name}}
+            <h3>{{controllers.users.myUser.firstObject.name}}</h3>
+          {{/if}}
         </div>
       </div>
     </header>
-    <div class="container">
+
+    <main>
       <div class="row">
-        <div class="span3">
-          <ul class="nav nav-list well">
-            {{#if controllers.users.myUser.firstObject.name}}
-              <li class="nav-header">
-                Hi, {{controllers.users.myUser.firstObject.name}}!
-              </li>
-            {{else}}
-              <li class="nav-header">Menu</li>
-            {{/if}}
+        <div class="span2 offset1">
+          <ul class="nav nav-pills nav-stacked well">
             <li>{{#linkTo "index"}}Home{{/linkTo}}</li>
             <li>{{#linkTo "profile"}}My profile{{/linkTo}}</li>
           </ul>
         </div>
-        <div class="span8 main">
+        <div class="span8">
           {{outlet}}
         </div>
       </div>
-    </div>
+    </main>
+
     <footer class="footer">
-      <div class="container">
-        <p>
-          Code licensed under
-          <a href="http://www.debian.org/legal/licenses/mit" target="_blank">MIT</a>
-        </p>
-        <ul class="footer-links">
-          <li><a href="http://vole.cc/">Site</a></li>
-          <li class="muted">·</li>
-          <li><a href="https://github.com/vole/vole/issues">Issues</a></li>
-        </ul>
-      </div>
+      <p>
+        Code licensed under
+        <a href="http://www.debian.org/legal/licenses/mit" target="_blank">MIT</a>
+      </p>
+      <ul class="footer-links">
+        <li><a href="http://vole.cc/">Site</a></li>
+        <li class="muted">·</li>
+        <li><a href="https://github.com/vole/vole/issues">Issues</a></li>
+      </ul>
     </footer>
   </script>
 
   <script type="text/x-handlebars" data-template-name="index">
-    <h3 class="well">
-      All Posts
-
+    <div class="well">
+      <h3>All Posts</h3>
       <a href="#new-post" role="button" class="btn btn-primary pull-right" data-toggle="modal">
         New Post
         <i class="icon-share icon-white"></i>
       </a>
-    </h3>
+    </div>
 
     {{#if myUser.isLoaded}}
       {{#if myUser.length}}
