@@ -33,7 +33,7 @@
             <li>{{#linkTo "profile"}}My profile{{/linkTo}}</li>
           </ul>
         </div>
-        <div class="span8">
+        <div class="span7">
           {{outlet}}
         </div>
       </div>
@@ -53,38 +53,10 @@
   </script>
 
   <script type="text/x-handlebars" data-template-name="index">
-    <div class="well">
-      <h3>All Posts</h3>
-      <a href="#new-post" role="button" class="btn btn-primary pull-right" data-toggle="modal">
-        New Post
-        <i class="icon-share icon-white"></i>
-      </a>
+    <div id="post-area" class="well">
+      {{view Ember.TextArea id="post-text" placeholder="Say something..." rows="3" cols="60" valueBinding="newPostTitle" disabledBinding="postBoxDisabled"}}
+      <button id="post-button" {{bindAttr disabled="postButtonDisabled"}} {{action "createNewPost"}} class="btn btn-primary">Post <i class="icon-share-alt icon-white"></i></button>
     </div>
-
-    {{#if myUser.isLoaded}}
-      {{#if myUser.length}}
-        <div id="new-post" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="new-post-label" aria-hidden="true">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h3 id="new-post-label">New Post</h3>
-          </div>
-          <div class="modal-body">
-            <form class="form-horizontal">
-              <div class="control-group">
-                <label class="control-label">Text:</label>
-                <div class="controls">
-                  {{view Ember.TextArea id="new-post" rows="3" cols="50" valueBinding="newPostTitle"}}
-                </div>
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-            <button {{action "createNewPost"}} class="btn btn-primary" data-dismiss="modal">Post</button>
-          </div>
-        </div>
-      {{/if}}
-    {{/if}}
 
     {{view "App.PostsView" controllerBinding="controllers.posts"}}
   </script>
@@ -137,22 +109,22 @@
   <script type="text/x-handlebars" data-template-name="posts">
     {{#if length}}
       {{#if filteredPosts}}
-        <div class="posts">
+        <div id="posts-list">
           {{#each filteredPosts}}
             <div class="post row">
               <div class="span1">
-                <span class="user">{{unbound userName}}</span>
                 <img src="{{unbound userAvatar}}" width="75" height="75" />
               </div>
-              <div class="span6">
+
+              <small class="time" data-time="{{unbound created}}">
+                {{unbound nanoDate created}}
+              </small>
+
+              <div class="span5">
+                <div class="user-name">{{unbound userName}}</div>
                 <span>
                   {{unbound enrich title}}
                 </span>
-              </div>
-              <div class="span1 pull-right">
-                <small class="time" data-time="{{unbound created}}">
-                  {{unbound nanoDate created}}
-                </small>
               </div>
             </div>
           {{/each}}
@@ -163,7 +135,9 @@
         </div>
       {{/if}}
     {{else}}
-      Loading...
+      <div class="progress progress-striped active">
+        <div class="bar" style="width: 100%;"></div>
+      </div>
     {{/if}}
   </script>
 

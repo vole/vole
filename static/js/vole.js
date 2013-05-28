@@ -57,6 +57,14 @@
     myUserBinding: 'controllers.users.myUser',
     newPostTitle: '',
 
+    postBoxDisabled: function() {
+      return !(this.get('myUser.isLoaded') && (this.get('myUser.length') > 0));
+    }.property('myUser.isLoaded', 'myUser.length'),
+
+    postButtonDisabled: function() {
+      return !(!this.get('postBoxDisabled') && this.get('newPostTitle.length') > 0);
+    }.property('postBoxDisabled', 'newPostTitle'),
+
     createNewPost: function() {
       var self = this;
       var myUser = this.get('controllers.users.myUser.firstObject.user');
