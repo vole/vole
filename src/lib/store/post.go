@@ -91,6 +91,15 @@ func (post *Post) Save() error {
 }
 
 /**
+ * Collection()
+ *
+ * Return a post collection wrapping this user.
+ */
+func (post *Post) Collection() *PostCollection {
+  return &PostCollection{[]Post{*post}}
+}
+
+/**
  * Container()
  *
  * Return a post container wrapping this post.
