@@ -12,49 +12,57 @@
   <div id="ember-container"></div>
 
   <script type="text/x-handlebars" data-template-name="application">
-    <header>
-      <div class="navbar">
-        <div class="navbar-inner">
-          <a class="brand" href="#">Vole</a>
+    <header id="main-nav">
+      <div class="row">
+        <div class="span2 offset1">
+          <h2 id="logo">Vole</h2>
         </div>
-      </div>
-    </header>
-    <div class="container-fluid">
-      <div class="row-fluid">
-        <div class="span2">
-          <ul class="nav nav-list well">
-            <li class="nav-header">Menu</li>
-            <li>{{#linkTo "index"}}Home{{/linkTo}}</li>
-            <li>{{#linkTo "profile"}}My profile{{/linkTo}}</li>
-          </ul>
-
+        <div class="span7">
           {{#if controllers.users.myUser.firstObject.name}}
-            <div class="nav well">
-              Hi, {{controllers.users.myUser.firstObject.name}}!
+            <div class="text-right">
+              <h3 id="my-username-title">{{controllers.users.myUser.firstObject.name}}</h3>
             </div>
           {{/if}}
         </div>
-        <div class="span10">
+      </div>
+    </header>
+
+    <main>
+      <div class="row">
+        <div class="span2 offset1">
+          <ul class="nav nav-pills nav-stacked well">
+            {{#linkTo "index" tagName="li"}}
+              <a href="#">Home</a>
+            {{/linkTo}}
+            {{#linkTo "profile" tagName="li"}}
+              <a href="#">My profile</a>
+            {{/linkTo}}
+          </ul>
+        </div>
+        <div class="span7">
           {{outlet}}
         </div>
       </div>
-    </div>
+    </main>
+
+    <footer class="footer">
+      <p>
+        Code licensed under
+        <a href="http://www.debian.org/legal/licenses/mit" target="_blank">MIT</a>
+      </p>
+      <ul class="footer-links">
+        <li><a href="http://vole.cc/">Site</a></li>
+        <li class="muted">·</li>
+        <li><a href="https://github.com/vole/vole/issues">Issues</a></li>
+      </ul>
+    </footer>
   </script>
 
   <script type="text/x-handlebars" data-template-name="index">
-    <h4>All posts</h4>
-    {{#if myUser.isLoaded}}
-      {{#if myUser.length}}
-        <div class="navbar">
-          <div class="navbar-inner">
-            <form class="navbar-form">
-              {{view Ember.TextArea id="new-post" rows="4" cols="50" valueBinding="newPostTitle"}}
-              <button {{action "createNewPost"}} class="btn">Post</button>
-            </form>
-          </div>
-        </div>
-      {{/if}}
-    {{/if}}
+    <div id="above-posts" class="well">
+      {{view Ember.TextArea id="post-text" placeholder="Say something..." rows="3" cols="60" valueBinding="newPostTitle" disabledBinding="postBoxDisabled"}}
+      <button id="post-button" {{bindAttr disabled="postButtonDisabled"}} {{action "createNewPost"}} class="btn btn-primary">Post <i class="icon-share-alt icon-white"></i></button>
+    </div>
 
     {{view "App.PostsView" controllerBinding="controllers.posts"}}
   </script>
@@ -62,10 +70,13 @@
   <script type="text/x-handlebars" data-template-name="profile">
     {{#if myUser.isLoaded}}
       {{#if myUser.length}}
-        <h3>{{myUser.firstObject.name}}</h3>
-        {{#if myUser.firstObject.avatar}}
-          <img src="{{unbound myUser.firstObject.avatar}}" />
-        {{/if}}
+        <div id="above-posts" class="well clearfix">
+          <div class="pull-left">
+            <h3>
+              {{myUser.firstObject.name}}
+            </h3>
+          </div>
+        </div>
         {{view "App.PostsView" controllerBinding="controllers.posts"}}
       {{else}}
         <h3>Profile not found</h3>
@@ -89,38 +100,53 @@
             </div>
           </div>
         </form>
-
       {{/if}}
     {{else}}
-      Loading...
+      <div class="progress progress-striped active">
+        <div class="bar" style="width: 100%;"></div>
+      </div>
     {{/if}}
   </script>
 
   <script type="text/x-handlebars" data-template-name="posts">
-    {{#if length}}
-      {{#if filteredPosts}}
-        <ul class="posts">
-          {{#each filteredPosts}}
-            <li>
-              <span class="user">{{unbound userName}}</span>
-              <img src="{{unbound userAvatar}}" width="75" height="75" />
-              <span class="post">
-                {{unbound enrich title}}
-              </span>
-              <span class="time" data-time="{{unbound created}}">
-                {{unbound nanoDate created}}
-              </span>
-            </li>
-          {{/each}}
-        </ul>
+    <div id="posts-list">
+      {{#if length}}
+        {{#if filteredPosts}}
+          <div id="posts-loaded">
+            {{#each filteredPosts}}
+              <div class="post row">
+                <div class="span1">
+                  <img class="avatar-img img-rounded" src="{{unbound userAvatar}}" />
+                </div>
+                <div class="span6">
+                  <div class="row">
+                    <div class="span4 user-name">{{unbound userName}}</div>
+                    <small class="span2 time text-right" data-time="{{unbound created}}">
+                      {{unbound nanoDate created}}
+                    </small>
+                  </div>
+                  <div class="row">
+                    <div class="span6">
+                      <span>
+                        {{unbound enrich title}}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        {{else}}
+          <div>
+            No posts found.
+          </div>
+        {{/if}}
       {{else}}
-        <div>
-          No posts found.
+        <div class="progress progress-striped active">
+          <div class="bar" style="width: 100%;"></div>
         </div>
       {{/if}}
-    {{else}}
-      Loading...
-    {{/if}}
+    </div>
   </script>
 
   <script src="/js/vendor/jquery.min.js"></script>

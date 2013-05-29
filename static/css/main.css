@@ -1,46 +1,81 @@
 
-.navbar-inner {
-  padding-top: 1em;
+#ember-container {
+  min-width: 960px;
 }
 
-#new-post {
+#main-nav {
+  background: black;
+  margin: 0 0 15px 0;
+}
+
+#logo {
+  color: #888888;
+}
+
+#post-text {
   width: auto;
 }
 
-ul.posts {
-  list-style: none;
-  margin: 0;
+#post-button {
+  margin: 0 0 10px 5px;
+  vertical-align: bottom;
 }
 
-  ul.posts li {
-    padding: 10px 5px;
-    border-bottom: 1px solid #EEE;
-    line-height: 2em;
-  }
+#above-posts {
+  min-height: 90px;
+}
 
-  ul.posts li:hover {
-    background-color: #EFEFEF;
-  }
+#posts-list {
+  min-height: 800px;
+}
 
-    ul.posts li span.user {
-      font-weight: bold;
-      padding: 0 50px 0 0;
-      display: block;
-      float: left;
-      width: 80px;
-    }
+#my-username-title {
+  color: #888888;
+}
 
-    ul.posts li span.user:after {
-      content: ": ";
-    }
+.post {
+  border-top: 1px #f2f2f2 solid;
+  padding: 10px 0 10px 0;
+}
 
-    ul.posts li span.time {
-      display: inline-block;
-      float: right;
-      color: #CCC;
-    }
+.avatar-img {
+  width: 75px;
+}
 
-      span.post img {
-        max-width: 128px;
-        max-height: 128px;
-      }
+.user-name {
+  font-weight: bold;
+}
+
+.time {
+  color: #bbbbbb;
+  font-size: 75%;
+}
+
+/**
+ * Footer.
+ */
+.footer {
+  text-align: center;
+  padding: 30px 0;
+  margin-top: 20px;
+  border-top: 1px solid #e5e5e5;
+  background-color: #f5f5f5;
+}
+
+.footer p {
+  margin-bottom: 0;
+  color: #777;
+}
+
+.footer-links {
+  margin: 10px 0;
+}
+
+.footer-links li {
+  display: inline;
+  padding: 0 2px;
+}
+
+.footer-links li:first-child {
+  padding-left: 0;
+}

@@ -57,6 +57,14 @@
     myUserBinding: 'controllers.users.myUser',
     newPostTitle: '',
 
+    postBoxDisabled: function() {
+      return !(this.get('myUser.isLoaded') && (this.get('myUser.length') > 0));
+    }.property('myUser.isLoaded', 'myUser.length'),
+
+    postButtonDisabled: function() {
+      return !(!this.get('postBoxDisabled') && this.get('newPostTitle.length') > 0);
+    }.property('postBoxDisabled', 'newPostTitle'),
+
     createNewPost: function() {
       var self = this;
       var myUser = this.get('controllers.users.myUser.firstObject.user');
@@ -183,7 +191,9 @@
       });
 
       if (/\.(jpg|gif|png)$/.test(matches[0])) {
-        link.html($('<img />', { src : matches[0] }));
+        var image = $('<img />', { src : matches[0] });
+        image.addClass('img-rounded');
+        link.html(image);
       }
       else {
         link.text(matches[0]);
