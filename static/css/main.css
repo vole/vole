@@ -9,7 +9,7 @@
 }
 
 #logo {
-  color: #EEEEEE;
+  color: #888888;
 }
 
 #post-text {
@@ -21,9 +21,25 @@
   vertical-align: bottom;
 }
 
+#above-posts {
+  min-height: 90px;
+}
+
+#posts-list {
+  min-height: 800px;
+}
+
+#my-username-title {
+  color: #888888;
+}
+
 .post {
   border-top: 1px #f2f2f2 solid;
   padding: 10px 0 10px 0;
+}
+
+.avatar-img {
+  width: 75px;
 }
 
 .user-name {

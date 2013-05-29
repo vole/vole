@@ -19,7 +19,9 @@
         </div>
         <div class="span7">
           {{#if controllers.users.myUser.firstObject.name}}
-            <h3 class="pull-right">{{controllers.users.myUser.firstObject.name}}</h3>
+            <div class="text-right">
+              <h3 id="my-username-title">{{controllers.users.myUser.firstObject.name}}</h3>
+            </div>
           {{/if}}
         </div>
       </div>
@@ -57,7 +59,7 @@
   </script>
 
   <script type="text/x-handlebars" data-template-name="index">
-    <div id="post-area" class="well">
+    <div id="above-posts" class="well">
       {{view Ember.TextArea id="post-text" placeholder="Say something..." rows="3" cols="60" valueBinding="newPostTitle" disabledBinding="postBoxDisabled"}}
       <button id="post-button" {{bindAttr disabled="postButtonDisabled"}} {{action "createNewPost"}} class="btn btn-primary">Post <i class="icon-share-alt icon-white"></i></button>
     </div>
@@ -68,16 +70,11 @@
   <script type="text/x-handlebars" data-template-name="profile">
     {{#if myUser.isLoaded}}
       {{#if myUser.length}}
-        <div class="well clearfix">
+        <div id="above-posts" class="well clearfix">
           <div class="pull-left">
             <h3>
               {{myUser.firstObject.name}}
             </h3>
-          </div>
-          <div class="pull-right">
-            {{#if myUser.firstObject.avatar}}
-              <img class="img-rounded" src="{{unbound myUser.firstObject.avatar}}" height="100" width="100" />
-            {{/if}}
           </div>
         </div>
         {{view "App.PostsView" controllerBinding="controllers.posts"}}
@@ -111,38 +108,40 @@
   </script>
 
   <script type="text/x-handlebars" data-template-name="posts">
-    {{#if length}}
-      {{#if filteredPosts}}
-        <div id="posts-list">
-          {{#each filteredPosts}}
-            <div class="post row">
-              <div class="span1">
-                <img src="{{unbound userAvatar}}" width="75" height="75" />
-              </div>
+    <div id="posts-list">
+      {{#if length}}
+        {{#if filteredPosts}}
+          <div id="posts-loaded">
+            {{#each filteredPosts}}
+              <div class="post row">
+                <div class="span1">
+                  <img class="avatar-img img-rounded" src="{{unbound userAvatar}}" />
+                </div>
 
-              <small class="time" data-time="{{unbound created}}">
-                {{unbound nanoDate created}}
-              </small>
+                <small class="time" data-time="{{unbound created}}">
+                  {{unbound nanoDate created}}
+                </small>
 
-              <div class="span5">
-                <div class="user-name">{{unbound userName}}</div>
-                <span>
-                  {{unbound enrich title}}
-                </span>
+                <div class="span5">
+                  <div class="user-name">{{unbound userName}}</div>
+                  <span>
+                    {{unbound enrich title}}
+                  </span>
+                </div>
               </div>
-            </div>
-          {{/each}}
-        </div>
+            {{/each}}
+          </div>
+        {{else}}
+          <div>
+            No posts found.
+          </div>
+        {{/if}}
       {{else}}
-        <div>
-          No posts found.
+        <div class="progress progress-striped active">
+          <div class="bar" style="width: 100%;"></div>
         </div>
       {{/if}}
-    {{else}}
-      <div class="progress progress-striped active">
-        <div class="bar" style="width: 100%;"></div>
-      </div>
-    {{/if}}
+    </div>
   </script>
 
   <script src="/js/vendor/jquery.min.js"></script>
