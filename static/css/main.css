@@ -1,6 +1,6 @@
 
 #ember-container {
-  height: 200px;
+  min-width: 960px;
 }
 
 #main-nav {

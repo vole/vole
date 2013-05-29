@@ -9,7 +9,7 @@
   <link rel="stylesheet" type="text/css" href="/css/main.css" />
 </head>
 <body>
-  <div id="ember-container" class="container"></div>
+  <div id="ember-container"></div>
 
   <script type="text/x-handlebars" data-template-name="application">
     <header id="main-nav">
@@ -120,16 +120,16 @@
                   <img class="avatar-img img-rounded" src="{{unbound userAvatar}}" />
                 </div>
 
-                <small class="time" data-time="{{unbound created}}">
-                  {{unbound nanoDate created}}
-                </small>
-
                 <div class="span5 post-middle">
                   <div class="user-name">{{unbound userName}}</div>
                   <span>
                     {{unbound enrich title}}
                   </span>
                 </div>
+
+                <small class="time span1" data-time="{{unbound created}}">
+                  {{unbound nanoDate created}}
+                </small>
               </div>
             {{/each}}
           </div>
