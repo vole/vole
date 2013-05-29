@@ -1,6 +1,24 @@
 
 (function ($) {
 
+  moment.lang('en', {
+    relativeTime : {
+      future: "in %s",
+      past:   "%s",
+      s:  "s",
+      m:  "1m",
+      mm: "%dm",
+      h:  "1h",
+      hh: "%dh",
+      d:  "1d",
+      dd: "%dd",
+      M:  "1 mon",
+      MM: "%dmon",
+      y:  "1y",
+      yy: "%dy"
+    }
+  });
+
   $.fn.moment = function (options) {
     options = options || {};
 
