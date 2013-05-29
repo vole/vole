@@ -15,11 +15,11 @@
     <header id="main-nav">
       <div class="row">
         <div class="span2 offset1">
-          <a href="#"><h2 id="logo">Vole</h2></a>
+          <h2 id="logo">Vole</h2>
         </div>
         <div class="span7">
           {{#if controllers.users.myUser.firstObject.name}}
-            <h3>{{controllers.users.myUser.firstObject.name}}</h3>
+            <h3 class="pull-right">{{controllers.users.myUser.firstObject.name}}</h3>
           {{/if}}
         </div>
       </div>
@@ -29,8 +29,12 @@
       <div class="row">
         <div class="span2 offset1">
           <ul class="nav nav-pills nav-stacked well">
-            <li>{{#linkTo "index"}}Home{{/linkTo}}</li>
-            <li>{{#linkTo "profile"}}My profile{{/linkTo}}</li>
+            {{#linkTo "index" tagName="li"}}
+              <a href="#">Home</a>
+            {{/linkTo}}
+            {{#linkTo "profile" tagName="li"}}
+              <a href="#">My profile</a>
+            {{/linkTo}}
           </ul>
         </div>
         <div class="span7">
