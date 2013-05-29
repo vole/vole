@@ -6,15 +6,15 @@
       future: "in %s",
       past:   "%s",
       s:  "s",
-      m:  "1 min",
+      m:  "1m",
       mm: "%dm",
-      h:  "1 hour",
+      h:  "1h",
       hh: "%dh",
-      d:  "1 day",
+      d:  "1d",
       dd: "%dd",
       M:  "1 mon",
       MM: "%dmon",
-      y:  "1 year",
+      y:  "1y",
       yy: "%dy"
     }
   });
