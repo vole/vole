@@ -100,7 +100,6 @@
             </div>
           </div>
         </form>
-
       {{/if}}
     {{else}}
       <div class="progress progress-striped active">
@@ -119,17 +118,21 @@
                 <div class="span1">
                   <img class="avatar-img img-rounded" src="{{unbound userAvatar}}" />
                 </div>
-
-                <div class="span5 post-middle">
-                  <div class="user-name">{{unbound userName}}</div>
-                  <span>
-                    {{unbound enrich title}}
-                  </span>
+                <div class="span6">
+                  <div class="row">
+                    <div class="span4 user-name">{{unbound userName}}</div>
+                    <small class="span2 time text-right" data-time="{{unbound created}}">
+                      {{unbound nanoDate created}}
+                    </small>
+                  </div>
+                  <div class="row">
+                    <div class="span6">
+                      <span>
+                        {{unbound enrich title}}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-
-                <small class="time span1" data-time="{{unbound created}}">
-                  {{unbound nanoDate created}}
-                </small>
               </div>
             {{/each}}
           </div>
