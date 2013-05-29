@@ -51,6 +51,10 @@
   font-size: 75%;
 }
 
+.middle-post {
+  padding-right: 10px;
+}
+
 /**
  * Footer.
  */
