@@ -131,7 +131,13 @@
         }
       }
       return this.get('arrangedContent');
-    }.property('content.[]', 'filterByUser.[]')
+    }.property('content.[]', 'filterByUser.[]'),
+
+    deletePost: function(id) {
+      var post = App.Post.find(id);
+      post.deleteRecord();
+      post.get('transaction').commit();
+    }
   });
 
   //-------------------------

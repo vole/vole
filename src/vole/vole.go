@@ -5,11 +5,12 @@ import (
   "encoding/json"
   "flag"
   "github.com/vole/web"
-  osuser "os/user"
-  "path"
   "io/ioutil"
   "lib/config"
   "lib/store"
+  osuser "os/user"
+  "path"
+  "sort"
 )
 
 var port = flag.String("port", "6789", "Port on which to run the web server.")
@@ -24,7 +25,7 @@ var DIR = func() string {
 }()
 
 var userStore = &store.UserStore{
-  Path: DIR,
+  Path:    DIR,
   Version: "v1",
 }
 
@@ -144,6 +145,31 @@ func main() {
       ctx.Abort(500, "Could not create container")
     }
     return postJson
+  })
+
+  web.Delete("/api/posts/(.*)", func(ctx *web.Context, id string) string {
+    user, err := userStore.GetMyUser()
+    if err != nil {
+      ctx.Abort(500, "Error loading user.")
+    }
+
+    posts, err := user.GetPosts()
+    if err != nil {
+      ctx.Abort(500, "Error loading posts.")
+    }
+
+    for _, post := range posts.Posts {
+      if post.Id == id {
+        err := post.Delete()
+        if err != nil {
+          ctx.Abort(500, "Error deleting post.")
+        } else {
+          return "OK"
+        }
+      }
+    }
+
+    return "OK"
   })
 
   web.Run("0.0.0.0:" + *port)

@@ -40,6 +40,7 @@
 
 .avatar-img {
   width: 75px;
+  box-shadow: 0px 0px 3px rgba(50, 50, 50, 0.75);
 }
 
 .user-name {
@@ -49,6 +50,22 @@
 .time {
   color: #bbbbbb;
   font-size: 75%;
+}
+
+.post-actions {
+  list-style: none;
+  margin: 5px 0 0 0;
+  height: 20px;
+}
+
+.post-actions li {
+  display: none;
+  float: left;
+  padding-left: 5px;
+}
+
+.post:hover .post-actions li {
+  display: block;
 }
 
 /**

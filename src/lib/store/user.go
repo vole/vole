@@ -1,12 +1,12 @@
 package store
 
 import (
-  "os"
-  "path"
-  "fmt"
   "encoding/json"
+  "fmt"
   "github.com/vole/gouuid"
   "github.com/vole/gravatar"
+  "os"
+  "path"
 )
 
 /**
@@ -14,13 +14,13 @@ import (
  */
 type User struct {
   // Properties that should be saved to disk.
-  Id           string `json:"id"`
-  Name         string `json:"name"`
-  Avatar       string `json:"avatar"`
+  Id     string `json:"id"`
+  Name   string `json:"name"`
+  Avatar string `json:"avatar"`
 
   // Properties that are used by Vole backend and frontend, but not saved to disk.
-  IsMyUser     bool   `json:"is_my_user,omitempty"`
-  Email        string `json:"email,omitempty"`
+  IsMyUser bool   `json:"is_my_user,omitempty"`
+  Email    string `json:"email,omitempty"`
 
   // Properties that are only used by the backend and thus don't have
   // to be marshaled to JSON for either the frontend or disk.

@@ -1,9 +1,9 @@
 package store
 
 import (
-  "path"
-  "os"
   "io/ioutil"
+  "os"
+  "path"
 )
 
 /**
@@ -33,4 +33,8 @@ func Write(path string, data []byte) error {
   }
 
   return file.Close()
+}
+
+func Delete(args ...string) error {
+  return os.Remove(path.Join(args...))
 }
