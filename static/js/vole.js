@@ -211,7 +211,7 @@
       escaped = escaped.replace(matches[0], outer.append(link).html());
     }
 
-    return new Handlebars.SafeString(escaped);
+    return new Handlebars.SafeString(escaped.replace(/\n/g, '<br />'));
   });
 
   $('.time').moment({ frequency: 5000 });
