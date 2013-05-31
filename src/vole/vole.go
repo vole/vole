@@ -10,7 +10,6 @@ import (
   "lib/store"
   osuser "os/user"
   "path"
-  "sort"
 )
 
 var port = flag.String("port", "6789", "Port on which to run the web server.")
