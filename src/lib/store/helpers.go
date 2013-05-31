@@ -34,3 +34,7 @@ func Write(path string, data []byte) error {
 
   return file.Close()
 }
+
+func Delete(args ...string) error {
+  return os.Remove(path.Join(args...))
+}

@@ -32,7 +32,7 @@ func (user *User) NewPostFromContainerJson(rawJson []byte) (*Post, error) {
  */
 func (user *User) NewPost(title string) *Post {
   post := &Post{}
-  post.InitNew(title, user.FullPath, user.Id, user.Name, user.Avatar)
+  post.InitNew(title, user.FullPath, user.Id, user.Name, user.Avatar, user.IsMyUser)
   return post
 }
 
@@ -55,7 +55,7 @@ func (user *User) GetPosts() (*PostCollection, error) {
       continue
     }
     post := Post{}
-    if err := post.InitFromJson(data, fullPath, user.Id, user.Name, user.Avatar); err != nil {
+    if err := post.InitFromJson(data, fullPath, user.Id, user.Name, user.Avatar, user.IsMyUser); err != nil {
       return nil, errors.New("No post or invalid json.")
     }
     collection = append(collection, post)
