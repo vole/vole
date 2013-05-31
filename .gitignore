@@ -5,4 +5,5 @@
 *.o
 *.a
 config.json
-
+/node_modules
+/dist

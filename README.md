@@ -49,6 +49,11 @@ Profile site
 
 We plan on allowing people to claim their names on vole.cc and store their keys along with their profile, making it much easier to find people who are posting publicly.
 
+Versions
+--------
+
+Vole uses [semantic versioning](http://semver.org)
+
 Technology
 ----------
 
