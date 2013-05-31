@@ -1,6 +1,7 @@
 package socket
 
 import (
+  "fmt"
   "code.google.com/p/go.net/websocket"
 )
 
@@ -18,6 +19,9 @@ type Hub struct {
   unregister chan *Connection
 }
 
+/**
+ * Returns a new instance of a hub.
+ */
 func NewHub() *Hub {
   h := Hub{
     connections: make(map[*Connection]bool),
@@ -29,8 +33,12 @@ func NewHub() *Hub {
   return &h
 }
 
+/**
+ * Handles incoming socket connections.
+ */
 func (hub *Hub) Handler() websocket.Handler {
   return websocket.Handler(func(ws *websocket.Conn) {
+    fmt.Println("hello socket!")
     c := &Connection{
       send: make(chan string, 256),
       ws: ws,

@@ -1,4 +1,5 @@
 (function ($, Ember) {
+  var poll = false;
   var cl = console.log.bind(console);
 
   var App = Ember.Application.create({
@@ -146,11 +147,13 @@
     setupController: function(controller) {
       controller.set('controllers.posts.content', App.Post.find());
       controller.set('controllers.users.myUser', App.User.find({'is_my_user': true}));
-      var refreshUI = function() {
-        App.Post.find();
-        setTimeout(refreshUI, 1000);
-      };
-      setTimeout(refreshUI, 5000);
+      if (poll) {
+        var refreshUI = function() {
+          App.Post.find();
+          setTimeout(refreshUI, 1000);
+        };
+        setTimeout(refreshUI, 5000);
+      }
     }
   });
 
@@ -207,4 +210,28 @@
 
   $('.time').moment({ frequency: 5000 });
 
+  //-------------------------
+  // Websockets
+  //-------------------------
+  /*
+  TODO - fix socket.io so polling fallback is "free".
+  var socket = io.connect('ws://localhost:6789', {
+    resource: 'ws'
+  });
+  socket.on('connect', function() {
+    console.log('boom');
+  });
+  */
+  if (typeof WebSocket !== 'undefined') {
+    var conn = new WebSocket("ws://localhost:6789/ws");
+    conn.onclose = function(evt) {
+      console.log('Connection closed.');
+    };
+    conn.onmessage = function(evt) {
+      console.log(evt.data);
+    };
+  }
+  else {
+    poll = true;
+  }
 })(jQuery, Ember);

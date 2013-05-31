@@ -41,7 +41,7 @@ func main() {
   // Websockets!
   var h = socket.NewHub()
   go h.Run()
-  web.Get("/ws", h.Handler())
+  web.Websocket("/ws/?(.*)", h.Handler())
 
   //go fs.run()
 
