@@ -3,8 +3,8 @@ package config
 import (
   "encoding/json"
   "errors"
-  "io/ioutil"
   "fmt"
+  "io/ioutil"
 )
 
 type Config struct {

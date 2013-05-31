@@ -13,6 +13,14 @@ To grab the latest development version of Vole and run it:
 
 In your browser, navigate to http://localhost:6789.
 
+Windows
+-------
+
+To set the Go path on Windows, use:
+
+    set GOPATH="c:\Users..."
+    set PATH=%GOPATH%\bin;%PATH%
+
 Testing
 -------
 
