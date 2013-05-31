@@ -10,6 +10,8 @@ import (
   "io/ioutil"
   "lib/config"
   "lib/store"
+  "lib/socket"
+  //"lib/fswatch"
 )
 
 var port = flag.String("port", "6789", "Port on which to run the web server.")
@@ -35,6 +37,13 @@ func main() {
   if err != nil {
     panic(err)
   }
+
+  // Websockets!
+  var h = socket.NewHub()
+  go h.Run()
+  web.Get("/ws", h.Handler())
+
+  //go fs.run()
 
   web.Get("/api/config", func(ctx *web.Context) string {
     ctx.ContentType("json")
