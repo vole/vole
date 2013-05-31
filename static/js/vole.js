@@ -28,7 +28,8 @@
     created: DS.attr('number'),
     userId: DS.attr('string'),
     userName: DS.attr('string'),
-    userAvatar: DS.attr('string')
+    userAvatar: DS.attr('string'),
+    isMyPost: DS.attr('boolean')
   });
 
   App.User = DS.Model.extend({
@@ -134,9 +135,11 @@
     }.property('content.[]', 'filterByUser.[]'),
 
     deletePost: function(id) {
-      var post = App.Post.find(id);
-      post.deleteRecord();
-      post.get('transaction').commit();
+      if (confirm('Are you sure you want to delete this post?')) {
+        var post = App.Post.find(id);
+        post.deleteRecord();
+        post.get('transaction').commit();
+      }
     }
   });
 

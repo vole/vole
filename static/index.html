@@ -120,11 +120,13 @@
                 <div class="span1">
                   <img class="avatar-img img-rounded" src="{{unbound userAvatar}}" />
                   <ul class="post-actions">
-                    <li>
-                      <a class="post-action" {{action "deletePost" id}} href="#">
-                        <i class="icon-trash"></i>
-                      </a>
-                    </li>
+                    {{#if isMyPost}}
+                      <li>
+                        <a class="post-action" {{action "deletePost" id}} href="#">
+                          <i class="icon-trash"></i>
+                        </a>
+                      </li>
+                    {{/if}}
                   </ul>
                 </div>
                 <div class="span6">

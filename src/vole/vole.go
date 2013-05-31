@@ -55,7 +55,7 @@ func main() {
     if err != nil || len(allPosts.Posts) < 1 {
       // Return a welcome post.
       post := &store.Post{}
-      post.InitNew("Welcome to Vole. To start, create a new profile", "none", "none", "Welcome", "")
+      post.InitNew("Welcome to Vole. To start, create a new profile", "none", "none", "Welcome", "", false)
       post.Id = "none"
       allPosts = post.Collection()
     }
