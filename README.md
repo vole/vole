@@ -3,7 +3,7 @@ Vole
 
 Vole is a web application for sharing words, pictures and videos with others. Data is distributed peer-to-peer using Bittorrent Sync.
 
-[http://vole.cc](http://vole.cc)
+A complete introduction is available on [vole.cc](http://vole.cc).
 
 Getting started
 ---------------
