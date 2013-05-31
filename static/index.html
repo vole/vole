@@ -61,7 +61,9 @@
   <script type="text/x-handlebars" data-template-name="index">
     <div id="above-posts" class="well">
       {{view Ember.TextArea id="post-text" placeholder="Say something..." rows="3" cols="60" valueBinding="newPostTitle" disabledBinding="postBoxDisabled"}}
-      <button id="post-button" {{bindAttr disabled="postButtonDisabled"}} {{action "createNewPost"}} class="btn btn-primary">Post <i class="icon-share-alt icon-white"></i></button>
+      <button id="post-button" {{bindAttr disabled="postButtonDisabled"}} {{action "createNewPost"}} class="btn btn-primary">
+        Post <i class="icon-share-alt icon-white"></i>
+      </button>
     </div>
 
     {{view "App.PostsView" controllerBinding="controllers.posts"}}
@@ -117,6 +119,15 @@
               <div class="post row">
                 <div class="span1">
                   <img class="avatar-img img-rounded" src="{{unbound userAvatar}}" />
+                  <ul class="post-actions">
+                    {{#if isMyPost}}
+                      <li>
+                        <a class="post-action" {{action "deletePost" id}} href="#">
+                          <i class="icon-trash"></i>
+                        </a>
+                      </li>
+                    {{/if}}
+                  </ul>
                 </div>
                 <div class="span6">
                   <div class="row">
