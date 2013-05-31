@@ -1,7 +1,7 @@
 Vole
 ====
 
-Vole is a web application for sharing words, pictures and videos securely and privately with others. Data is distributed to users peer-to-peer using Bittorrent Sync.
+Vole is a web application for sharing words, pictures and videos with others. Data is distributed peer-to-peer using Bittorrent Sync.
 
 [http://vole.cc](http://vole.cc)
 
