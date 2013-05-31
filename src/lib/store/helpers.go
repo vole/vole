@@ -1,9 +1,9 @@
 package store
 
 import (
-  "path"
-  "os"
   "io/ioutil"
+  "os"
+  "path"
 )
 
 /**

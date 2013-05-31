@@ -5,10 +5,10 @@
 package store
 
 import (
-  "strings"
-  "path"
-  "errors"
   "encoding/json"
+  "errors"
+  "path"
+  "strings"
 )
 
 /**

@@ -5,11 +5,11 @@ import (
   "encoding/json"
   "flag"
   "github.com/vole/web"
-  osuser "os/user"
-  "path"
   "io/ioutil"
   "lib/config"
   "lib/store"
+  osuser "os/user"
+  "path"
 )
 
 var port = flag.String("port", "6789", "Port on which to run the web server.")
@@ -24,7 +24,7 @@ var DIR = func() string {
 }()
 
 var userStore = &store.UserStore{
-  Path: DIR,
+  Path:    DIR,
   Version: "v1",
 }
 

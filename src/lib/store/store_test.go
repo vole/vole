@@ -1,11 +1,11 @@
 package store
 
 import (
-  "testing"
-  "strings"
   "os"
   osuser "os/user"
   "path"
+  "strings"
+  "testing"
 )
 
 var DIR = func() string {
@@ -20,7 +20,7 @@ var DIR = func() string {
 }()
 
 var userStore = &UserStore{
-  Path: DIR,
+  Path:    DIR,
   Version: "v1",
 }
 
@@ -57,10 +57,10 @@ func TestCreateUser(t *testing.T) {
   if !strings.Contains(user.Avatar, "https://gravatar.com/") {
     t.Error("Gravatar not being set correctly")
   }
-  if !strings.Contains(user.FullPath, user.Name + "_" + user.Id) {
+  if !strings.Contains(user.FullPath, user.Name+"_"+user.Id) {
     t.Error("User path location not set correctly")
   }
-  if !strings.Contains(user.UserJsonPath, user.Name + "_" + user.Id) {
+  if !strings.Contains(user.UserJsonPath, user.Name+"_"+user.Id) {
     t.Error("User json path location not set correctly")
   }
 }
@@ -79,7 +79,7 @@ func TestSaveUser(t *testing.T) {
   if user.IsMyUser != true {
     t.Error("After saving a new user, ismyuser must be true")
   }
-  assertFileOrDir(t, path.Join(userStore.Path, "users", user.Name + "_" + user.Id, userStore.Version))
+  assertFileOrDir(t, path.Join(userStore.Path, "users", user.Name+"_"+user.Id, userStore.Version))
 }
 
 func TestGetMyUser(t *testing.T) {
@@ -239,7 +239,7 @@ func TestSaveUserFromJson(t *testing.T) {
   if err := user.Save(); err != nil {
     t.Error(err)
   }
-  assertFileOrDir(t, path.Join(userStore.Path, "users", user.Name + "_" + user.Id, userStore.Version))
+  assertFileOrDir(t, path.Join(userStore.Path, "users", user.Name+"_"+user.Id, userStore.Version))
 
   container := user.Container()
   userJson, err := container.Json()

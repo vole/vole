@@ -1,19 +1,19 @@
 package store
 
 import (
+  "encoding/json"
+  "errors"
   "path"
   "sort"
   "strings"
-  "errors"
-  "encoding/json"
 )
 
 /**
  * UserStore.
  */
 type UserStore struct {
-  Path       string
-  Version    string
+  Path    string
+  Version string
 }
 
 /**
@@ -113,7 +113,7 @@ func (userStore *UserStore) GetPosts() (*PostCollection, error) {
   for _, user := range users.Users {
     userPosts, err := user.GetPosts()
     if err != nil {
-      continue;
+      continue
     }
 
     collection = append(collection, userPosts.Posts...)
@@ -142,7 +142,7 @@ func (userStore *UserStore) SetMyUser(user *User) error {
  * the current user.
  */
 func (userStore *UserStore) getMyUserSubDir() (string, error) {
- rawId, err := ReadFile(userStore.Path, "my_user")
+  rawId, err := ReadFile(userStore.Path, "my_user")
   if err != nil {
     return "", err
   }
