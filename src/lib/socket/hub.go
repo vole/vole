@@ -1,7 +1,6 @@
 package socket
 
 import (
-  "fmt"
   "code.google.com/p/go.net/websocket"
 )
 
@@ -38,7 +37,6 @@ func NewHub() *Hub {
  */
 func (hub *Hub) Handler() websocket.Handler {
   return websocket.Handler(func(ws *websocket.Conn) {
-    fmt.Println("hello socket!")
     c := &Connection{
       send: make(chan string, 256),
       ws: ws,
