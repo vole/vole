@@ -29,7 +29,8 @@
     created: DS.attr('number'),
     userId: DS.attr('string'),
     userName: DS.attr('string'),
-    userAvatar: DS.attr('string')
+    userAvatar: DS.attr('string'),
+    isMyPost: DS.attr('boolean')
   });
 
   App.User = DS.Model.extend({
@@ -132,7 +133,15 @@
         }
       }
       return this.get('arrangedContent');
-    }.property('content.[]', 'filterByUser.[]')
+    }.property('content.[]', 'filterByUser.[]'),
+
+    deletePost: function(id) {
+      if (confirm('Are you sure you want to delete this post?')) {
+        var post = App.Post.find(id);
+        post.deleteRecord();
+        post.get('transaction').commit();
+      }
+    }
   });
 
   //-------------------------
@@ -205,7 +214,7 @@
       escaped = escaped.replace(matches[0], outer.append(link).html());
     }
 
-    return new Handlebars.SafeString(escaped);
+    return new Handlebars.SafeString(escaped.replace(/\n/g, '<br />'));
   });
 
   $('.time').moment({ frequency: 5000 });
