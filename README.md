@@ -24,7 +24,7 @@ Sharing and following
 
 Start by installing [Bittorrent Sync](http://labs.bittorrent.com/experiments/sync.html).
 
-Following and sharing currently involves manually setting up folders, however we'd like to automate it as soon as Bittorrent Sync releases a build that supports command-line control.
+Following and sharing currently involves manually setting up folders, however we'd like to automate it as soon as Bittorrent Sync releases a build that supports control via an API.
 
 Following others
 ----------------
