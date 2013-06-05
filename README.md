@@ -10,7 +10,7 @@ Getting started
 
 Currently we are pre-release. The following steps are for interested developers.
 
-* [Download Vole](https://www.dropbox.com/sh/cd943dyjjavzxk7/uqm3wh37fS) for Mac OSX, Windows or Linux.
+* [Download Vole](https://www.dropbox.com/sh/cd943dyjjavzxk7/uqm3wh37fS) for Mac OSX, Windows or Linux. The current version is 0.1.0.
 * Or, you can compile it yourself. See [CONTRIBUTING](https://github.com/vole/vole/blob/master/CONTRIBUTING.md).
 * Run the Vole application from the command line. First, `cd` into the directory that you placed Vole. Then, on Mac/Linux type `./vole`, and on Windows type `vole.exe`.
 * Open a web browser and go to [http://localhost:6789](http://localhost:6789).
