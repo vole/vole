@@ -6,10 +6,6 @@ module.exports = function(grunt) {
       dist: {
         files: [
           {
-            src: ['static/**'],
-            dest: 'dist/'
-          },
-          {
             src: ['bin/vole'],
             dest: 'dist/vole'
           },
@@ -18,8 +14,14 @@ module.exports = function(grunt) {
             dest: 'dist/vole.exe'
           },
           {
-            src: ['config.sample.json'],
-            dest: 'dist/config.sample.json'
+            src: [
+              'static/**',
+              'README.md',
+              'CONTRIBUTING.md',
+              'LICENSE',
+              'config.sample.json'
+            ],
+            dest: 'dist/'
           }
         ]
       }
