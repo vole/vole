@@ -8,9 +8,11 @@ A complete introduction is available on [vole.cc](http://vole.cc).
 Getting started
 ---------------
 
-Currently we are pre-release, so there are no builds available. The following steps are for interested developers.
+Currently we are pre-release. The following steps are for interested developers.
 
-* Compile and run the Go backend. See [contributing](https://github.com/vole/vole/blob/master/CONTRIBUTING.md).
+* [Download Vole](https://www.dropbox.com/sh/cd943dyjjavzxk7/uqm3wh37fS) for Mac OSX, Windows and Linux.
+* Or, you can compile it yourself. See [contributing](https://github.com/vole/vole/blob/master/CONTRIBUTING.md).
+* Run the vole executable. On Mac/Linux run `./vole`, and on Windows run `vole.exe`.
 * Open a web browser and go to [http://localhost:6789](http://localhost:6789).
 * Click 'My Profile'
 * Enter your name. Enter your Gravatar email (optional).
@@ -28,8 +30,8 @@ Following others
 ----------------
 
 * Grab the read-only ID of the person you want to follow. A directory is in progress at [vole.cc](http://vole.cc). Why not start with Vole Team updates? Our key is RA32XLBBHXMWMECGJAJSJMMPQ3Z2ZGR7K.
-* Find the Vole `users` folder. Unless you changed the defaults, it will be in `~/Vole/users`.
-* Create a new folder in `~/Vole/users`, you can name it whatever you like.
+* Find the Vole `users` folder. Unless you changed the defaults, it will be in a directory called `Vole/users` in your home folder.
+* Create a new folder in `Vole/users`, you can name it whatever you like.
 * In BitTorrent Sync, add this new folder as a shared folder. [Instructions](http://labs.bittorrent.com/experiments/sync/get-started.html) are available on their site.
 * You should receive notification that the folder has sync'd.
 * In your browser, see the new posts appear.
