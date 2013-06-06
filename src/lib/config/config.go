@@ -5,6 +5,8 @@ import (
   "errors"
   "fmt"
   "io/ioutil"
+  osuser "os/user"
+  "strings"
 )
 
 type Config struct {
@@ -13,26 +15,46 @@ type Config struct {
   } `json:"install"`
 
   UI struct {
-    Reverse bool `json:"reverse"`
+    Reverse bool   `json:"reverse"`
+    Theme   string `json:"theme"`
   } `json:"ui"`
 }
 
-func Load() (*Config, error) {
-  config := Config{}
+func Load() *Config {
+  config := &Config{}
 
   var file []byte
   file, err := ioutil.ReadFile("config.json")
   if err != nil {
-    file, err = ioutil.ReadFile("config.sample.json")
+    fmt.Println("Can't find config.json, reading default config.")
+    file, err = ioutil.ReadFile("config.default.json")
+
     if err != nil {
-      fmt.Println("Can't find config.json, reading default config.")
+      panic(errors.New("Unable to find config.json"))
     }
   }
 
-  err = json.Unmarshal(file, &config)
+  err = json.Unmarshal(file, config)
   if err != nil {
-    return nil, errors.New("Unable to parse config.json.")
+    panic(errors.New("Unable to parse config.json."))
   }
 
-  return &config, nil
+  return config
+}
+
+func (config *Config) InstallDir() string {
+  conf := Load()
+
+  user, err := osuser.Current()
+  if err != nil {
+    return conf.Install.Dir
+  }
+
+  dir := strings.Replace(conf.Install.Dir, "{HOME}", user.HomeDir, 1)
+
+  if strings.HasPrefix(dir, "~") {
+    dir = strings.Replace(conf.Install.Dir, "~", user.HomeDir, 1)
+  }
+
+  return dir
 }

@@ -1,45 +1,33 @@
 package main
 
 import (
-  //"fmt"
   "encoding/json"
   "flag"
+  "fmt"
   "github.com/vole/web"
   "io/ioutil"
   "lib/config"
   "lib/store"
-  osuser "os/user"
-  "path"
 )
+
+var conf = config.Load()
 
 var port = flag.String("port", "6789", "Port on which to run the web server.")
 
-var DIR = func() string {
-  dir := "."
-  user, err := osuser.Current()
-  if err == nil {
-    dir = user.HomeDir
-  }
-  return path.Join(dir, "Vole")
-}()
-
 var userStore = &store.UserStore{
-  Path:    DIR,
+  Path:    conf.InstallDir(),
   Version: "v1",
 }
 
 func main() {
   flag.Parse()
 
-  config, err := config.Load()
-  if err != nil {
-    panic(err)
-  }
+  fmt.Printf("%s\n", conf.InstallDir())
 
   web.Get("/api/config", func(ctx *web.Context) string {
     ctx.ContentType("json")
 
-    configJson, err := json.Marshal(config)
+    configJson, err := json.Marshal(conf)
     if err != nil {
       ctx.Abort(500, "Error marshalling config.")
     }
@@ -74,6 +62,7 @@ func main() {
     _, isMyUserFilter := ctx.Params["is_my_user"]
 
     var users *store.UserCollection
+    var err error
 
     if isMyUserFilter {
       myUser, _ := userStore.GetMyUser()

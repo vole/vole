@@ -149,6 +149,7 @@
   App.Router.map(function() {
     this.resource('index', {path: '/'});
     this.resource('profile', {path: '/profile'});
+    this.resource('settings', {path: '/settings'});
   });
 
   App.ApplicationRoute = Ember.Route.extend({
@@ -177,6 +178,8 @@
       postsController.set('filterByUser', usersController.get('myUser'));
     }
   });
+
+  App.SettingsRoute = Ember.Route.extend({});
 
   //-------------------------
   // Handlebars

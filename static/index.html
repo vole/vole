@@ -37,6 +37,9 @@
             {{#linkTo "profile" tagName="li"}}
               <a href="#">My profile</a>
             {{/linkTo}}
+            {{#linkTo "settings" tagName="li"}}
+              <a href="#">Settings</a>
+            {{/linkTo}}
           </ul>
         </div>
         <div class="span7">
@@ -165,6 +168,30 @@
           <div class="bar" style="width: 100%;"></div>
         </div>
       {{/if}}
+    </div>
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="settings">
+    <div id="settings">
+      <form class="form-horizontal">
+        <div class="control-group">
+          <label class="control-label">Name:</label>
+          <div class="controls">
+            {{view Ember.TextField valueBinding="newName"}}
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Email (for Gravatar):</label>
+          <div class="controls">
+            {{view Ember.TextField valueBinding="newEmail"}}
+          </div>
+        </div>
+        <div class="control-group">
+          <div class="controls">
+            <button {{action "createNew"}} class="btn" {{bindAttr disabled="createButtonDisabled"}}>Create</button>
+          </div>
+        </div>
+      </form>
     </div>
   </script>
 

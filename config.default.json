@@ -1,0 +1,9 @@
+{
+  "install" : {
+    "dir": "{HOME}/Vole"
+  },
+  "ui" : {
+    "reverse" : false,
+    "theme" : "default"
+  }
+}
