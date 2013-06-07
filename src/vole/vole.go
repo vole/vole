@@ -28,6 +28,18 @@ var userStore = &store.UserStore{
   Version: "v1",
 }
 
+var serveIndex = func(ctx *web.Context) string {
+  ctx.SetHeader("Content-Security-Policy", "script-src 'self' 'unsafe-eval'", true)
+  ctx.SetHeader("Content-Type", "text/html", true)
+
+  index, err := ioutil.ReadFile("static/index.html")
+  if err != nil {
+    panic(err)
+  }
+
+  return string(index)
+}
+
 func main() {
   flag.Parse()
 
@@ -170,6 +182,9 @@ func main() {
 
     return "OK"
   })
+
+  web.Get("/", serveIndex)
+  web.Get("/index.html", serveIndex)
 
   web.Run("0.0.0.0:" + *port)
 }
