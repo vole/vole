@@ -29,7 +29,7 @@ Following and sharing currently involves manually setting up folders, however we
 Following others
 ----------------
 
-* Grab the read-only ID of the person you want to follow. A directory is in progress at [vole.cc](http://vole.cc). Why not start with Vole Team updates? Our key is RA32XLBBHXMWMECGJAJSJMMPQ3Z2ZGR7K.
+* Grab the **read-only** ID of the person you want to follow. A directory is in progress at [vole.cc](http://vole.cc). Why not start with Vole Team updates? Our key is RA32XLBBHXMWMECGJAJSJMMPQ3Z2ZGR7K.
 * Find the Vole `users` folder. Unless you changed the defaults, it will be in a directory called `Vole/users` in your home folder.
 * Create a new folder in `Vole/users`, you can name it whatever you like.
 * In BitTorrent Sync, add this new folder as a shared folder. [Instructions](http://labs.bittorrent.com/experiments/sync/get-started.html) are available on their site.
@@ -44,7 +44,7 @@ Find your own user folder, for example, if you created a profile named 'Chuck':
     /home/chuck/Vole/users/Chuck_9674e8e8-7c7a-41e6-52ed-51a3f7969812
 
 * In Bittorrent Sync, add this folder as a shared folder.
-* In the folder options, grab the read-only key. This is the key that you can share to others so they can follow your posts.
+* In the folder options, grab the **read-only key**. Make sure the key starts with the letter 'R' that signifies it's the read-only one. You can find it by going to the advanced folder preferences. This is the key that you can share to others so they can follow your posts.
 
 Profile site
 ------------
