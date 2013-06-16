@@ -1,3 +1,10 @@
+General
+-------
+
+We welcome contributions. For new features or changes to the API, please write up your proposal and make a Github issue *before* coding it. There will always be discussion around implementation and we want to make sure your time isn't wasted. 
+
+For obvious bugs, just send a pull request.
+
 Building
 --------
 
