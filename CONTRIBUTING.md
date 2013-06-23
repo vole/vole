@@ -1,7 +1,7 @@
 General
 -------
 
-We welcome contributions. For new features or changes to the API, please write up your proposal and make a Github issue *before* coding it. There will always be discussion around implementation and we want to make sure your time isn't wasted. 
+We welcome contributions. For new features or changes to the API, please write up your proposal and make a Github issue *before* coding it. There will always be discussion around implementation and we want to make sure your time isn't wasted. You can also search the [mailing list](https://groups.google.com/forum/#!forum/vole-dev).
 
 For obvious bugs, just send a pull request.
 
