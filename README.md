@@ -33,7 +33,7 @@ Following others
 * Find the Vole `users` folder. Unless you changed the defaults, it will be in a directory called `Vole/users` in your home folder.
 * Create a new folder in `Vole/users`, you should name it after the user that you're about to follow. For example, `Vole/users/voleteam`.
 * In BitTorrent Sync, add this new folder as a shared folder, using the read-only key you grabbed in step 1. [Instructions](http://labs.bittorrent.com/experiments/sync/get-started.html) are available on their site and vary a little by operating system.
-* ![OSX Screenshot](https://f.cloud.github.com/assets/453297/692312/c113737a-dc18-11e2-84e4-dee7e0507c08.png)
+![OSX Screenshot](https://f.cloud.github.com/assets/453297/692312/c113737a-dc18-11e2-84e4-dee7e0507c08.png)
 * You should receive notification that the folder has sync'd.
 * In your browser, see the new posts appear.
 
