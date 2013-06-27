@@ -25,8 +25,8 @@
   min-height: 800px;
 }
 
-img {
-  max-width: none;
+.post img {
+  max-width: 800px;
 }
 
 #my-username-title {
