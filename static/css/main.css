@@ -25,6 +25,10 @@
   min-height: 800px;
 }
 
+img {
+  max-width: none;
+}
+
 #my-username-title {
   color: #888888;
 }
