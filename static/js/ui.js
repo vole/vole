@@ -3,7 +3,7 @@
  */
 (function($){
   // Expand images to full-size clicked
-  $('.post img').click(function(e){
+  $(document).on('click', '.post .span6 img', function(e) {
     e.preventDefault();
     $(this).toggleClass('full');
   });

@@ -25,7 +25,7 @@
   min-height: 800px;
 }
 
-.post img {
+.post .span6 img {
   -webkit-transition: .3s all ease-in-out;
      -moz-transition: .3s all ease-in-out;
       -ms-transition: .3s all ease-in-out;
@@ -33,7 +33,7 @@
           transition: .3s all ease-in-out;
 }
 
-.post img.full {
+.post .span6 img.full {
   max-width: 800px;
 }
 
