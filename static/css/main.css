@@ -26,6 +26,14 @@
 }
 
 .post img {
+  -webkit-transition: .3s all ease-in-out;
+     -moz-transition: .3s all ease-in-out;
+      -ms-transition: .3s all ease-in-out;
+       -o-transition: .3s all ease-in-out;
+          transition: .3s all ease-in-out;
+}
+
+.post img.full {
   max-width: 800px;
 }
 
