@@ -3,6 +3,7 @@
     "dir": "~/Vole"
   },
   "ui" : {
-    "reverse" : false
+    "reverse" : false,
+    "page_size" : 5
   }
 }

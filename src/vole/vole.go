@@ -1,7 +1,6 @@
 package main
 
 import (
-  //"fmt"
   "encoding/json"
   "flag"
   "github.com/vole/web"
@@ -62,8 +61,18 @@ func main() {
   web.Get("/api/posts", func(ctx *web.Context) string {
     ctx.ContentType("json")
 
+    limit := config.UI.PageSize
+    watermark, _ := ctx.Params["watermark"]
+
     var allPosts *store.PostCollection
-    allPosts, err := userStore.GetPosts()
+    var err error
+
+    if watermark != "" {
+      allPosts, err = userStore.GetPostsFromWatermark(watermark, limit)
+    } else {
+      allPosts, err = userStore.GetPosts(limit)
+    }
+
     if err != nil || len(allPosts.Posts) < 1 {
       // Return a welcome post.
       post := &store.Post{}

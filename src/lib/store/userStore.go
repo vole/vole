@@ -3,6 +3,7 @@ package store
 import (
   "encoding/json"
   "errors"
+  //"fmt"
   "path"
   "sort"
   "strings"
@@ -103,7 +104,7 @@ func (userStore *UserStore) GetUsers() (*UserCollection, error) {
  *
  * Get all posts from all users.
  */
-func (userStore *UserStore) GetPosts() (*PostCollection, error) {
+func (userStore *UserStore) GetPosts(limit int) (*PostCollection, error) {
   users, err := userStore.GetUsers()
   if err != nil {
     return nil, err
@@ -118,9 +119,42 @@ func (userStore *UserStore) GetPosts() (*PostCollection, error) {
 
     collection = append(collection, userPosts.Posts...)
   }
+
   postCol := &PostCollection{collection}
   sort.Sort(postCol)
+
+  if limit >= len(postCol.Posts) {
+    limit = len(postCol.Posts)
+  }
+
+  postCol.Posts = postCol.Posts[0:limit]
+
   return postCol, nil
+}
+
+func (userStore *UserStore) GetPostsFromWatermark(watermark string, limit int) (*PostCollection, error) {
+  posts, err := userStore.GetPosts(0)
+  if err != nil {
+    return nil, err
+  }
+
+  i := sort.Search(len(posts.Posts), func(i int) bool {
+    return posts.Posts[i].Id == watermark
+  })
+
+  if i == len(posts.Posts) {
+    return nil, errors.New("Watermark not present.")
+  }
+
+  start := i + 1
+  end := start + limit
+
+  if end >= len(posts.Posts) {
+    end = len(posts.Posts) - 1
+  }
+
+  posts.Posts = posts.Posts[start:end]
+  return posts, nil
 }
 
 /**

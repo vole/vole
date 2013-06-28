@@ -140,6 +140,10 @@
         post.deleteRecord();
         post.get('transaction').commit();
       }
+    },
+
+    loadMore: function() {
+      var posts = App.Post.find({watermark : 'wat'});
     }
   });
 

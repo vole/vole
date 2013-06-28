@@ -13,7 +13,8 @@ type Config struct {
   } `json:"install"`
 
   UI struct {
-    Reverse bool `json:"reverse"`
+    Reverse  bool `json:"reverse"`
+    PageSize int  `json:"page_size"`
   } `json:"ui"`
 }
 
