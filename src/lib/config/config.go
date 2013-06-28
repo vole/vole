@@ -15,6 +15,10 @@ type Config struct {
   UI struct {
     Reverse bool `json:"reverse"`
   } `json:"ui"`
+
+  Server struct {
+    Listen string `json:"listen"`
+  } `json:"server"`
 }
 
 func Load() (*Config, error) {
