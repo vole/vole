@@ -41,6 +41,19 @@
   color: #888888;
 }
 
+body #backend-health {
+  color: green;
+}
+body #backend-health:after {
+  content: "on";
+}
+body.backend-off #backend-health {
+   color: red;
+}
+body.backend-off #backend-health:after {
+  content: "off";
+}
+
 .post {
   border-top: 1px #f2f2f2 solid;
   padding: 10px 0 10px 0;

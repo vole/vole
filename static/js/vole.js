@@ -214,6 +214,15 @@
     return new Handlebars.SafeString(escaped.replace(/\n/g, '<br />'));
   });
 
+  //-------------------------
+  // Display backend health
+  //-------------------------
+  $(document).ajaxError(function() {
+    $( "body" ).addClass( "backend-off" );
+  }).ajaxSuccess(function() {
+    $( "body" ).removeClass( "backend-off" );
+  });
+
   $('.time').moment({ frequency: 5000 });
 
 })(jQuery, Ember);
