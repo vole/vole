@@ -17,7 +17,7 @@ type Config struct {
   } `json:"ui"`
 
   Server struct {
-    Host string `json:"host"`
+    Listen string `json:"listen"`
   } `json:"server"`
 }
 

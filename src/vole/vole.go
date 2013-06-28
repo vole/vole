@@ -186,5 +186,5 @@ func main() {
   web.Get("/", serveIndex)
   web.Get("/index.html", serveIndex)
 
-  web.Run(config.Server.Host + ":" + *port)
+  web.Run(config.Server.Listen + ":" + *port)
 }
