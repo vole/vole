@@ -3,7 +3,6 @@ package store
 import (
   "encoding/json"
   "errors"
-  //"fmt"
   "path"
   "sort"
   "strings"
@@ -127,23 +126,23 @@ func (userStore *UserStore) GetPosts(limit int) (*PostCollection, error) {
     limit = len(postCol.Posts)
   }
 
-  postCol.Posts = postCol.Posts[0:limit]
+  if limit > 0 {
+    postCol.Posts = postCol.Posts[0:limit]
+  }
 
   return postCol, nil
 }
 
-func (userStore *UserStore) GetPostsFromWatermark(watermark string, limit int) (*PostCollection, error) {
+func (userStore *UserStore) GetPostsBeforeId(id string, limit int) (*PostCollection, error) {
   posts, err := userStore.GetPosts(0)
   if err != nil {
     return nil, err
   }
 
-  i := sort.Search(len(posts.Posts), func(i int) bool {
-    return posts.Posts[i].Id == watermark
-  })
+  i := posts.Find(id)
 
-  if i == len(posts.Posts) {
-    return nil, errors.New("Watermark not present.")
+  if i == -1 {
+    return nil, errors.New("Id not present.")
   }
 
   start := i + 1
@@ -151,6 +150,28 @@ func (userStore *UserStore) GetPostsFromWatermark(watermark string, limit int) (
 
   if end >= len(posts.Posts) {
     end = len(posts.Posts) - 1
+  }
+
+  posts.Posts = posts.Posts[start:end]
+  return posts, nil
+}
+
+func (userStore *UserStore) GetPostsAfterId(id string, limit int) (*PostCollection, error) {
+  posts, err := userStore.GetPosts(0)
+  if err != nil {
+    return nil, err
+  }
+
+  i := posts.Find(id)
+  if i == -1 {
+    return nil, errors.New("Id not present.")
+  }
+
+  end := i - 1
+  start := end - limit
+
+  if start < 0 {
+    start = 0
   }
 
   posts.Posts = posts.Posts[start:end]

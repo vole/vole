@@ -142,8 +142,9 @@
       }
     },
 
-    loadMore: function() {
-      var posts = App.Post.find({watermark : 'wat'});
+    loadMore: function(id) {
+      // TODO: Get actual UUID.
+      var posts = App.Post.find({before : id});
     }
   });
 
@@ -160,7 +161,8 @@
       controller.set('controllers.posts.content', App.Post.find());
       controller.set('controllers.users.myUser', App.User.find({'is_my_user': true}));
       var refreshUI = function() {
-        App.Post.find();
+        // TODO: Get actual UUID.
+        App.Post.find({after : 'SOME UUID'});
         setTimeout(refreshUI, 1000);
       };
       setTimeout(refreshUI, 5000);

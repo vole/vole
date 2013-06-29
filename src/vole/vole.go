@@ -62,13 +62,16 @@ func main() {
     ctx.ContentType("json")
 
     limit := config.UI.PageSize
-    watermark, _ := ctx.Params["watermark"]
+    before, _ := ctx.Params["before"]
+    after, _ := ctx.Params["after"]
 
     var allPosts *store.PostCollection
     var err error
 
-    if watermark != "" {
-      allPosts, err = userStore.GetPostsFromWatermark(watermark, limit)
+    if before != "" {
+      allPosts, err = userStore.GetPostsBeforeId(before, limit)
+    } else if after != "" {
+      allPosts, err = userStore.GetPostsAfterId(after, limit)
     } else {
       allPosts, err = userStore.GetPosts(limit)
     }
