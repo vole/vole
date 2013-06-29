@@ -1,4 +1,12 @@
-(function ($, Ember) {
+
+define([
+  'ember',
+  'ember-data',
+  'plugins/moment',
+  'plugins/resize'
+],
+function (Ember, DS) {
+
   var cl = console.log.bind(console);
 
   var App = Ember.Application.create({
@@ -220,4 +228,4 @@
 
   $('.time').moment({ frequency: 5000 });
 
-})(jQuery, Ember);
+});
