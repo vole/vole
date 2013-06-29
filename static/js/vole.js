@@ -193,22 +193,26 @@
     var matches = escaped.match(rUrl);
 
     if (matches) {
-      var outer = $('<div />');
-      var link = $('<a />', {
-        href : matches[0],
-        target : '_blank'
-      });
+      for (var x = 0, len = matches.length; x < len; x++) {
+        var match = matches[x];
 
-      if (/\.(jpg|gif|png)$/.test(matches[0])) {
-        var image = $('<img />', { src : matches[0] });
-        image.addClass('img-rounded');
-        link.html(image);
-      }
-      else {
-        link.text(matches[0]);
-      }
+        var outer = $('<div />');
+        var link = $('<a />', {
+          href : match,
+          target : '_blank'
+        });
 
-      escaped = escaped.replace(matches[0], outer.append(link).html());
+        if (/\.(jpg|gif|png)$/.test(match)) {
+          var image = $('<img />', { src : match });
+          image.addClass('img-rounded');
+          link.html(image);
+        }
+        else {
+          link.text(match);
+        }
+
+        escaped = escaped.replace(match, outer.append(link).html());
+      }
     }
 
     return new Handlebars.SafeString(escaped.replace(/\n/g, '<br />'));
