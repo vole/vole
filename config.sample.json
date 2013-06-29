@@ -4,7 +4,7 @@
   },
   "ui" : {
     "reverse": false,
-    "pollInterval": 3000
+    "pollInterval": 5000
   },
   "server" : {
     "listen": "127.0.0.1:6789",
