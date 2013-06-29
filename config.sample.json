@@ -3,8 +3,8 @@
     "dir": "~/Vole"
   },
   "ui" : {
-    "reverse" : false,
-    "pollInterval": 3000
+    "reverse": false,
+    "pollInterval": 5000
   },
   "server" : {
     "listen": "127.0.0.1:6789",
