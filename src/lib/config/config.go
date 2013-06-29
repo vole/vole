@@ -24,10 +24,13 @@ type Config struct {
 
 func Load() (*Config, error) {
   // Create configuration object and set default values.
+  // Make sure any changes here are reflected in config.sample.json,
+  // so that users who copy the file to modify defaults don't have old
+  // values.
   config := Config{}
   config.Install.Dir = "~/Vole"
   config.UI.Reverse = false
-  config.UI.PollInterval = 3000
+  config.UI.PollInterval = 5000
   config.Server.Listen = "127.0.0.1:6789"
   config.Server.Debug = false
 
