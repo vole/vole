@@ -5,7 +5,7 @@
   "ui" : {
     "reverse": false,
     "pollInterval": 5000,
-    "pageSize" : 5
+    "pageSize" : 50
   },
   "server" : {
     "listen": "127.0.0.1:6789",

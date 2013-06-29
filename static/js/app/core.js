@@ -173,9 +173,8 @@ function (Config, Ember, DS, applicationTemplate, indexTemplate, postsTemplate, 
       }
     },
 
-    loadMore: function(id) {
-      // TODO: Get actual UUID.
-      var posts = App.Post.find({before : id});
+    loadMore: function() {
+      App.Post.find({before : this.get('filteredPosts.lastObject.id')});
     }
   });
 
@@ -192,8 +191,6 @@ function (Config, Ember, DS, applicationTemplate, indexTemplate, postsTemplate, 
       controller.set('controllers.posts.content', App.Post.find());
       controller.set('controllers.users.myUser', App.User.find({'is_my_user': true}));
       var refreshUI = function() {
-        // TODO: Get actual UUID.
-        App.Post.find({after : 'SOME UUID'});
         App.Post.find();
         setTimeout(refreshUI, Config.ui.pollInterval);
       };

@@ -34,6 +34,7 @@ func Load() (*Config, error) {
   config.UI.PollInterval = 5000
   config.Server.Listen = "127.0.0.1:6789"
   config.Server.Debug = false
+  config.UI.PageSize = 50
 
   // Now read config.json for any overrides of the defaults.
   var file []byte
