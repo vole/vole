@@ -64,6 +64,15 @@ function (Config, Ember, DS, applicationTemplate, indexTemplate, postsTemplate, 
     templateName: 'posts'
   });
 
+  App.IndexView = Ember.View.extend({
+    keyPress: function(event) {
+      // Ctrl + Enter
+      if (event.ctrlKey && event.which === 13) {
+        this.get('controller').send('createNewPost');
+      }
+    }
+  });
+
   //-------------------------
   // Controllers
   //-------------------------
