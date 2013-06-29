@@ -1,0 +1,38 @@
+{{#if myUser.isLoaded}}
+  {{#if myUser.length}}
+    <div id="above-posts" class="well clearfix">
+      <div class="pull-left">
+        <h3>
+          {{myUser.firstObject.name}}
+        </h3>
+      </div>
+    </div>
+    {{view "App.PostsView" controllerBinding="controllers.posts"}}
+  {{else}}
+    <h3>Profile not found</h3>
+    <p>Vole could not find your user profile. Would you like to create a new one?</p>
+    <form class="form-horizontal">
+      <div class="control-group">
+        <label class="control-label">Name:</label>
+        <div class="controls">
+          {{view Ember.TextField valueBinding="newName"}}
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Email (for Gravatar):</label>
+        <div class="controls">
+          {{view Ember.TextField valueBinding="newEmail"}}
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+          <button {{action "createNew"}} class="btn" {{bindAttr disabled="createButtonDisabled"}}>Create</button>
+        </div>
+      </div>
+    </form>
+  {{/if}}
+{{else}}
+  <div class="progress progress-striped active">
+    <div class="bar" style="width: 100%;"></div>
+  </div>
+{{/if}}
