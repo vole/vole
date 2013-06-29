@@ -171,6 +171,10 @@ function (Config, Ember, DS, applicationTemplate, indexTemplate, postsTemplate, 
         post.deleteRecord();
         post.get('transaction').commit();
       }
+    },
+
+    loadMore: function() {
+      App.Post.find({before : this.get('filteredPosts.lastObject.id')});
     }
   });
 
