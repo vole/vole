@@ -133,6 +133,11 @@ func (userStore *UserStore) GetPosts(limit int) (*PostCollection, error) {
   return postCol, nil
 }
 
+/**
+ * GetPostsBeforeId(id, limit)
+ *
+ * Get posts occurring before the specified `id`, limited by `limit`.
+ */
 func (userStore *UserStore) GetPostsBeforeId(id string, limit int) (*PostCollection, error) {
   posts, err := userStore.GetPosts(0)
   if err != nil {
@@ -156,6 +161,11 @@ func (userStore *UserStore) GetPostsBeforeId(id string, limit int) (*PostCollect
   return posts, nil
 }
 
+/**
+ * GetPostsAfterId(id, limit)
+ *
+ * Get posts occurring after the specified `id`, limited by `limit`.
+ */
 func (userStore *UserStore) GetPostsAfterId(id string, limit int) (*PostCollection, error) {
   posts, err := userStore.GetPosts(0)
   if err != nil {
