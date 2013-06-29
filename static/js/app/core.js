@@ -27,23 +27,6 @@ function (Config, Ember, DS, applicationTemplate, indexTemplate, postsTemplate, 
   window.App = App;
 
   //-------------------------
-  // Vole config
-  //-------------------------
-  App.voleConfig = {};
-  var req = $.ajax({
-    url: "/api/config"
-  }).done(function(data, textStatus, jqXHR) {
-    if (jqXHR.status === 200) {
-      App.voleConfig = data;
-    }
-    else {
-      throw new Error('Unable to fetch config information.');
-    }
-  }).fail(function(jqXHR, textStatus) {
-    throw new Error("Request for config failed: " + textStatus);
-  });
-
-  //-------------------------
   // Store
   //-------------------------
   App.Store = DS.Store.extend({
