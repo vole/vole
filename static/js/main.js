@@ -14,6 +14,9 @@ requirejs.config({
     'ember-data' : {
       deps : ['ember'],
       exports : 'DS'
+    },
+    'handlebars' : {
+      exports : 'Handlebars'
     }
   }
 });
