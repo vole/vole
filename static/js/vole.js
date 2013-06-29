@@ -202,7 +202,7 @@
           target : '_blank'
         });
 
-        if (/\.(jpg|gif|png)$/.test(match)) {
+        if (/\.(jpg|jpeg|gif|png|bmp|ico)$/.test(match)) {
           var image = $('<img />', { src : match });
           image.addClass('img-rounded');
           link.html(image);
