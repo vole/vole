@@ -1,4 +1,22 @@
-(function ($, Ember) {
+
+define([
+  'app/config',
+  'ember',
+  'ember-data',
+  'plugins/text!app/templates/application.hbs',
+  'plugins/text!app/templates/index.hbs',
+  'plugins/text!app/templates/posts.hbs',
+  'plugins/text!app/templates/profile.hbs',
+  'plugins/moment',
+  'plugins/resize'
+],
+function (Config, Ember, DS, applicationTemplate, indexTemplate, postsTemplate, profileTemplate) {
+
+  Ember.TEMPLATES['application'] = Ember.Handlebars.compile(applicationTemplate);
+  Ember.TEMPLATES['index'] = Ember.Handlebars.compile(indexTemplate);
+  Ember.TEMPLATES['profile'] = Ember.Handlebars.compile(profileTemplate);
+  Ember.TEMPLATES['posts'] = Ember.Handlebars.compile(postsTemplate);
+
   var cl = console.log.bind(console);
 
   var App = Ember.Application.create({
@@ -44,6 +62,19 @@
   //-------------------------
   App.PostsView = Ember.View.extend({
     templateName: 'posts'
+  });
+
+  App.IndexView = Ember.View.extend({
+    keyPress: function(event) {
+      if (this.get('controller').get('postButtonDisabled')) {
+        return;
+      }
+
+      // Ctrl + Enter.
+      if (event.ctrlKey && event.which === 13) {
+        this.get('controller').send('createNewPost');
+      }
+    }
   });
 
   //-------------------------
@@ -163,7 +194,8 @@
       var refreshUI = function() {
         // TODO: Get actual UUID.
         App.Post.find({after : 'SOME UUID'});
-        setTimeout(refreshUI, 1000);
+        App.Post.find();
+        setTimeout(refreshUI, Config.ui.pollInterval);
       };
       setTimeout(refreshUI, 5000);
     }
@@ -199,22 +231,26 @@
     var matches = escaped.match(rUrl);
 
     if (matches) {
-      var outer = $('<div />');
-      var link = $('<a />', {
-        href : matches[0],
-        target : '_blank'
-      });
+      for (var x = 0, len = matches.length; x < len; x++) {
+        var match = matches[x];
 
-      if (/\.(jpg|gif|png)$/.test(matches[0])) {
-        var image = $('<img />', { src : matches[0] });
-        image.addClass('img-rounded');
-        link.html(image);
-      }
-      else {
-        link.text(matches[0]);
-      }
+        var outer = $('<div />');
+        var link = $('<a />', {
+          href : match,
+          target : '_blank'
+        });
 
-      escaped = escaped.replace(matches[0], outer.append(link).html());
+        if (/\.(jpg|jpeg|gif|png|bmp|ico)$/.test(match)) {
+          var image = $('<img />', { src : match });
+          image.addClass('img-rounded');
+          link.html(image);
+        }
+        else {
+          link.text(match);
+        }
+
+        escaped = escaped.replace(match, outer.append(link).html());
+      }
     }
 
     return new Handlebars.SafeString(escaped.replace(/\n/g, '<br />'));
@@ -222,4 +258,4 @@
 
   $('.time').moment({ frequency: 5000 });
 
-})(jQuery, Ember);
+});

@@ -2,7 +2,7 @@ package main
 
 import (
   "encoding/json"
-  "flag"
+  "fmt"
   "github.com/vole/web"
   "io/ioutil"
   "lib/config"
@@ -10,8 +10,6 @@ import (
   osuser "os/user"
   "path"
 )
-
-var port = flag.String("port", "6789", "Port on which to run the web server.")
 
 var DIR = func() string {
   dir := "."
@@ -40,14 +38,15 @@ var serveIndex = func(ctx *web.Context) string {
 }
 
 func main() {
-  flag.Parse()
+  // Use the fmt package by default so that we don't have to keep commenting it.
+  fmt.Println("vole startup")
 
   config, err := config.Load()
   if err != nil {
     panic(err)
   }
 
-  web.Get("/api/config", func(ctx *web.Context) string {
+  web.Get("/js/app/config.js", func(ctx *web.Context) string {
     ctx.ContentType("json")
 
     configJson, err := json.Marshal(config)
@@ -55,7 +54,7 @@ func main() {
       ctx.Abort(500, "Error marshalling config.")
     }
 
-    return string(configJson)
+    return "define(function () { return " + string(configJson) + "; });"
   })
 
   web.Get("/api/posts", func(ctx *web.Context) string {
@@ -198,5 +197,5 @@ func main() {
   web.Get("/", serveIndex)
   web.Get("/index.html", serveIndex)
 
-  web.Run("0.0.0.0:" + *port)
+  web.Run(config.Server.Listen)
 }

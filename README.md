@@ -51,10 +51,10 @@ Find your own user folder, for example, if you created a profile named 'Chuck':
 * In the folder options, grab the **read-only key**. Make sure the key starts with the letter 'R' that signifies it's the read-only one. You can find it by going to the advanced folder preferences. This is the key that you can share with others so they can follow your posts.
 * If you want to list your key on vole.cc, make a pull request on the [website repo](https://github.com/vole/vole.github.io). Here is an [example](https://github.com/vole/vole.github.io/pull/9).
 
-Profile site
-------------
+Configuration
+-------------
 
-We plan on allowing people to claim their names on vole.cc and store their keys along with their profile, making it much easier to find people who are posting publicly.
+To override the default configuration options, make a copy of `config.sample.json` and name it `config.json`.
 
 Versions
 --------

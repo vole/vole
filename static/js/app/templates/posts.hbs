@@ -1,0 +1,47 @@
+<div id="posts-list">
+  {{#if length}}
+    {{#if filteredPosts}}
+      <div id="posts-loaded">
+        {{#each filteredPosts}}
+          <div class="post row">
+            <div class="span1">
+              <img class="avatar-img img-rounded" src="{{unbound userAvatar}}" />
+              <ul class="post-actions">
+                {{#if isMyPost}}
+                  <li>
+                    <a class="post-action" {{action "deletePost" id}} href="#">
+                      <i class="icon-trash"></i>
+                    </a>
+                  </li>
+                {{/if}}
+              </ul>
+            </div>
+            <div class="span6">
+              <div class="row">
+                <div class="span4 user-name">{{unbound userName}}</div>
+                <small class="span2 time text-right" data-time="{{unbound created}}">
+                  {{unbound nanoDate created}}
+                </small>
+              </div>
+              <div class="row">
+                <div class="span6">
+                  <span>
+                    {{unbound enrich title}}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    {{else}}
+      <div>
+        No posts found.
+      </div>
+    {{/if}}
+  {{else}}
+    <div class="progress progress-striped active">
+      <div class="bar" style="width: 100%;"></div>
+    </div>
+  {{/if}}
+</div>
