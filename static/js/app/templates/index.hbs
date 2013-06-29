@@ -1,0 +1,16 @@
+<div id="above-posts">
+  <div class="row">
+    <div class="span7">
+      {{view Ember.TextArea id="post-text" placeholder="Say something..." rows="3" valueBinding="newPostTitle" disabledBinding="postBoxDisabled" class="span7"}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="span2 offset5">
+      <button id="post-button" {{bindAttr disabled="postButtonDisabled"}} {{action "createNewPost"}} class="btn btn-primary pull-right">
+        Post <i class="icon-share-alt icon-white"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+{{view "App.PostsView" controllerBinding="controllers.posts"}}
