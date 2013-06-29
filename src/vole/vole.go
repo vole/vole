@@ -46,7 +46,7 @@ func main() {
     panic(err)
   }
 
-  web.Get("/api/config", func(ctx *web.Context) string {
+  web.Get("/js/app/config.js", func(ctx *web.Context) string {
     ctx.ContentType("json")
 
     configJson, err := json.Marshal(config)
@@ -54,7 +54,7 @@ func main() {
       ctx.Abort(500, "Error marshalling config.")
     }
 
-    return string(configJson)
+    return "define(function () { return " + string(configJson) + "; });"
   })
 
   web.Get("/api/posts", func(ctx *web.Context) string {

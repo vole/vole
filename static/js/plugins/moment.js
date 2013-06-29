@@ -1,5 +1,5 @@
 
-(function ($) {
+define(['moment', 'jquery'], function (moment, $) {
 
   moment.lang('en', {
     relativeTime : {
@@ -39,4 +39,4 @@
     poll();
   };
 
-})(jQuery);
+});

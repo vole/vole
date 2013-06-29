@@ -1,4 +1,22 @@
-(function ($, Ember) {
+
+define([
+  'app/config',
+  'ember',
+  'ember-data',
+  'plugins/text!app/templates/application.hbs',
+  'plugins/text!app/templates/index.hbs',
+  'plugins/text!app/templates/posts.hbs',
+  'plugins/text!app/templates/profile.hbs',
+  'plugins/moment',
+  'plugins/resize'
+],
+function (Config, Ember, DS, applicationTemplate, indexTemplate, postsTemplate, profileTemplate) {
+
+  Ember.TEMPLATES['application'] = Ember.Handlebars.compile(applicationTemplate);
+  Ember.TEMPLATES['index'] = Ember.Handlebars.compile(indexTemplate);
+  Ember.TEMPLATES['profile'] = Ember.Handlebars.compile(profileTemplate);
+  Ember.TEMPLATES['posts'] = Ember.Handlebars.compile(postsTemplate);
+
   var cl = console.log.bind(console);
 
   var App = Ember.Application.create({
@@ -174,7 +192,7 @@
       controller.set('controllers.users.myUser', App.User.find({'is_my_user': true}));
       var refreshUI = function() {
         App.Post.find();
-        setTimeout(refreshUI, App.voleConfig.ui.pollInterval);
+        setTimeout(refreshUI, Config.ui.pollInterval);
       };
       setTimeout(refreshUI, 5000);
     }
@@ -237,4 +255,4 @@
 
   $('.time').moment({ frequency: 5000 });
 
-})(jQuery, Ember);
+});

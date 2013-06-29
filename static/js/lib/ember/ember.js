@@ -1,7 +1,6 @@
 // Version: v1.0.0-rc.3-226-gd97b553
 // Last commit: d97b553 (2013-05-14 21:51:35 -0700)
 
-
 (function() {
 /*global __fail__*/
 
@@ -5072,8 +5071,8 @@ Ember.run.scheduleOnce = function(queue, target, method) {
 };
 
 /**
-  Schedules an item to run from within a separate run loop, after 
-  control has been returned to the system. This is equivalent to calling 
+  Schedules an item to run from within a separate run loop, after
+  control has been returned to the system. This is equivalent to calling
   `Ember.run.later` with a wait time of 1ms.
 
   ```javascript
@@ -5085,7 +5084,7 @@ Ember.run.scheduleOnce = function(queue, target, method) {
   Multiple operations scheduled with `Ember.run.next` will coalesce
   into the same later run loop, along with any other operations
   scheduled by `Ember.run.later` that expire right around the same
-  time that `Ember.run.next` operations will fire. 
+  time that `Ember.run.next` operations will fire.
 
   Note that there are often alternatives to using `Ember.run.next`.
   For instance, if you'd like to schedule an operation to happen
@@ -5111,13 +5110,13 @@ Ember.run.scheduleOnce = function(queue, target, method) {
 
   One benefit of the above approach compared to using `Ember.run.next` is
   that you will be able to perform DOM/CSS operations before unprocessed
-  elements are rendered to the screen, which may prevent flickering or 
+  elements are rendered to the screen, which may prevent flickering or
   other artifacts caused by delaying processing until after rendering.
 
-  The other major benefit to the above approach is that `Ember.run.next` 
-  introduces an element of non-determinism, which can make things much 
-  harder to test, due to its reliance on `setTimeout`; it's much harder 
-  to guarantee the order of scheduled operations when they are scheduled 
+  The other major benefit to the above approach is that `Ember.run.next`
+  introduces an element of non-determinism, which can make things much
+  harder to test, due to its reliance on `setTimeout`; it's much harder
+  to guarantee the order of scheduled operations when they are scheduled
   outside of the current run loop, i.e. with `Ember.run.next`.
 
   @method next
@@ -22508,7 +22507,7 @@ helpers = helpers || Ember.Handlebars.helpers; data = data || {};
   var buffer = '', stack1, hashTypes, escapeExpression=this.escapeExpression, self=this;
 
 function program1(depth0,data) {
-  
+
   var buffer = '', hashTypes;
   data.buffer.push("<option value=\"\">");
   hashTypes = {};
@@ -22518,7 +22517,7 @@ function program1(depth0,data) {
   }
 
 function program3(depth0,data) {
-  
+
   var hashTypes;
   hashTypes = {'contentBinding': "STRING"};
   data.buffer.push(escapeExpression(helpers.view.call(depth0, "view.optionView", {hash:{
@@ -22533,7 +22532,7 @@ function program3(depth0,data) {
   stack1 = helpers.each.call(depth0, "view.content", {hash:{},inverse:self.noop,fn:self.program(3, program3, data),contexts:[depth0],types:["ID"],hashTypes:hashTypes,data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   return buffer;
-  
+
 }),
   attributeBindings: ['multiple', 'disabled', 'tabindex', 'name'],
 
@@ -24289,9 +24288,9 @@ Ember.Router = Ember.Object.extend({
   /**
     Transition to another route via the `routeTo` event which
     will by default be handled by ApplicationRoute.
-   
+
     @method routeTo
-    @param {TransitionEvent} transitionEvent 
+    @param {TransitionEvent} transitionEvent
    */
   routeTo: function(transitionEvent) {
     var handlerInfos = this.router.currentHandlerInfos;
@@ -24548,9 +24547,9 @@ Ember.Route = Ember.Object.extend({
   /**
     Transition to another route via the `routeTo` event which
     will by default be handled by ApplicationRoute.
-   
+
     @method routeTo
-    @param {TransitionEvent} transitionEvent 
+    @param {TransitionEvent} transitionEvent
    */
   routeTo: function(transitionEvent) {
     this.router.routeTo(transitionEvent);
@@ -25121,7 +25120,7 @@ function teardownView(route) {
 
 /*
   A TransitionEvent is passed as the argument for `transitionTo`
-  events and contains information about an attempted transition 
+  events and contains information about an attempted transition
   that can be modified or decorated by leafier `transitionTo` event
   handlers before the actual transition is committed by ApplicationRoute.
 
@@ -25132,7 +25131,7 @@ function teardownView(route) {
 Ember.TransitionEvent = Ember.Object.extend({
 
   /*
-    The Ember.Route method used to perform the transition.  Presently, 
+    The Ember.Route method used to perform the transition.  Presently,
     the only valid values are 'transitionTo' and 'replaceWith'.
    */
   transitionMethod: 'transitionTo',
@@ -25268,7 +25267,7 @@ Ember.onLoad('Ember.Handlebars', function(Handlebars) {
 
     disabled: Ember.computed(function(key, value) {
       if (value !== undefined) { this.set('_isDisabled', value); }
-      
+
       return value ? this.get('disabledClass') : false;
     }),
 
@@ -25291,7 +25290,7 @@ Ember.onLoad('Ember.Handlebars', function(Handlebars) {
 
       event.preventDefault();
       if (this.bubbles === false) { event.stopPropagation(); }
-      
+
       if (get(this, '_isDisabled')) { return false; }
 
       var router = this.get('router');
@@ -25360,7 +25359,7 @@ Ember.onLoad('Ember.Handlebars', function(Handlebars) {
     </li>
     ```
 
-    To override this option for your entire application, see 
+    To override this option for your entire application, see
     "Overriding Application-wide Defaults".
 
     ### Handling `href`
@@ -25407,7 +25406,7 @@ Ember.onLoad('Ember.Handlebars', function(Handlebars) {
     </a>
     ```
 
-    To override this option for your entire application, see 
+    To override this option for your entire application, see
     "Overriding Application-wide Defaults".
 
     ### Supplying a model
@@ -26111,7 +26110,7 @@ Ember.ControllerMixin.reopen({
     Optionally supply a model for the route in question. The model
     will be serialized into the URL using the `serialize` hook of
     the route:
-    
+
     ```javascript
       aController.transitionToRoute('blogPost', aPost);
     ```
@@ -27817,11 +27816,11 @@ Ember.ControllerMixin.reopen({
       needs: ['post']
     });
     ```
-    
+
     The application's single instance of these other
     controllers are accessible by name through the
     `controllers` property:
-    
+
     ```javascript
     this.get('controllers.post'); // instance of App.PostController
     ```
@@ -29422,4 +29421,3 @@ Ember
 */
 
 })();
-
