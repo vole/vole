@@ -66,7 +66,11 @@ function (Config, Ember, DS, applicationTemplate, indexTemplate, postsTemplate, 
 
   App.IndexView = Ember.View.extend({
     keyPress: function(event) {
-      // Ctrl + Enter
+      if (this.get('controller').get('postButtonDisabled')) {
+        return;
+      }
+
+      // Ctrl + Enter.
       if (event.ctrlKey && event.which === 13) {
         this.get('controller').send('createNewPost');
       }
