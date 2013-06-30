@@ -3,7 +3,7 @@ define([
   'app/config',
   'ember',
   'ember-data',
-  'lib/showdown',
+  'lib/marked',
   'plugins/text!app/templates/application.hbs',
   'plugins/text!app/templates/index.hbs',
   'plugins/text!app/templates/posts.hbs',
@@ -11,7 +11,7 @@ define([
   'plugins/moment',
   'plugins/resize'
 ],
-function (Config, Ember, DS, showdown, applicationTemplate, indexTemplate, postsTemplate, profileTemplate) {
+function (Config, Ember, DS, marked, applicationTemplate, indexTemplate, postsTemplate, profileTemplate) {
 
   Ember.TEMPLATES['application'] = Ember.Handlebars.compile(applicationTemplate);
   Ember.TEMPLATES['index'] = Ember.Handlebars.compile(indexTemplate);
@@ -206,66 +206,8 @@ function (Config, Ember, DS, showdown, applicationTemplate, indexTemplate, posts
     return new Handlebars.SafeString(moment(ms).fromNow());
   });
 
-  var linkify = function (text) {
-    var rUrl = /\(?\b(?:(http|https|ftp):\/\/)+((?:www.)?[a-zA-Z0-9\-\.]+[\.][a-zA-Z]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?(?=[\s\/,\.\)])([\/]{1}[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]\(\)]*))?([\#][^\s\n]*)?\)?/ig;
-    var matches = text.match(rUrl);
-
-    if (matches) {
-      for (var x = 0, len = matches.length; x < len; x++) {
-        var match = matches[x];
-
-        var outer = $('<div />');
-        var link = $('<a />', {
-          href : match,
-          target : '_blank'
-        });
-
-        if (/\.(jpg|jpeg|gif|png|bmp|ico)$/.test(match)) {
-          var image = $('<img />', { src : match });
-          image.addClass('img-rounded');
-          link.html(image);
-        }
-        else {
-          link.text(match);
-        }
-
-        text = text.replace(match, outer.append(link).html());
-      }
-    }
-
-    return text;
-  };
-
   Ember.Handlebars.registerBoundHelper('markdown', function(content) {
-    // Convert the markdown to HTML.
-    var converter = new Showdown.converter();
-    var converted = converter.makeHtml(content);
-
-    // Create a fragment with the HTML so we can traverse its text nodes.
-    var html = $('<div>').html(converted);
-
-    function collectTextNodes (element, texts) {
-      for (var child = element.firstChild; child !== null; child = child.nextSibling) {
-        if (child.nodeType === 3) {
-          texts.push(child);
-        }
-        else if (child.nodeType === 1) {
-          collectTextNodes(child, texts);
-        }
-      }
-    }
-
-    // Find all the text nodes.
-    var textNodes = [];
-    collectTextNodes(html.get(0), textNodes);
-
-    // Replace each text node with a linkified version.
-    for (var x = 0; x < textNodes.length; x++) {
-      $(textNodes[x]).replaceWith(linkify(textNodes[x].data));
-    }
-
-    // Return the complete HTML.
-    return new Handlebars.SafeString(html.html());
+    return new Handlebars.SafeString(marked(content));
   });
 
   $('.time').moment({ frequency: 5000 });
