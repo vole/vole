@@ -41,6 +41,8 @@ func main() {
   // Use the fmt package by default so that we don't have to keep commenting it.
   fmt.Println("vole startup")
 
+  store.BuildIndex(userStore.Path)
+
   config, err := config.Load()
   if err != nil {
     panic(err)

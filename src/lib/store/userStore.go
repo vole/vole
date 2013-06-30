@@ -118,6 +118,7 @@ func (userStore *UserStore) GetPosts() (*PostCollection, error) {
 
     collection = append(collection, userPosts.Posts...)
   }
+
   postCol := &PostCollection{collection}
   sort.Sort(postCol)
   return postCol, nil
