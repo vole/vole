@@ -10,7 +10,7 @@ Bugfix release, the most important bugs from initial feedback.
 * [71] Provide configuration for listening to different ips/port, listen to localhost only by default.
 * [65] Don't open a new window/tab when clicking images, rather zoom image size.
 * [43] Set Content Security Policy header for future work.
-* Don't save is_my_post back to .json files.
+* [42] Don't save is_my_post back to .json files.
 
 0.1.0
 -----
