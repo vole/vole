@@ -588,7 +588,7 @@ InlineLexer.prototype.output = function(src) {
       src = src.substring(cap[0].length);
       text = escape(cap[1]);
       href = text;
-      var isImage = /(?:([^:\/?#]+):)?(?:\/\/([^\/?#]*))?([^?#]*\.(?:jpg|gif|png))(?:\?([^#]*))?(?:#(.*))?/.test(href);
+      var isImage = /(?:([^:\/?#]+):)?(?:\/\/([^\/?#]*))?([^?#]*\.(?:jpg|jpeg|gif|png|ico|bmp))(?:\?([^#]*))?(?:#(.*))?/.test(href);
       if (isImage) {
         out += '<img src="'
           + href
