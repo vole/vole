@@ -77,6 +77,10 @@
   display: block;
 }
 
+.load-more {
+  width: 100%;
+}
+
 /**
  * Footer.
  */

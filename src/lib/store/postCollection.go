@@ -40,6 +40,20 @@ func (collection *PostCollection) Json() (string, error) {
 }
 
 /**
+ * Find()
+ *
+ * Find a post within a collection and return its index.
+ */
+func (collection *PostCollection) Find(id string) int {
+  for i, post := range collection.Posts {
+    if post.Id == id {
+      return i
+    }
+  }
+  return -1
+}
+
+/**
  * GetEmptyPostCollection()
  *
  * Return an empty collection.
