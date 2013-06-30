@@ -3,14 +3,16 @@ define([
   'app/config',
   'ember',
   'ember-data',
+  'lib/marked',
   'plugins/text!app/templates/application.hbs',
   'plugins/text!app/templates/index.hbs',
   'plugins/text!app/templates/posts.hbs',
   'plugins/text!app/templates/profile.hbs',
+  'app/templates/helpers',
   'plugins/moment',
   'plugins/resize'
 ],
-function (Config, Ember, DS, applicationTemplate, indexTemplate, postsTemplate, profileTemplate) {
+function (Config, Ember, DS, marked, applicationTemplate, indexTemplate, postsTemplate, profileTemplate) {
 
   Ember.TEMPLATES['application'] = Ember.Handlebars.compile(applicationTemplate);
   Ember.TEMPLATES['index'] = Ember.Handlebars.compile(indexTemplate);
@@ -213,46 +215,7 @@ function (Config, Ember, DS, applicationTemplate, indexTemplate, postsTemplate, 
     }
   });
 
-  //-------------------------
-  // Handlebars
-  //-------------------------
-  Ember.Handlebars.registerBoundHelper('nanoDate', function(value, options) {
-    var escaped = Handlebars.Utils.escapeExpression(value);
-    var ms = Math.round(escaped / Math.pow(10, 6));
-    return new Handlebars.SafeString(moment(ms).fromNow());
-  });
-
-  Ember.Handlebars.registerBoundHelper('enrich', function(value, options) {
-    var escaped = Handlebars.Utils.escapeExpression(value);
-    var rUrl = /\(?\b(?:(http|https|ftp):\/\/)+((?:www.)?[a-zA-Z0-9\-\.]+[\.][a-zA-Z]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?(?=[\s\/,\.\)])([\/]{1}[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]\(\)]*))?([\#][^\s\n]*)?\)?/ig;
-    var matches = escaped.match(rUrl);
-
-    if (matches) {
-      for (var x = 0, len = matches.length; x < len; x++) {
-        var match = matches[x];
-
-        var outer = $('<div />');
-        var link = $('<a />', {
-          href : match,
-          target : '_blank'
-        });
-
-        if (/\.(jpg|jpeg|gif|png|bmp|ico)$/.test(match)) {
-          var image = $('<img />', { src : match });
-          image.addClass('img-rounded');
-          link.html(image);
-        }
-        else {
-          link.text(match);
-        }
-
-        escaped = escaped.replace(match, outer.append(link).html());
-      }
-    }
-
-    return new Handlebars.SafeString(escaped.replace(/\n/g, '<br />'));
-  });
-
+  // TODO: Put this somewhere else.
   $('.time').moment({ frequency: 5000 });
 
 });
