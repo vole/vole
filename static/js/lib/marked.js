@@ -588,11 +588,19 @@ InlineLexer.prototype.output = function(src) {
       src = src.substring(cap[0].length);
       text = escape(cap[1]);
       href = text;
-      out += '<a href="'
-        + href
-        + '">'
-        + text
-        + '</a>';
+      var isImage = /(?:jpg|jpeg|gif|png|ico)(?:\?([^#]*))?(?:#(.*))?/.test(href);
+      if (isImage) {
+        out += '<img src="'
+          + href
+          + '" />';
+      }
+      else {
+        out += '<a href="'
+          + href
+          + '">'
+          + text
+          + '</a>';
+        }
       continue;
     }
 
