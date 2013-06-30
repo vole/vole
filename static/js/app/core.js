@@ -8,6 +8,7 @@ define([
   'plugins/text!app/templates/index.hbs',
   'plugins/text!app/templates/posts.hbs',
   'plugins/text!app/templates/profile.hbs',
+  'app/templates/helpers',
   'plugins/moment',
   'plugins/resize'
 ],
@@ -214,24 +215,7 @@ function (Config, Ember, DS, marked, applicationTemplate, indexTemplate, postsTe
     }
   });
 
-  //-------------------------
-  // Handlebars
-  //-------------------------
-  Ember.Handlebars.registerBoundHelper('nanoDate', function(value, options) {
-    var escaped = Handlebars.Utils.escapeExpression(value);
-    var ms = Math.round(escaped / Math.pow(10, 6));
-    return new Handlebars.SafeString(moment(ms).fromNow());
-  });
-
-  Ember.Handlebars.registerBoundHelper('markdown', function(content) {
-    marked.setOptions({
-      gfm: true,
-      sanitize: true,
-      breaks: true
-    });
-    return new Handlebars.SafeString(marked(content));
-  });
-
+  // TODO: Put this somewhere else.
   $('.time').moment({ frequency: 5000 });
 
 });
