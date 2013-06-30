@@ -60,8 +60,21 @@ func main() {
   web.Get("/api/posts", func(ctx *web.Context) string {
     ctx.ContentType("json")
 
+    limit := config.UI.PageSize
+    before, _ := ctx.Params["before"]
+    after, _ := ctx.Params["after"]
+
     var allPosts *store.PostCollection
-    allPosts, err := userStore.GetPosts()
+    var err error
+
+    if before != "" {
+      allPosts, err = userStore.GetPostsBeforeId(before, limit)
+    } else if after != "" {
+      allPosts, err = userStore.GetPostsAfterId(after, limit)
+    } else {
+      allPosts, err = userStore.GetPosts(limit)
+    }
+
     if err != nil || len(allPosts.Posts) < 1 {
       // Return a welcome post.
       post := &store.Post{}
