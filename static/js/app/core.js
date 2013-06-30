@@ -224,6 +224,10 @@ function (Config, Ember, DS, marked, applicationTemplate, indexTemplate, postsTe
   });
 
   Ember.Handlebars.registerBoundHelper('markdown', function(content) {
+    marked.setOptions({
+      gfm: true,
+      sanitize: true
+    });
     return new Handlebars.SafeString(marked(content));
   });
 
