@@ -151,6 +151,10 @@ func (userStore *UserStore) GetPostsBeforeId(id string, limit int) (*PostCollect
   }
 
   start := i + 1
+  if start == len(posts.Posts) {
+    posts.Posts = posts.Posts[i:i]
+    return posts, nil
+  }
   end := start + limit
 
   if end >= len(posts.Posts) {
