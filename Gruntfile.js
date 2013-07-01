@@ -1,6 +1,6 @@
 module.exports = function(grunt) {
   grunt.initConfig({
-    clean: ['dist/', 'bin/vole'],
+    clean: ['dist/', 'bin/vole', 'bin/vole.exe'],
 
     copy: {
       dist: {
