@@ -3,9 +3,10 @@ define([
   'ember',
   'handlebars',
   'lib/marked',
-  'moment'
+  'moment',
+  'jquery'
 ],
-function (Ember, Handlebars, marked, moment) {
+function (Ember, Handlebars, marked, moment, $) {
 
   Ember.Handlebars.registerBoundHelper('nanoDate', function(value, options) {
     var escaped = Handlebars.Utils.escapeExpression(value);
@@ -20,7 +21,14 @@ function (Ember, Handlebars, marked, moment) {
       breaks: true
     });
 
-    return new Handlebars.SafeString(marked(content));
+  var html = $('<div>')
+    .html(marked(content))
+    .find('a')
+      .attr('target', '_blank')
+    .end()
+    .html();
+
+    return new Handlebars.SafeString(html);
   });
 
 });
