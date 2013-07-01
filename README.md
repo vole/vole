@@ -20,7 +20,7 @@ Currently we are pre-release. The following steps are for interested developers.
 * Click 'My Profile'
 * Enter your name. Enter your Gravatar email (optional).
 * Click 'Home'
-* Post something.
+* Post something. Vole supports [Github flavored markdown](https://help.github.com/articles/github-flavored-markdown), and will also auto-embed any image links you put in the text.
 
 Sharing and following
 ---------------------
