@@ -1,7 +1,7 @@
 0.1.1
 -----
 
-Date: 30-Jun-13
+`Date: 30-Jun-13`
 
 Bugfix release, the most important bugs from initial feedback.
 
@@ -18,6 +18,6 @@ Bugfix release, the most important bugs from initial feedback.
 0.1.0
 -----
 
-Date: 04-Jun-13
+`Date: 04-Jun-13`
 
 First release, a developer preview.
