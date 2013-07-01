@@ -56,6 +56,8 @@ Configuration
 
 To override the default configuration options, make a copy of `config.sample.json` and name it `config.json`.
 
+Change the `server.listen` value to `0.0.0.0:6789` to listen for requests from any network device, instead of just the local machine.
+
 Versions
 --------
 
