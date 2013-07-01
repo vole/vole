@@ -18,6 +18,7 @@ module.exports = function(grunt) {
               'static/**',
               'README.md',
               'CONTRIBUTING.md',
+              'CHANGELOG.md',
               'LICENSE',
               'config.sample.json'
             ],
