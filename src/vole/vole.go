@@ -37,6 +37,11 @@ var serveIndex = func(ctx *web.Context) string {
   return string(index)
 }
 
+func setJsonHeaders(ctx *web.Context) {
+  ctx.ContentType("json")
+  ctx.SetHeader("Cache-Control", "no-cache, no-store", true)
+}
+
 func main() {
   // Use the fmt package by default so that we don't have to keep commenting it.
   fmt.Println("vole startup")
@@ -47,8 +52,7 @@ func main() {
   }
 
   web.Get("/js/app/config.js", func(ctx *web.Context) string {
-    ctx.ContentType("json")
-
+    setJsonHeaders(ctx)
     configJson, err := json.Marshal(config)
     if err != nil {
       ctx.Abort(500, "Error marshalling config.")
@@ -58,8 +62,7 @@ func main() {
   })
 
   web.Get("/api/posts", func(ctx *web.Context) string {
-    ctx.ContentType("json")
-
+    setJsonHeaders(ctx)
     limit := config.UI.PageSize
     before, _ := ctx.Params["before"]
     after, _ := ctx.Params["after"]
@@ -91,8 +94,7 @@ func main() {
   })
 
   web.Get("/api/users", func(ctx *web.Context) string {
-    ctx.ContentType("json")
-
+    setJsonHeaders(ctx)
     _, isMyUserFilter := ctx.Params["is_my_user"]
 
     var users *store.UserCollection
@@ -120,6 +122,7 @@ func main() {
   })
 
   web.Post("/api/users", func(ctx *web.Context) string {
+    setJsonHeaders(ctx)
     body, err := ioutil.ReadAll(ctx.Request.Body)
     if err != nil {
       ctx.Abort(500, "Error reading request body.")
@@ -144,6 +147,7 @@ func main() {
   })
 
   web.Post("/api/posts", func(ctx *web.Context) string {
+    setJsonHeaders(ctx)
     body, err := ioutil.ReadAll(ctx.Request.Body)
     if err != nil {
       ctx.Abort(500, "Error reading request body.")
@@ -169,6 +173,7 @@ func main() {
   })
 
   web.Delete("/api/posts/(.*)", func(ctx *web.Context, id string) string {
+    setJsonHeaders(ctx)
     user, err := userStore.GetMyUser()
     if err != nil {
       ctx.Abort(500, "Error loading user.")

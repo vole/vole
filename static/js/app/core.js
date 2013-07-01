@@ -13,7 +13,6 @@ define([
   'plugins/resize'
 ],
 function (Config, Ember, DS, marked, applicationTemplate, indexTemplate, postsTemplate, profileTemplate) {
-
   Ember.TEMPLATES['application'] = Ember.Handlebars.compile(applicationTemplate);
   Ember.TEMPLATES['index'] = Ember.Handlebars.compile(indexTemplate);
   Ember.TEMPLATES['profile'] = Ember.Handlebars.compile(profileTemplate);
