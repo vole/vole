@@ -37,6 +37,10 @@
   max-width: 800px;
 }
 
+.post blockquote p {
+  font-size: 14px;
+}
+
 #my-username-title {
   color: #888888;
 }
