@@ -1,5 +1,6 @@
 .DS_Store
 /bin/vole
+/bin/vole.exe
 /vole
 /pkg
 *.o

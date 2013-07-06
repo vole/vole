@@ -1,19 +1,16 @@
 package main
 
 import (
-  //"fmt"
   "encoding/json"
-  "flag"
+  "fmt"
   "github.com/vole/web"
   "io/ioutil"
   "lib/config"
-  "lib/store"
   "lib/socket"
+  "lib/store"
   osuser "os/user"
   "path"
 )
-
-var port = flag.String("port", "6789", "Port on which to run the web server.")
 
 var DIR = func() string {
   dir := "."
@@ -29,8 +26,26 @@ var userStore = &store.UserStore{
   Version: "v1",
 }
 
+var serveIndex = func(ctx *web.Context) string {
+  ctx.SetHeader("Content-Security-Policy", "script-src 'self' 'unsafe-eval'", true)
+  ctx.SetHeader("Content-Type", "text/html", true)
+
+  index, err := ioutil.ReadFile("static/index.html")
+  if err != nil {
+    panic(err)
+  }
+
+  return string(index)
+}
+
+func setJsonHeaders(ctx *web.Context) {
+  ctx.ContentType("json")
+  ctx.SetHeader("Cache-Control", "no-cache, no-store", true)
+}
+
 func main() {
-  flag.Parse()
+  // Use the fmt package by default so that we don't have to keep commenting it.
+  fmt.Println("vole startup")
 
   config, err := config.Load()
   if err != nil {
@@ -42,30 +57,39 @@ func main() {
   go h.Run()
   web.Websocket("/ws/?(.*)", h.Handler())
 
-  //go fs.run()
-
-  web.Get("/api/config", func(ctx *web.Context) string {
-    ctx.ContentType("json")
+  web.Get("/js/app/config.js", func(ctx *web.Context) string {
+    setJsonHeaders(ctx)
 
     configJson, err := json.Marshal(config)
     if err != nil {
       ctx.Abort(500, "Error marshalling config.")
     }
 
-    return string(configJson)
+    return "define(function () { return " + string(configJson) + "; });"
   })
 
   web.Get("/api/posts", func(ctx *web.Context) string {
-    ctx.ContentType("json")
+    setJsonHeaders(ctx)
+    limit := config.UI.PageSize
+    before, _ := ctx.Params["before"]
+    after, _ := ctx.Params["after"]
 
     var allPosts *store.PostCollection
-    allPosts, err := userStore.GetPosts()
-    if err != nil || len(allPosts.Posts) < 1 {
-      // Return a welcome post.
-      post := &store.Post{}
-      post.InitNew("Welcome to Vole. To start, create a new profile", "none", "none", "Welcome", "", false)
-      post.Id = "none"
-      allPosts = post.Collection()
+    var err error
+
+    if before != "" {
+      allPosts, err = userStore.GetPostsBeforeId(before, limit)
+    } else if after != "" {
+      allPosts, err = userStore.GetPostsAfterId(after, limit)
+    } else {
+      allPosts, err = userStore.GetPosts(limit)
+      if err != nil || len(allPosts.Posts) < 1 {
+        // Return a welcome post.
+        post := &store.Post{}
+        post.InitNew("Welcome to Vole. To start, create a new profile by clicking 'My Profile' on the left.", "none", "none", "Welcome", "", false)
+        post.Id = "none"
+        allPosts = post.Collection()
+      }
     }
 
     postsJson, err := allPosts.Json()
@@ -77,8 +101,7 @@ func main() {
   })
 
   web.Get("/api/users", func(ctx *web.Context) string {
-    ctx.ContentType("json")
-
+    setJsonHeaders(ctx)
     _, isMyUserFilter := ctx.Params["is_my_user"]
 
     var users *store.UserCollection
@@ -106,6 +129,7 @@ func main() {
   })
 
   web.Post("/api/users", func(ctx *web.Context) string {
+    setJsonHeaders(ctx)
     body, err := ioutil.ReadAll(ctx.Request.Body)
     if err != nil {
       ctx.Abort(500, "Error reading request body.")
@@ -130,6 +154,7 @@ func main() {
   })
 
   web.Post("/api/posts", func(ctx *web.Context) string {
+    setJsonHeaders(ctx)
     body, err := ioutil.ReadAll(ctx.Request.Body)
     if err != nil {
       ctx.Abort(500, "Error reading request body.")
@@ -155,6 +180,7 @@ func main() {
   })
 
   web.Delete("/api/posts/(.*)", func(ctx *web.Context, id string) string {
+    setJsonHeaders(ctx)
     user, err := userStore.GetMyUser()
     if err != nil {
       ctx.Abort(500, "Error loading user.")
@@ -179,5 +205,8 @@ func main() {
     return "OK"
   })
 
-  web.Run("0.0.0.0:" + *port)
+  web.Get("/", serveIndex)
+  web.Get("/index.html", serveIndex)
+
+  web.Run(config.Server.Listen)
 }

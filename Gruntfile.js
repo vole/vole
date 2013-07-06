@@ -1,14 +1,10 @@
 module.exports = function(grunt) {
   grunt.initConfig({
-    clean: ['dist/', 'bin/vole'],
+    clean: ['dist/', 'bin/vole', 'bin/vole.exe'],
 
     copy: {
       dist: {
         files: [
-          {
-            src: ['static/**'],
-            dest: 'dist/'
-          },
           {
             src: ['bin/vole'],
             dest: 'dist/vole'
@@ -18,8 +14,15 @@ module.exports = function(grunt) {
             dest: 'dist/vole.exe'
           },
           {
-            src: ['config.sample.json'],
-            dest: 'dist/config.sample.json'
+            src: [
+              'static/**',
+              'README.md',
+              'CONTRIBUTING.md',
+              'CHANGELOG.md',
+              'LICENSE',
+              'config.sample.json'
+            ],
+            dest: 'dist/'
           }
         ]
       }

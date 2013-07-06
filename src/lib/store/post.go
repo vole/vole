@@ -84,6 +84,7 @@ func (post *Post) Save() error {
   postClone.UserId = ""
   postClone.UserName = ""
   postClone.UserAvatar = ""
+  postClone.IsMyPost = false
 
   rawJson, err := json.Marshal(postClone)
   if err != nil {

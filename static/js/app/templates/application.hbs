@@ -1,0 +1,44 @@
+<header id="main-nav">
+  <div class="row">
+    <div class="span2 offset1">
+      <h2 id="logo">Vole</h2>
+    </div>
+    <div class="span7">
+      {{#if controllers.users.myUser.firstObject.name}}
+        <div class="text-right">
+          <h3 id="my-username-title">{{controllers.users.myUser.firstObject.name}}</h3>
+        </div>
+      {{/if}}
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="row">
+    <div class="span2 offset1">
+      <ul class="nav nav-pills nav-stacked well">
+        {{#linkTo "index" tagName="li"}}
+          <a href="#">Home</a>
+        {{/linkTo}}
+        {{#linkTo "profile" tagName="li"}}
+          <a href="#">My profile</a>
+        {{/linkTo}}
+      </ul>
+    </div>
+    <div class="span7">
+      {{outlet}}
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <p>
+    Code licensed under
+    <a href="http://www.debian.org/legal/licenses/mit" target="_blank">MIT</a>
+  </p>
+  <ul class="footer-links">
+    <li><a href="http://vole.cc/">Site</a></li>
+    <li class="muted">·</li>
+    <li><a href="https://github.com/vole/vole/issues">Issues</a></li>
+  </ul>
+</footer>
