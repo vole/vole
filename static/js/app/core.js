@@ -222,12 +222,21 @@ function (Config, Ember, DS, marked, io, applicationTemplate, indexTemplate, pos
   // Websockets
   //-------------------------
   /*
-  TODO - fix socket.io so polling fallback is "free".
-  */
   var socket = io.connect('ws://127.0.0.1:6789', {
     resource: 'ws'
   });
   socket.on('connect', function() {
     console.log('boom');
   });
+  */
+  var conn = new WebSocket("ws://localhost:6789/ws");
+  conn.onopen = function(evt) {
+    console.log('Connection opened.');
+  };
+  conn.onclose = function(evt) {
+    console.log('Connection closed.');
+  };
+  conn.onmessage = function(evt) {
+    console.log(evt.data);
+  };
 });
