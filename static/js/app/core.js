@@ -218,7 +218,7 @@ function (Config, Ember, DS, marked, applicationTemplate, indexTemplate, postsTe
       var postsController = controller.get('controllers.posts');
       var usersController = controller.get('controllers.users');
       postsController.set('filterByUser', usersController.get('myUser'));
-      App.Post.find({is_my_post: true});
+      App.Post.find({user: 'my_user'});
       postsController.set('content', App.Post.filter(function(item) {
         return item.get('isMyPost');
       }));

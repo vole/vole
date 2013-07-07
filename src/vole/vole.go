@@ -65,15 +65,14 @@ func main() {
     setJsonHeaders(ctx)
     limit := config.UI.PageSize
     before, _ := ctx.Params["before"]
-    myPosts, _ := ctx.Params["is_my_post"]
     userId, _ := ctx.Params["user"]
 
     var allPosts *store.PostCollection
     var err error
 
-    if userId != "" || myPosts != "" {
+    if userId != "" {
       var user *store.User
-      if myPosts != "" {
+      if userId == "my_user" {
         user, err = userStore.GetMyUser()
       } else {
         user, err = userStore.GetUserById(userId)
