@@ -164,7 +164,7 @@ function (Config, Ember, DS, marked, applicationTemplate, indexTemplate, postsTe
         }
       }
       return this.get('arrangedContent');
-    }.property('content.[]', 'filterByUser.[]'),
+    }.property('content.[]', 'filterByUser.[]', 'arrangedContent.[]'),
 
     deletePost: function(id) {
       if (confirm('Are you sure you want to delete this post?')) {
