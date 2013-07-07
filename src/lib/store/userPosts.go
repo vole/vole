@@ -8,6 +8,7 @@ import (
   "encoding/json"
   "errors"
   "path"
+  "sort"
   "strings"
 )
 
@@ -39,7 +40,7 @@ func (user *User) NewPost(title string) *Post {
 /**
  * GetPosts()
  *
- * Get all a user's posts.
+ * Get all user's posts.
  */
 func (user *User) GetPosts() (*PostCollection, error) {
   collection := make([]Post, 0)
@@ -60,5 +61,7 @@ func (user *User) GetPosts() (*PostCollection, error) {
     }
     collection = append(collection, post)
   }
-  return &PostCollection{collection}, nil
+  postCol := &PostCollection{collection}
+  sort.Sort(postCol)
+  return postCol, nil
 }
