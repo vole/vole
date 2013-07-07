@@ -40,7 +40,7 @@ func (user *User) NewPost(title string) *Post {
 /**
  * GetPosts()
  *
- * Get all user's posts.
+ * Get all of a user's posts.
  */
 func (user *User) GetPosts() (*PostCollection, error) {
   collection := make([]Post, 0)
