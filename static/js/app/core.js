@@ -197,11 +197,11 @@ function (Config, Ember, DS, marked, applicationTemplate, indexTemplate, postsTe
   App.ApplicationRoute = Ember.Route.extend({
     setupController: function(controller) {
       controller.set('controllers.users.myUser', App.User.find({'is_my_user': true}));
-      // var refreshUI = function() {
-      //   App.Post.find();
-      //   setTimeout(refreshUI, Config.ui.pollInterval);
-      // };
-      // setTimeout(refreshUI, 5000);
+      var refreshUI = function() {
+        App.Post.find();
+        setTimeout(refreshUI, Config.ui.pollInterval);
+      };
+      setTimeout(refreshUI, 5000);
     }
   });
 
