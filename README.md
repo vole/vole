@@ -48,7 +48,7 @@ Find your own user folder, for example, if you created a profile named 'Chuck':
     /home/chuck/Vole/users/Chuck_9674e8e8-7c7a-41e6-52ed-51a3f7969812
 
 * In Bittorrent Sync, add this folder as a shared folder.
-* In the folder options, grab the **read-only key**. Make sure the key starts with the letter 'R' that signifies it's the read-only one. You can find it by going to the advanced folder preferences. This is the key that you can share with others so they can follow your posts.
+* In the folder options, grab the **read-only key**. Make sure the key starts with the letter 'B' that signifies it's the read-only one. You can find it by going to the advanced folder preferences. This is the key that you can share with others so they can follow your posts.
 * If you want to list your key on vole.cc, make a pull request on the [website repo](https://github.com/vole/vole.github.io). Here is an [example](https://github.com/vole/vole.github.io/pull/9).
 
 Configuration
