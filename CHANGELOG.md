@@ -1,3 +1,15 @@
+0.1.2
+-----
+
+Date: xxx
+
+Not released yet.
+
+* [#89] Reduce font size of blockquotes
+* [#90, #93] Open links in posts in a new window.
+* [#95] Fix the 'load more' behavior on the profile page
+* [#94] Upgrade Ember to the latest version
+
 0.1.1
 -----
 
@@ -5,8 +17,6 @@ Date: 30-Jun-13
 
 Bugfix release, the most important bugs from initial feedback.
 
-* [#89] Reduce font size of blockquotes
-* [#90] Open links in posts in a new window.
 * [#83] Add support for Github Flavored Markdown in posts.
 * [#82] Pagination support, so now only 50 posts are loaded at a time.
 * [#80] Support keyboard shortcut ctrl+enter for submitting posts.
