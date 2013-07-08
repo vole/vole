@@ -3,6 +3,12 @@
     "dir": "~/Vole"
   },
   "ui" : {
-    "reverse" : false
+    "reverse": false,
+    "pollInterval": 5000,
+    "pageSize" : 50
+  },
+  "server" : {
+    "listen": "127.0.0.1:6789",
+    "debug": false
   }
 }

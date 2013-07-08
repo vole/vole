@@ -4,6 +4,7 @@ package web
 
 import (
     "bytes"
+    "code.google.com/p/go.net/websocket"
     "crypto/hmac"
     "crypto/sha1"
     "crypto/tls"
@@ -19,7 +20,6 @@ import (
     "strconv"
     "strings"
     "time"
-    "code.google.com/p/go.net/websocket"
 )
 
 // A Context object is created for every incoming HTTP request, and is
@@ -63,6 +63,16 @@ func (ctx *Context) NotModified() {
 func (ctx *Context) NotFound(message string) {
     ctx.ResponseWriter.WriteHeader(404)
     ctx.ResponseWriter.Write([]byte(message))
+}
+
+//Unauthorized writes a 401 HTTP response
+func (ctx *Context) Unauthorized() {
+    ctx.ResponseWriter.WriteHeader(401)
+}
+
+//Forbidden writes a 403 HTTP response
+func (ctx *Context) Forbidden() {
+    ctx.ResponseWriter.WriteHeader(403)
 }
 
 // ContentType sets the Content-Type header for an HTTP response.
