@@ -99,11 +99,38 @@ func (userStore *UserStore) GetUsers() (*UserCollection, error) {
 }
 
 /**
+ * GetUserById()
+ *
+ * Get user with the given ID.
+ */
+func (userStore *UserStore) GetUserById(id string) (*User, error) {
+  myUserDir, err := userStore.getMyUserSubDir()
+  if err != nil {
+    return nil, err
+  }
+
+  userDirs, _ := ReadDir(userStore.Path, "users")
+
+  for _, dir := range userDirs {
+    user, err := userStore.getUserFromDir(dir.Name())
+    if err != nil {
+      continue
+    }
+    if user.Id == id {
+      user.IsMyUser = (myUserDir == dir.Name())
+      return user, nil
+    }
+  }
+
+  return nil, errors.New("User not found")
+}
+
+/**
  * GetPosts()
  *
  * Get all posts from all users.
  */
-func (userStore *UserStore) GetPosts(limit int) (*PostCollection, error) {
+func (userStore *UserStore) GetPosts() (*PostCollection, error) {
   users, err := userStore.GetUsers()
   if err != nil {
     return nil, err
@@ -122,74 +149,7 @@ func (userStore *UserStore) GetPosts(limit int) (*PostCollection, error) {
   postCol := &PostCollection{collection}
   sort.Sort(postCol)
 
-  if limit >= len(postCol.Posts) {
-    limit = len(postCol.Posts)
-  }
-
-  if limit > 0 {
-    postCol.Posts = postCol.Posts[0:limit]
-  }
-
   return postCol, nil
-}
-
-/**
- * GetPostsBeforeId(id, limit)
- *
- * Get posts occurring before the specified `id`, limited by `limit`.
- */
-func (userStore *UserStore) GetPostsBeforeId(id string, limit int) (*PostCollection, error) {
-  posts, err := userStore.GetPosts(0)
-  if err != nil {
-    return nil, err
-  }
-
-  i := posts.Find(id)
-
-  if i == -1 {
-    return nil, errors.New("Id not present.")
-  }
-
-  start := i + 1
-  if start == len(posts.Posts) {
-    posts.Posts = posts.Posts[i:i]
-    return posts, nil
-  }
-  end := start + limit
-
-  if end >= len(posts.Posts) {
-    end = len(posts.Posts) - 1
-  }
-
-  posts.Posts = posts.Posts[start:end]
-  return posts, nil
-}
-
-/**
- * GetPostsAfterId(id, limit)
- *
- * Get posts occurring after the specified `id`, limited by `limit`.
- */
-func (userStore *UserStore) GetPostsAfterId(id string, limit int) (*PostCollection, error) {
-  posts, err := userStore.GetPosts(0)
-  if err != nil {
-    return nil, err
-  }
-
-  i := posts.Find(id)
-  if i == -1 {
-    return nil, errors.New("Id not present.")
-  }
-
-  end := i - 1
-  start := end - limit
-
-  if start < 0 {
-    start = 0
-  }
-
-  posts.Posts = posts.Posts[start:end]
-  return posts, nil
 }
 
 /**

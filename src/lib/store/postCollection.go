@@ -54,6 +54,38 @@ func (collection *PostCollection) Find(id string) int {
 }
 
 /**
+ * Limit()
+ *
+ * Reduce the post collection to the specified limit.
+ */
+func (collection *PostCollection) Limit(limit int) {
+  if limit > 0 && limit < len(collection.Posts) {
+    collection.Posts = collection.Posts[0:limit]
+  }
+}
+
+/**
+ * BeforeId()
+ *
+ * Reduce the post collection to only posts before the specified ID.
+ */
+func (collection *PostCollection) BeforeId(id string) {
+  if id == "" {
+    return
+  }
+  i := collection.Find(id)
+  if i == -1 {
+    return
+  }
+  start := i + 1
+  if start == len(collection.Posts) {
+    collection.Posts = collection.Posts[i:i]
+    return
+  }
+  collection.Posts = collection.Posts[start:]
+}
+
+/**
  * GetEmptyPostCollection()
  *
  * Return an empty collection.

@@ -65,17 +65,28 @@ func main() {
     setJsonHeaders(ctx)
     limit := config.UI.PageSize
     before, _ := ctx.Params["before"]
-    after, _ := ctx.Params["after"]
+    userId, _ := ctx.Params["user"]
 
     var allPosts *store.PostCollection
     var err error
 
-    if before != "" {
-      allPosts, err = userStore.GetPostsBeforeId(before, limit)
-    } else if after != "" {
-      allPosts, err = userStore.GetPostsAfterId(after, limit)
+    if userId != "" {
+      var user *store.User
+      if userId == "my_user" {
+        user, err = userStore.GetMyUser()
+      } else {
+        user, err = userStore.GetUserById(userId)
+      }
+      if err != nil {
+        ctx.Abort(500, "User not found while getting posts.")
+        return ""
+      }
+      allPosts, err = user.GetPosts()
+      if err != nil {
+        ctx.Abort(500, "Error loading posts.")
+      }
     } else {
-      allPosts, err = userStore.GetPosts(limit)
+      allPosts, err = userStore.GetPosts()
       if err != nil || len(allPosts.Posts) < 1 {
         // Return a welcome post.
         post := &store.Post{}
@@ -84,6 +95,9 @@ func main() {
         allPosts = post.Collection()
       }
     }
+
+    allPosts.BeforeId(before)
+    allPosts.Limit(limit)
 
     postsJson, err := allPosts.Json()
     if err != nil {

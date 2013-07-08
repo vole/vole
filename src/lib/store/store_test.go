@@ -219,6 +219,62 @@ func TestGetAllPosts(t *testing.T) {
   }
 }
 
+func TestPostsLimit(t *testing.T) {
+  allPosts, err := userStore.GetPosts()
+  if err != nil {
+    t.Error(err)
+  }
+
+  allPosts.Limit(100)
+  if len(allPosts.Posts) != 6 {
+    t.Error("Large limit failure")
+  }
+  allPosts.Limit(0)
+  if len(allPosts.Posts) != 6 {
+    t.Error("Zero limit failure")
+  }
+
+  allPosts.Limit(2)
+  if len(allPosts.Posts) != 2 {
+    t.Error("Only two posts should be returned.")
+  }
+  for i := 0; i < 2; i++ {
+    if allPosts.Posts[i].Title != titles[5-i] {
+      t.Error("Title of post found to be incorrect, expected: '" + titles[5-i] + "' found: '" + allPosts.Posts[i].Title + "'")
+    }
+  }
+}
+
+func TestPostsBeforeId(t *testing.T) {
+  allPosts, err := userStore.GetPosts()
+  if err != nil {
+    t.Error(err)
+  }
+
+  allPosts.BeforeId("garbage")
+  if len(allPosts.Posts) != 6 {
+    t.Error("Garbage ID failure")
+  }
+
+  beforeId := allPosts.Posts[0].Id
+  allPosts.BeforeId(beforeId)
+  if len(allPosts.Posts) != 5 {
+    t.Error("Boundary limit fail")
+  }
+
+  allPosts, _ = userStore.GetPosts()
+  beforeId = allPosts.Posts[2].Id
+  allPosts.BeforeId(beforeId)
+  if len(allPosts.Posts) != 3 {
+    t.Error("Before ID failure")
+  }
+  for i := 0; i < 2; i++ {
+    if allPosts.Posts[i].Title != titles[2-i] {
+      t.Error("Title of post found to be incorrect, expected: '" + titles[2-i] + "' found: '" + allPosts.Posts[i].Title + "'")
+    }
+  }
+}
+
 func TestSaveUserFromJson(t *testing.T) {
   rawJson := []byte(`{"user":{"name":"json_user","avatar":null,"is_my_user":true,"email":"json_user@example.com"}}`)
   user, err := userStore.NewUserFromContainerJson(rawJson)
