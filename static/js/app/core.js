@@ -164,7 +164,7 @@ function (Config, Ember, DS, marked, applicationTemplate, indexTemplate, postsTe
         }
       }
       return this.get('arrangedContent');
-    }.property('content.[]', 'filterByUser.[]'),
+    }.property('content.[]', 'filterByUser.[]', 'arrangedContent.[]'),
 
     deletePost: function(id) {
       if (confirm('Are you sure you want to delete this post?')) {
@@ -175,7 +175,14 @@ function (Config, Ember, DS, marked, applicationTemplate, indexTemplate, postsTe
     },
 
     loadMore: function() {
-      App.Post.find({before : this.get('filteredPosts.lastObject.id')});
+      var filter = {
+        'before': this.get('filteredPosts.lastObject.id')
+      };
+      var filterUserId = this.get('filterByUser.firstObject.id');
+      if (filterUserId) {
+        filter.user = filterUserId;
+      }
+      App.Post.find(filter);
     }
   });
 
@@ -189,7 +196,6 @@ function (Config, Ember, DS, marked, applicationTemplate, indexTemplate, postsTe
 
   App.ApplicationRoute = Ember.Route.extend({
     setupController: function(controller) {
-      controller.set('controllers.posts.content', App.Post.find());
       controller.set('controllers.users.myUser', App.User.find({'is_my_user': true}));
       var refreshUI = function() {
         App.Post.find();
@@ -203,6 +209,7 @@ function (Config, Ember, DS, marked, applicationTemplate, indexTemplate, postsTe
     setupController: function(controller) {
       var postsController = controller.get('controllers.posts');
       postsController.set('filterByUser', []);
+      postsController.set('content', App.Post.find());
     }
   });
 
@@ -211,6 +218,10 @@ function (Config, Ember, DS, marked, applicationTemplate, indexTemplate, postsTe
       var postsController = controller.get('controllers.posts');
       var usersController = controller.get('controllers.users');
       postsController.set('filterByUser', usersController.get('myUser'));
+      App.Post.find({user: 'my_user'});
+      postsController.set('content', App.Post.filter(function(item) {
+        return item.get('isMyPost');
+      }));
     }
   });
 
