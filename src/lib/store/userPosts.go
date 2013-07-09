@@ -22,18 +22,18 @@ func (user *User) NewPostFromContainerJson(rawJson []byte) (*Post, error) {
   if err := json.Unmarshal(rawJson, &container); err != nil {
     return nil, err
   }
-  post := user.NewPost(container.Post.Title)
+  post := user.NewPost(container.Post)
   return post, nil
 }
 
 /**
- * NewPost(title)
+ * NewPost(postData)
  *
  * Return a new Post struct for this user.
  */
-func (user *User) NewPost(title string) *Post {
+func (user *User) NewPost(postData Post) *Post {
   post := &Post{}
-  post.InitNew(title, user.FullPath, user.Id, user.Name, user.Avatar, user.IsMyUser)
+  post.InitNew(postData, user.FullPath, user.Id, user.Name, user.Avatar, user.IsMyUser)
   return post
 }
 

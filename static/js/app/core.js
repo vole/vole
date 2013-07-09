@@ -48,7 +48,11 @@ function (Config, Ember, DS, marked, applicationTemplate, indexTemplate, postsTe
     userId: DS.attr('string'),
     userName: DS.attr('string'),
     userAvatar: DS.attr('string'),
-    isMyPost: DS.attr('boolean')
+    isMyPost: DS.attr('boolean'),
+    isRepost: DS.attr('boolean'),
+    repostUserName: DS.attr('string'),
+    repostUserAvatar: DS.attr('string'),
+    repostPostId: DS.attr('string')
   });
 
   App.User = DS.Model.extend({
@@ -171,6 +175,21 @@ function (Config, Ember, DS, marked, applicationTemplate, indexTemplate, postsTe
         var post = App.Post.find(id);
         post.deleteRecord();
         post.get('transaction').commit();
+      }
+    },
+
+    repostPost: function(id) {
+      if (confirm('Are you sure you want to repost this?')) {
+        var post = App.Post.find(id);
+        var myUser = this.get('controllers.users.myUser.firstObject.user');
+        var newPost = App.Post.createRecord({
+            user: myUser,
+            title: post.get('title'),
+            repostUserName: post.get('userName'),
+            repostUserAvatar: post.get('userAvatar'),
+            repostPostId: post.get('id')
+          });
+          newPost.get('transaction').commit();
       }
     },
 

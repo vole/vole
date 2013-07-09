@@ -5,7 +5,11 @@
         {{#each filteredPosts}}
           <div class="post row">
             <div class="span1">
-              <img class="avatar-img img-rounded" src="{{unbound userAvatar}}" />
+              {{#if isRepost}}
+                <img class="avatar-img img-rounded" src="{{unbound repostUserAvatar}}" />
+              {{else}}
+                <img class="avatar-img img-rounded" src="{{unbound userAvatar}}" />
+              {{/if}}
               <ul class="post-actions">
                 {{#if isMyPost}}
                   <li>
@@ -14,11 +18,22 @@
                     </a>
                   </li>
                 {{/if}}
+                {{#unless isMyPost}}
+                  <li>
+                    <a class="post-action" {{action "repostPost" id}} href="#">
+                      <i class="icon-retweet"></i>
+                    </a>
+                  </li>
+                {{/unless}}
               </ul>
             </div>
             <div class="span6">
               <div class="row">
-                <div class="span4 user-name">{{unbound userName}}</div>
+                {{#if isRepost}}
+                  <div class="span4 user-name">{{unbound repostUserName}}</div>
+                {{else}}
+                  <div class="span4 user-name">{{unbound userName}}</div>
+                {{/if}}
                 <small class="span2 time text-right" data-time="{{unbound created}}">
                   {{unbound nanoDate created}}
                 </small>
@@ -29,6 +44,11 @@
                     {{unbound markdown title}}
                   </span>
                 </div>
+              </div>
+              <div class="row">
+                {{#if isRepost}}
+                  <div class="span6 muted">Reposted by {{unbound userName}}</div>
+                {{/if}}
               </div>
             </div>
           </div>
