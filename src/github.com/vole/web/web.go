@@ -4,6 +4,7 @@ package web
 
 import (
     "bytes"
+    "code.google.com/p/go.net/websocket"
     "crypto/hmac"
     "crypto/sha1"
     "crypto/tls"
@@ -62,6 +63,16 @@ func (ctx *Context) NotModified() {
 func (ctx *Context) NotFound(message string) {
     ctx.ResponseWriter.WriteHeader(404)
     ctx.ResponseWriter.Write([]byte(message))
+}
+
+//Unauthorized writes a 401 HTTP response
+func (ctx *Context) Unauthorized() {
+    ctx.ResponseWriter.WriteHeader(401)
+}
+
+//Forbidden writes a 403 HTTP response
+func (ctx *Context) Forbidden() {
+    ctx.ResponseWriter.WriteHeader(403)
 }
 
 // ContentType sets the Content-Type header for an HTTP response.
@@ -235,6 +246,16 @@ func Delete(route string, handler interface{}) {
 // Match adds a handler for an arbitrary http method in the main server.
 func Match(method string, route string, handler interface{}) {
     mainServer.addRoute(route, method, handler)
+}
+
+//Adds a custom handler. Only for webserver mode. Will have no effect when running as FCGI or SCGI.
+func Handler(route string, method string, httpHandler http.Handler) {
+    mainServer.Handler(route, method, httpHandler)
+}
+
+//Adds a handler for websockets. Only for webserver mode. Will have no effect when running as FCGI or SCGI.
+func Websocket(route string, httpHandler websocket.Handler) {
+    mainServer.Websocket(route, httpHandler)
 }
 
 // SetLogger sets the logger for the main server.

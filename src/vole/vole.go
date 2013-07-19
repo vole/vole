@@ -6,6 +6,7 @@ import (
   "github.com/vole/web"
   "io/ioutil"
   "lib/config"
+  "lib/socket"
   "lib/store"
   osuser "os/user"
   "path"
@@ -51,8 +52,14 @@ func main() {
     panic(err)
   }
 
+  // Websockets!
+  var h = socket.NewHub()
+  go h.Run()
+  web.Websocket("/ws/?(.*)", h.Handler())
+
   web.Get("/js/app/config.js", func(ctx *web.Context) string {
     setJsonHeaders(ctx)
+
     configJson, err := json.Marshal(config)
     if err != nil {
       ctx.Abort(500, "Error marshalling config.")

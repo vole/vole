@@ -2,6 +2,7 @@ package web
 
 import (
     "bytes"
+    "encoding/base64"
     "encoding/json"
     "errors"
     "fmt"
@@ -144,6 +145,12 @@ func init() {
 
     Get("/error/notfound/(.*)", func(ctx *Context, message string) { ctx.NotFound(message) })
 
+    Get("/error/unauthorized", func(ctx *Context) { ctx.Unauthorized() })
+    Post("/error/unauthorized", func(ctx *Context) { ctx.Unauthorized() })
+
+    Get("/error/forbidden", func(ctx *Context) { ctx.Forbidden() })
+    Post("/error/forbidden", func(ctx *Context) { ctx.Forbidden() })
+
     Post("/posterror/code/(.*)/(.*)", func(ctx *Context, code string, message string) string {
         n, _ := strconv.Atoi(code)
         ctx.Abort(n, message)
@@ -200,6 +207,14 @@ func init() {
         ctx.SetHeader("Server", "myserver", true)
         return ""
     })
+
+    Get("/authorization", func(ctx *Context) string {
+        user, pass, err := ctx.GetBasicAuth()
+        if err != nil {
+            return "fail"
+        }
+        return user + pass
+    })
 }
 
 var tests = []Test{
@@ -215,6 +230,10 @@ var tests = []Test{
     //long url
     {"GET", "/echo/" + strings.Repeat("0123456789", 100), nil, "", 200, strings.Repeat("0123456789", 100)},
     {"GET", "/writetest", nil, "", 200, "hello"},
+    {"GET", "/error/unauthorized", nil, "", 401, ""},
+    {"POST", "/error/unauthorized", nil, "", 401, ""},
+    {"GET", "/error/forbidden", nil, "", 403, ""},
+    {"POST", "/error/forbidden", nil, "", 403, ""},
     {"GET", "/error/notfound/notfound", nil, "", 404, "notfound"},
     {"GET", "/doesnotexist", nil, "", 404, "Page not found"},
     {"POST", "/doesnotexist", nil, "", 404, "Page not found"},
@@ -228,6 +247,7 @@ var tests = []Test{
     {"GET", "/jsonbytes?a=1&b=2", nil, "", 200, `{"a":"1","b":"2"}`},
     {"POST", "/parsejson", map[string][]string{"Content-Type": {"application/json"}}, `{"a":"hello", "b":"world"}`, 200, "hello world"},
     //{"GET", "/testenv", "", 200, "hello world"},
+    {"GET", "/authorization", map[string][]string{"Authorization": {BuildBasicAuthCredentials("foo", "bar")}}, "", 200, "foobar"},
 }
 
 func buildTestRequest(method string, path string, body string, headers map[string][]string, cookies []*http.Cookie) *http.Request {
@@ -268,10 +288,10 @@ func TestRouting(t *testing.T) {
         resp := getTestResponse(test.method, test.path, test.body, test.headers, nil)
 
         if resp.statusCode != test.expectedStatus {
-            t.Fatalf("expected status %d got %d", test.expectedStatus, resp.statusCode)
+            t.Fatalf("%v(%v) expected status %d got %d", test.method, test.path, test.expectedStatus, resp.statusCode)
         }
         if resp.body != test.expectedBody {
-            t.Fatalf("expected %q got %q", test.expectedBody, resp.body)
+            t.Fatalf("%v(%v) expected %q got %q", test.method, test.path, test.expectedBody, resp.body)
         }
         if cl, ok := resp.headers["Content-Length"]; ok {
             clExp, _ := strconv.Atoi(cl[0])
@@ -517,5 +537,44 @@ func TestDuplicateHeader(t *testing.T) {
     }
     if resp.headers["Server"][0] != "myserver" {
         t.Fatalf("Incorrect header, exp 'myserver', got %q", resp.headers["Server"][0])
+    }
+}
+
+func BuildBasicAuthCredentials(user string, pass string) string {
+    s := user + ":" + pass
+    return "Basic " + base64.StdEncoding.EncodeToString([]byte(s))
+}
+
+func BenchmarkProcessGet(b *testing.B) {
+    s := NewServer()
+    s.SetLogger(log.New(ioutil.Discard, "", 0))
+    s.Get("/echo/(.*)", func(s string) string {
+        return s
+    })
+    req := buildTestRequest("GET", "/echo/hi", "", nil, nil)
+    var buf bytes.Buffer
+    iob := ioBuffer{input: nil, output: &buf}
+    c := scgiConn{wroteHeaders: false, req: req, headers: make(map[string][]string), fd: &iob}
+    b.ReportAllocs()
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        s.Process(&c, req)
+    }
+}
+
+func BenchmarkProcessPost(b *testing.B) {
+    s := NewServer()
+    s.SetLogger(log.New(ioutil.Discard, "", 0))
+    s.Post("/echo/(.*)", func(s string) string {
+        return s
+    })
+    req := buildTestRequest("POST", "/echo/hi", "", nil, nil)
+    var buf bytes.Buffer
+    iob := ioBuffer{input: nil, output: &buf}
+    c := scgiConn{wroteHeaders: false, req: req, headers: make(map[string][]string), fd: &iob}
+    b.ReportAllocs()
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        s.Process(&c, req)
     }
 }

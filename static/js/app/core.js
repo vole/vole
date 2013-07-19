@@ -4,6 +4,7 @@ define([
   'ember',
   'ember-data',
   'lib/marked',
+  'lib/socket.io-client',
   'plugins/text!app/templates/application.hbs',
   'plugins/text!app/templates/index.hbs',
   'plugins/text!app/templates/posts.hbs',
@@ -12,7 +13,7 @@ define([
   'plugins/moment',
   'plugins/resize'
 ],
-function (Config, Ember, DS, marked, applicationTemplate, indexTemplate, postsTemplate, profileTemplate) {
+function (Config, Ember, DS, marked, io, applicationTemplate, indexTemplate, postsTemplate, profileTemplate) {
   Ember.TEMPLATES['application'] = Ember.Handlebars.compile(applicationTemplate);
   Ember.TEMPLATES['index'] = Ember.Handlebars.compile(indexTemplate);
   Ember.TEMPLATES['profile'] = Ember.Handlebars.compile(profileTemplate);
@@ -228,4 +229,25 @@ function (Config, Ember, DS, marked, applicationTemplate, indexTemplate, postsTe
   // TODO: Put this somewhere else.
   $('.time').moment({ frequency: 5000 });
 
+  //-------------------------
+  // Websockets
+  //-------------------------
+  /*
+  var socket = io.connect('ws://127.0.0.1:6789', {
+    resource: 'ws'
+  });
+  socket.on('connect', function() {
+    console.log('boom');
+  });
+  */
+  var conn = new WebSocket("ws://localhost:6789/ws");
+  conn.onopen = function(evt) {
+    console.log('Connection opened.');
+  };
+  conn.onclose = function(evt) {
+    console.log('Connection closed.');
+  };
+  conn.onmessage = function(evt) {
+    console.log(evt.data);
+  };
 });
