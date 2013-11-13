@@ -113,3 +113,7 @@
 .footer-links li:first-child {
   padding-left: 0;
 }
+
+.modal {
+  display: none;
+}

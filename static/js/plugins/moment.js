@@ -5,17 +5,17 @@ define(['moment', 'jquery'], function (moment, $) {
     relativeTime : {
       future: "in %s",
       past:   "%s",
-      s:  "%ds",
-      m:  "1m",
-      mm: "%dm",
-      h:  "1h",
-      hh: "%dh",
-      d:  "1d",
-      dd: "%dd",
+      s:  "%d s",
+      m:  "1 m",
+      mm: "%d m",
+      h:  "1 h",
+      hh: "%d h",
+      d:  "1 d",
+      dd: "%d d",
       M:  "1 mon",
-      MM: "%dmon",
-      y:  "1y",
-      yy: "%dy"
+      MM: "%d mon",
+      y:  "1 y",
+      yy: "%d y"
     }
   });
 

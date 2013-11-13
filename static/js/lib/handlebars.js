@@ -2276,3 +2276,7 @@ Handlebars.template = Handlebars.VM.template;
 // lib/handlebars/browser-suffix.js
 })(Handlebars);
 ;
+
+define('lib/handlebars', function () {
+  return Handlebars;
+})
