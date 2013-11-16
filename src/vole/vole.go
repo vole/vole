@@ -3,6 +3,7 @@ package main
 import (
   "encoding/json"
   "fmt"
+  btsync "github.com/vole/btsync-api"
   "github.com/vole/web"
   "io/ioutil"
   "lib/config"
@@ -210,6 +211,19 @@ func main() {
     }
 
     return "OK"
+  })
+
+  web.Get("/api/get_folders", func(ctx *web.Context) string {
+    setJsonHeaders(ctx)
+
+    api := btsync.New("aaron", "lol", 1337, true)
+    folders, err := api.GetFolders()
+    if err != nil {
+      ctx.Abort(500, fmt.Sprintf("get_folders: %s", err))
+    }
+
+    foldersJson, err := json.Marshal(folders)
+    return string(foldersJson)
   })
 
   web.Get("/", serveIndex)

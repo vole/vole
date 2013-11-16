@@ -1,24 +1,23 @@
 
 requirejs.config({
   paths : {
-    'ember' : 'lib/ember/ember',
-    'ember-data' : 'lib/ember/ember-data',
-    'handlebars' : 'lib/handlebars',
-    'moment' : 'lib/moment'
-  },
-  shim : {
-    'ember' : {
-      deps : ['jquery', 'handlebars'],
-      exports : 'Ember'
-    },
-    'ember-data' : {
-      deps : ['ember'],
-      exports : 'DS'
-    },
-    'handlebars' : {
-      exports : 'Handlebars'
-    }
+    'moment' : 'lib/moment',
+    'flight' : 'lib/flight',
+    'text' : 'plugins/text',
+    'tmpl' : 'app/templates',
+    'bootstrap': 'lib/bootstrap'
   }
 });
 
-define(['app/core'], function () {});
+define([
+  // Global dependencies.
+  'lib/es5-shim',
+  'lib/es5-sham',
+  'plugins/markdown',
+  'plugins/nanodate',
+  'plugins/moment',
+  'bootstrap'
+], function () {
+  // Initialize app.
+  require(['app/init']);
+});
