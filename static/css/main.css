@@ -17,8 +17,12 @@
   vertical-align: bottom;
 }
 
+#post-text {
+  width: 516px;
+}
+
 #above-posts {
-  min-height: 90px;
+  min-height: 50px;
 }
 
 #posts-list {
@@ -112,4 +116,43 @@
 
 .footer-links li:first-child {
   padding-left: 0;
+}
+
+.file-upload {
+  min-height: 100px;
+}
+
+.file-list {
+  list-style: none;
+  margin: 0;
+}
+
+.file {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 5px;
+}
+
+.dropzone {
+  min-height: 50px;
+  padding: 13px;
+}
+
+.dropzone .dz-default.dz-message {
+  background-image: none;
+  position: relative;
+  width: auto;
+  height: auto;
+  margin: auto;
+  top: 0;
+  left: 0;
+}
+
+.dropzone .dz-default.dz-message span {
+  display: block;
+}
+
+.dropzone .dz-preview,
+.dropzone-previews .dz-preview {
+  margin: 5px;
 }

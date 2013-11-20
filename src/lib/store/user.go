@@ -75,6 +75,10 @@ func (user *User) InitFromJson(rawJson []byte, subDir string, storePath string, 
   return nil
 }
 
+func (user *User) FilePath() string {
+  return path.Join(user.FullPath, "files")
+}
+
 /**
  * EnsureDirs()
  *
@@ -89,6 +93,11 @@ func (user *User) EnsureDirs() error {
 
   // Create the user's posts directory.
   if err := os.MkdirAll(path.Join(user.FullPath, "posts"), 0755); err != nil {
+    return err
+  }
+
+  // Create the user's files directory.
+  if err := os.MkdirAll(path.Join(user.FullPath, "files"), 0755); err != nil {
     return err
   }
 

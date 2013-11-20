@@ -6,6 +6,7 @@
   <meta name="description" content="Vole is a peer-to-peer social network">
   <link rel="icon" href="/img/favicon.png" type="image/png" />
   <link rel="stylesheet" type="text/css" href="/css/vendor/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="/css/vendor/dropzone/css/dropzone.css" />
   <link rel="stylesheet" type="text/css" href="/css/main.css" />
 </head>
 <body>
@@ -38,13 +39,8 @@
         <div class="span7 timeline">
           <div id="above-posts">
             <div class="row">
-              <div class="span7">
-                <textarea id="post-text" placeholder="Say something..." rows="3" class="span7"></textarea>
-              </div>
-            </div>
-            <div class="row">
               <div class="span2 offset5">
-                <button id="post-button" class="btn btn-primary pull-right" disabled="disabled">
+                <button id="post-button" class="btn btn-primary pull-right">
                   Post <i class="icon-share-alt icon-white"></i>
                 </button>
               </div>
@@ -52,9 +48,7 @@
           </div>
 
           <div id="posts-list">
-            <div id="posts-loaded">
-
-            </div>
+            <div id="posts-loaded"></div>
             <button class="btn load-more" >Load More</button>
           </div>
         </div>
@@ -97,6 +91,28 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-primary" disabled="disabled">Create</button>
+      </div>
+    </div>
+
+    <div id="create-post" class="modal hide fade">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>New Post</h3>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal">
+          <div class="control-group">
+            <textarea id="post-text" placeholder="Say something..." rows="5"></textarea>
+          </div>
+        </form>
+        <form class="dropzone">
+          <div class="fallback">
+            <input name="file" type="file" multiple />
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" disabled="disabled">Post</button>
       </div>
     </div>
 

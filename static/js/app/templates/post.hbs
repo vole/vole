@@ -1,10 +1,10 @@
-<div class="post row">
+<div class="post row" data-id="{{ id }}">
   <div class="span1">
     <img class="avatar-img img-rounded" src="{{user_avatar}}" />
     <ul class="post-actions">
       {{#if is_my_post}}
         <li>
-          <a class="post-action" href="#">
+          <a class="post-action js-delete" href="#">
             <i class="icon-trash"></i>
           </a>
         </li>
@@ -23,6 +23,22 @@
         <span>
           {{markdown title}}
         </span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="span6">
+        {{#if files}}
+          <ul>
+            {{#each files}}
+              <li>
+                <a href="#" data-user="{{ ../user_id }}" data-post="{{ ../id }}">
+                  <i class="icon-file"></i> {{ name }}
+                </a>
+                ({{formatFileSize size }})
+              </li>
+            {{/each}}
+          </ul>
+        {{/if}}
       </div>
     </div>
   </div>

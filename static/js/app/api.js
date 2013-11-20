@@ -54,10 +54,11 @@ function (Config, $) {
 			});
 		},
 
-		post : function (title) {
+		post : function (title, files) {
 			var body = JSON.stringify({
 				post : {
-					title : title
+					title : title,
+					files: files
 				}
 			});
 
@@ -67,6 +68,13 @@ function (Config, $) {
 				data: body,
 				contentType: 'application/json; charset=utf-8',
 				dataType: 'json'
+			});
+		},
+
+		deletePost : function (id) {
+			return $.ajax({
+				type: 'DELETE',
+				url: '/api/posts/' + id
 			});
 		}
 

@@ -15,6 +15,7 @@ type Post struct {
   // Properties that should be saved to disk.
   Id      string `json:"id"`
   Title   string `json:"title"`
+  Files   []File `json:"files"`
   Created int64  `json:"created"`
 
   // Properties that are used by Vole backend and frontend, but not saved to disk
@@ -29,12 +30,19 @@ type Post struct {
   FullPath string `json:"-"`
 }
 
+type File struct {
+  Name string `json:"name"`
+  Type string `json:"type"`
+  Size int64  `json:"size"`
+  Hash string `json:"hash"`
+}
+
 /**
  * InitNew()
  *
  * Initialize a new post creating the id and other fields.
  */
-func (post *Post) InitNew(title, userPath, userId, userName, userAvatar string, isMyUser bool) {
+func (post *Post) InitNew(title string, files []File, userPath string, userId string, userName string, userAvatar string, isMyUser bool) {
   // Create a new UUID
   uuidBytes, _ := uuid.NewV4()
   uuid := fmt.Sprintf("%s", uuidBytes)
@@ -47,6 +55,7 @@ func (post *Post) InitNew(title, userPath, userId, userName, userAvatar string, 
 
   post.Id = uuid
   post.Title = title
+  post.Files = files
   post.Created = created
   post.UserId = userId
   post.UserName = userName

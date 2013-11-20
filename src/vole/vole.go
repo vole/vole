@@ -1,16 +1,25 @@
 package main
 
 import (
+  "crypto/md5"
   "encoding/json"
   "fmt"
   btsync "github.com/vole/btsync-api"
   "github.com/vole/web"
+  "io"
   "io/ioutil"
   "lib/config"
   "lib/store"
+  "os"
   osuser "os/user"
   "path"
 )
+
+func Md5(r io.Reader) string {
+  hash := md5.New()
+  io.Copy(hash, r)
+  return fmt.Sprintf("%x", hash.Sum(nil))
+}
 
 var DIR = func() string {
   dir := "."
@@ -91,7 +100,7 @@ func main() {
       if err != nil || len(allPosts.Posts) < 1 {
         // Return a welcome post.
         post := &store.Post{}
-        post.InitNew("Welcome to Vole. To start, create a new profile by clicking 'My Profile' on the left.", "none", "none", "Welcome", "", false)
+        post.InitNew("Welcome to Vole. To start, create a new profile by clicking 'My Profile' on the left.", []store.File{}, "none", "none", "Welcome", "", false)
         post.Id = "none"
         allPosts = post.Collection()
       }
@@ -163,6 +172,7 @@ func main() {
 
   web.Post("/api/posts", func(ctx *web.Context) string {
     setJsonHeaders(ctx)
+
     body, err := ioutil.ReadAll(ctx.Request.Body)
     if err != nil {
       ctx.Abort(500, "Error reading request body.")
@@ -172,18 +182,31 @@ func main() {
     if err != nil {
       ctx.Abort(500, "Error reading my user when posting.")
     }
+
     post, err := user.NewPostFromContainerJson(body)
     if err != nil {
       ctx.Abort(500, "Invalid JSON")
     }
+
     if err := post.Save(); err != nil {
       ctx.Abort(500, "Error saving post")
     }
+
+    for _, file := range post.Files {
+      // Move the file from the tmp dir to the user's file dir.
+      err := store.Move(path.Join(os.TempDir(), file.Hash), path.Join(user.FilePath(), file.Hash))
+      if err != nil {
+        ctx.Abort(500, fmt.Sprintf("Error opening temp file: %s", err))
+      }
+    }
+
     container := post.Container()
+
     postJson, err := container.Json()
     if err != nil {
       ctx.Abort(500, "Could not create container")
     }
+
     return postJson
   })
 
@@ -224,6 +247,41 @@ func main() {
 
     foldersJson, err := json.Marshal(folders)
     return string(foldersJson)
+  })
+
+  web.Post("/file/upload", func(ctx *web.Context) string {
+    ctx.Request.ParseMultipartForm(10 * 1024 * 1024)
+
+    // TODO(aaron): Find a way to stream this instead of buffering in memory.
+    form := ctx.Request.MultipartForm
+    fileHeader := form.File["file"][0]
+
+    // Open the uploaded file and get its md5 hash.
+    file, err := fileHeader.Open()
+    if err != nil {
+      ctx.Abort(500, fmt.Sprintf("Error reading file: %s", err))
+    }
+    defer file.Close()
+
+    hash := Md5(file)
+    file.Seek(0, os.SEEK_SET)
+
+    // Create a temp file to save the uploaded file to.
+    tmpFile, err := store.Create(os.TempDir(), hash)
+    if err != nil {
+      ctx.Abort(500, fmt.Sprintf("Error creating temp file: %s", err))
+    }
+    defer tmpFile.Close()
+
+    // Copy the uploaded file to the temp file.
+    _, err = io.Copy(tmpFile, file)
+    if err != nil {
+      ctx.Abort(500, fmt.Sprintf("Error creating temp file: %s", err))
+    }
+
+    // Return the md5 hash.
+    setJsonHeaders(ctx)
+    return fmt.Sprintf("{ \"hash\": \"%s\" }", hash)
   })
 
   web.Get("/", serveIndex)

@@ -4,15 +4,18 @@ define([
 	'jquery',
 	'app/events',
 	'app/api',
+	'app/post',
 	'lib/handlebars',
 	'text!tmpl/post.hbs'
-], function (component, $, events, API, Handlebars, postTmpl) {
+], function (component, $, events, API, Post, Handlebars, postTmpl) {
 
 	function timeline () {
 
 		this.defaultAttrs({
 			postListSelector: '#posts-loaded',
-			loadMoreSelector: '.load-more'
+			postButtonSelector: '#post-button',
+			loadMoreSelector: '.load-more',
+			postSelector: '.post'
 		});
 
 		this.start = function () {
@@ -60,12 +63,14 @@ define([
 			this.posts.push(post);
 			var html = Handlebars.compile(postTmpl)(post);
 			this.select('postListSelector').append(html);
+			Post.attachTo(this.attr.postSelector);
 		};
 
 		this.prependPost = function (post) {
 			this.posts.unshift(post);
 			var html = Handlebars.compile(postTmpl)(post);
 			this.select('postListSelector').prepend(html);
+			Post.attachTo(this.attr.postSelector);
 		};
 
 		this.viewMyProfile = function () {
@@ -100,6 +105,10 @@ define([
 			}
 		};
 
+		this.createPost = function () {
+			events.trigger(events.WRITE_POST);
+		};
+
 		this.after('initialize', function () {
 			this.posts = [];
 
@@ -107,7 +116,8 @@ define([
 			$(document).on(events.VIEW_HOME, $.proxy(this.viewHome, this));
 
 			this.on('click', {
-				loadMoreSelector: this.loadMore
+				loadMoreSelector: this.loadMore,
+				postButtonSelector: this.createPost
 			});
 		});
 
