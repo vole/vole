@@ -1,2 +1,2 @@
 all:
-	go run src/vole/vole.go
+	go run vole.go
