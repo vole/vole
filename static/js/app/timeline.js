@@ -4,15 +4,17 @@ define([
 	'jquery',
 	'app/events',
 	'app/api',
+	'app/post',
 	'lib/handlebars',
 	'text!tmpl/post.hbs'
-], function (component, $, events, API, Handlebars, postTmpl) {
+], function (component, $, events, API, Post, Handlebars, postTmpl) {
 
 	function timeline () {
 
 		this.defaultAttrs({
 			postListSelector: '#posts-loaded',
-			loadMoreSelector: '.load-more'
+			loadMoreSelector: '.load-more',
+			postSelector: '.post'
 		});
 
 		this.start = function () {
@@ -60,12 +62,14 @@ define([
 			this.posts.push(post);
 			var html = Handlebars.compile(postTmpl)(post);
 			this.select('postListSelector').append(html);
+			Post.attachTo(this.attr.postSelector);
 		};
 
 		this.prependPost = function (post) {
 			this.posts.unshift(post);
 			var html = Handlebars.compile(postTmpl)(post);
 			this.select('postListSelector').prepend(html);
+			Post.attachTo(this.attr.postSelector);
 		};
 
 		this.viewMyProfile = function () {

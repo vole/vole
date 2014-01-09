@@ -1,10 +1,10 @@
-<div class="post row">
+<div class="post row" data-id="{{ id }}">
   <div class="span1">
     <img class="avatar-img img-rounded" src="{{user_avatar}}" />
     <ul class="post-actions">
       {{#if is_my_post}}
         <li>
-          <a class="post-action" href="#">
+          <a class="post-action js-delete" href="#">
             <i class="icon-trash"></i>
           </a>
         </li>
