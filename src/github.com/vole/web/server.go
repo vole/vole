@@ -2,6 +2,7 @@ package web
 
 import (
     "bytes"
+    "code.google.com/p/go.net/websocket"
     "crypto/tls"
     "fmt"
     "log"
@@ -14,6 +15,7 @@ import (
     "regexp"
     "runtime"
     "strconv"
+    "strings"
     "time"
 )
 
@@ -56,10 +58,11 @@ func (s *Server) initServer() {
 }
 
 type route struct {
-    r       string
-    cr      *regexp.Regexp
-    method  string
-    handler reflect.Value
+    r           string
+    cr          *regexp.Regexp
+    method      string
+    handler     reflect.Value
+    httpHandler http.Handler
 }
 
 func (s *Server) addRoute(r string, method string, handler interface{}) {
@@ -69,11 +72,15 @@ func (s *Server) addRoute(r string, method string, handler interface{}) {
         return
     }
 
-    if fv, ok := handler.(reflect.Value); ok {
-        s.routes = append(s.routes, route{r, cr, method, fv})
-    } else {
+    switch handler.(type) {
+    case http.Handler:
+        s.routes = append(s.routes, route{r: r, cr: cr, method: method, httpHandler: handler.(http.Handler)})
+    case reflect.Value:
+        fv := handler.(reflect.Value)
+        s.routes = append(s.routes, route{r: r, cr: cr, method: method, handler: fv})
+    default:
         fv := reflect.ValueOf(handler)
-        s.routes = append(s.routes, route{r, cr, method, fv})
+        s.routes = append(s.routes, route{r: r, cr: cr, method: method, handler: fv})
     }
 }
 
@@ -84,7 +91,10 @@ func (s *Server) ServeHTTP(c http.ResponseWriter, req *http.Request) {
 
 // Process invokes the routing system for server s
 func (s *Server) Process(c http.ResponseWriter, req *http.Request) {
-    s.routeHandler(req, c)
+    route := s.routeHandler(req, c)
+    if route != nil {
+        route.httpHandler.ServeHTTP(c, req)
+    }
 }
 
 // Get adds a handler for the 'GET' http method for server s.
@@ -110,6 +120,16 @@ func (s *Server) Delete(route string, handler interface{}) {
 // Match adds a handler for an arbitrary http method for server s.
 func (s *Server) Match(method string, route string, handler interface{}) {
     s.addRoute(route, method, handler)
+}
+
+//Adds a custom handler. Only for webserver mode. Will have no effect when running as FCGI or SCGI.
+func (s *Server) Handler(route string, method string, httpHandler http.Handler) {
+    s.addRoute(route, method, httpHandler)
+}
+
+//Adds a handler for websockets. Only for webserver mode. Will have no effect when running as FCGI or SCGI.
+func (s *Server) Websocket(route string, httpHandler websocket.Handler) {
+    s.addRoute(route, "GET", httpHandler)
 }
 
 // Run starts the web application and serves HTTP requests for s
@@ -243,14 +263,47 @@ func (s *Server) tryServingFile(name string, req *http.Request, w http.ResponseW
     return false
 }
 
+func (s *Server) logRequest(ctx Context, sTime time.Time) {
+    //log the request
+    var logEntry bytes.Buffer
+    req := ctx.Request
+    requestPath := req.URL.Path
+
+    duration := time.Now().Sub(sTime)
+    var client string
+
+    // We suppose RemoteAddr is of the form Ip:Port as specified in the Request
+    // documentation at http://golang.org/pkg/net/http/#Request
+    pos := strings.LastIndex(req.RemoteAddr, ":")
+    if pos > 0 {
+        client = req.RemoteAddr[0:pos]
+    } else {
+        client = req.RemoteAddr
+    }
+
+    fmt.Fprintf(&logEntry, "%s - \033[32;1m %s %s\033[0m - %v", client, req.Method, requestPath, duration)
+
+    if len(ctx.Params) > 0 {
+        fmt.Fprintf(&logEntry, " - \033[37;1mParams: %v\033[0m\n", ctx.Params)
+    }
+
+    ctx.Server.Logger.Print(logEntry.String())
+
+}
+
 // the main route handler in web.go
-func (s *Server) routeHandler(req *http.Request, w http.ResponseWriter) {
+// Tries to handle the given request.
+// Finds the route matching the request, and execute the callback associated
+// with it.  In case of custom http handlers, this function returns an "unused"
+// route. The caller is then responsible for calling the httpHandler associated
+// with the returned route.
+func (s *Server) routeHandler(req *http.Request, w http.ResponseWriter) (unused *route) {
     requestPath := req.URL.Path
     ctx := Context{req, map[string]string{}, s, w}
 
-    //log the request
-    var logEntry bytes.Buffer
-    fmt.Fprintf(&logEntry, "\033[32;1m%s %s\033[0m", req.Method, requestPath)
+    //set some default headers
+    ctx.SetHeader("Server", "web.go", true)
+    tm := time.Now().UTC()
 
     //ignore errors from ParseForm because it's usually harmless.
     req.ParseForm()
@@ -258,13 +311,10 @@ func (s *Server) routeHandler(req *http.Request, w http.ResponseWriter) {
         for k, v := range req.Form {
             ctx.Params[k] = v[0]
         }
-        fmt.Fprintf(&logEntry, "\n\033[37;1mParams: %v\033[0m\n", ctx.Params)
     }
-    ctx.Server.Logger.Print(logEntry.String())
 
-    //set some default headers
-    ctx.SetHeader("Server", "web.go", true)
-    tm := time.Now().UTC()
+    defer s.logRequest(ctx, tm)
+
     ctx.SetHeader("Date", webTime(tm), true)
 
     if req.Method == "GET" || req.Method == "HEAD" {
@@ -291,6 +341,12 @@ func (s *Server) routeHandler(req *http.Request, w http.ResponseWriter) {
 
         if len(match[0]) != len(requestPath) {
             continue
+        }
+
+        if route.httpHandler != nil {
+            unused = &route
+            // We can not handle custom http handlers here, give back to the caller.
+            return
         }
 
         var args []reflect.Value
@@ -337,6 +393,7 @@ func (s *Server) routeHandler(req *http.Request, w http.ResponseWriter) {
         }
     }
     ctx.Abort(404, "Page not found")
+    return
 }
 
 // SetLogger sets the logger for server s
