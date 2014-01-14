@@ -81,6 +81,12 @@
   display: block;
 }
 
+#preview-text {
+  border: 2px dotted #ccc;
+  padding: 3px;
+  min-height: 30px;
+}
+
 .load-more {
   width: 100%;
 }
