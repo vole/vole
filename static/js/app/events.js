@@ -1,5 +1,7 @@
 
-define(function () {
+define(['jquery'], function ($) {
+
+	var $doc = $(document);
 
 	return {
 		// View the user's personal timeline.
@@ -12,7 +14,21 @@ define(function () {
 		PROFILE_NOT_FOUND: 'PROFILE_NOT_FOUND',
 
 		// A new profile has been created.
-		PROFILE_CREATED: 'PROFILE_CREATED'
+		PROFILE_CREATED: 'PROFILE_CREATED',
+
+		POST_DELETED: 'POST_DELETED',
+
+		WRITE_POST: 'WRITE_POST',
+
+		trigger: function () {
+			var args = Array.prototype.slice.call(arguments);
+			$doc.trigger.apply($doc, args);
+		},
+
+		on: function () {
+			var args = Array.prototype.slice.call(arguments);
+			$doc.on.apply($doc, args);
+		}
 	};
 
 });

@@ -68,6 +68,13 @@ function (Config, $) {
 				contentType: 'application/json; charset=utf-8',
 				dataType: 'json'
 			});
+		},
+
+		deletePost : function (id) {
+			return $.ajax({
+				type: 'DELETE',
+				url: '/api/posts/' + id
+			});
 		}
 
 	};
