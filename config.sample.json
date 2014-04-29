@@ -1,14 +1,10 @@
 {
-  "install" : {
-    "dir": "~/Vole"
-  },
-  "ui" : {
-    "reverse": false,
-    "pollInterval": 5000,
-    "pageSize" : 50
-  },
-  "server" : {
-    "listen": "127.0.0.1:6789",
-    "debug": false
-  }
+  "install_dir": "~/Vole",
+  "ui_theme": "default",
+  "ui_layout": "default",
+  "ui_reverse": false,
+  "ui_pollInterval": 5000,
+  "ui_pageSize" : 50,
+  "server_listen": "127.0.0.1:6789",
+  "server_debug": false
 }

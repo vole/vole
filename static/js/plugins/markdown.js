@@ -12,7 +12,16 @@ function (Handlebars, marked) {
       breaks: true
     });
 
-    return new Handlebars.SafeString(marked(content));
+    var html = '';
+
+    try {
+      html = marked(content || '');
+    }
+    catch (e) {
+      html = '[Parse Error]';
+    }
+
+    return new Handlebars.SafeString(html);
   });
 
 });

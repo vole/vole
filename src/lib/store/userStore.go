@@ -1,19 +1,19 @@
 package store
 
 import (
-  "encoding/json"
-  "errors"
-  "path"
-  "sort"
-  "strings"
+	"encoding/json"
+	"errors"
+	"path"
+	"sort"
+	"strings"
 )
 
 /**
  * UserStore.
  */
 type UserStore struct {
-  Path    string
-  Version string
+	Path    string
+	Version string
 }
 
 /**
@@ -22,7 +22,7 @@ type UserStore struct {
  * Return an empty user struct.
  */
 func (userStore *UserStore) GetEmptyUser() *User {
-  return new(User)
+	return new(User)
 }
 
 /**
@@ -31,12 +31,12 @@ func (userStore *UserStore) GetEmptyUser() *User {
  * Called by POST requests from the frontend.
  */
 func (userStore *UserStore) NewUserFromContainerJson(rawJson []byte) (*User, error) {
-  var container UserContainer
-  if err := json.Unmarshal(rawJson, &container); err != nil {
-    return nil, err
-  }
-  user := userStore.NewUser(container.User.Name, container.User.Email)
-  return user, nil
+	var container UserContainer
+	if err := json.Unmarshal(rawJson, &container); err != nil {
+		return nil, err
+	}
+	user := userStore.NewUser(container.User.Name, container.User.Email)
+	return user, nil
 }
 
 /**
@@ -45,9 +45,9 @@ func (userStore *UserStore) NewUserFromContainerJson(rawJson []byte) (*User, err
  * Return a new User struct.
  */
 func (userStore *UserStore) NewUser(name, email string) *User {
-  user := &User{}
-  user.InitNew(name, email, userStore.Path, userStore.Version)
-  return user
+	user := &User{}
+	user.InitNew(name, email, userStore.Path, userStore.Version)
+	return user
 }
 
 /**
@@ -56,19 +56,19 @@ func (userStore *UserStore) NewUser(name, email string) *User {
  * Get the user pointed at by the my_user file.
  */
 func (userStore *UserStore) GetMyUser() (*User, error) {
-  subDir, err := userStore.getMyUserSubDir()
-  if err != nil {
-    return nil, err
-  }
+	subDir, err := userStore.getMyUserSubDir()
+	if err != nil {
+		return nil, err
+	}
 
-  user, err := userStore.getUserFromDir(subDir)
-  if err != nil {
-    return nil, err
-  }
+	user, err := userStore.getUserFromDir(subDir)
+	if err != nil {
+		return nil, err
+	}
 
-  user.IsMyUser = true
+	user.IsMyUser = true
 
-  return user, nil
+	return user, nil
 }
 
 /**
@@ -77,25 +77,25 @@ func (userStore *UserStore) GetMyUser() (*User, error) {
  * Get all users.
  */
 func (userStore *UserStore) GetUsers() (*UserCollection, error) {
-  collection := make([]User, 0)
+	collection := make([]User, 0)
 
-  myUserDir, err := userStore.getMyUserSubDir()
-  if err != nil {
-    return nil, err
-  }
+	myUserDir, err := userStore.getMyUserSubDir()
+	if err != nil {
+		return nil, err
+	}
 
-  userDirs, _ := ReadDir(userStore.Path, "users")
+	userDirs, _ := ReadDir(userStore.Path, "users")
 
-  for _, dir := range userDirs {
-    user, err := userStore.getUserFromDir(dir.Name())
-    if err != nil {
-      continue
-    }
-    user.IsMyUser = (myUserDir == dir.Name())
-    collection = append(collection, *user)
-  }
+	for _, dir := range userDirs {
+		user, err := userStore.getUserFromDir(dir.Name())
+		if err != nil {
+			continue
+		}
+		user.IsMyUser = (myUserDir == dir.Name())
+		collection = append(collection, *user)
+	}
 
-  return &UserCollection{collection}, nil
+	return &UserCollection{collection}, nil
 }
 
 /**
@@ -104,25 +104,25 @@ func (userStore *UserStore) GetUsers() (*UserCollection, error) {
  * Get user with the given ID.
  */
 func (userStore *UserStore) GetUserById(id string) (*User, error) {
-  myUserDir, err := userStore.getMyUserSubDir()
-  if err != nil {
-    return nil, err
-  }
+	myUserDir, err := userStore.getMyUserSubDir()
+	if err != nil {
+		return nil, err
+	}
 
-  userDirs, _ := ReadDir(userStore.Path, "users")
+	userDirs, _ := ReadDir(userStore.Path, "users")
 
-  for _, dir := range userDirs {
-    user, err := userStore.getUserFromDir(dir.Name())
-    if err != nil {
-      continue
-    }
-    if user.Id == id {
-      user.IsMyUser = (myUserDir == dir.Name())
-      return user, nil
-    }
-  }
+	for _, dir := range userDirs {
+		user, err := userStore.getUserFromDir(dir.Name())
+		if err != nil {
+			continue
+		}
+		if user.Id == id {
+			user.IsMyUser = (myUserDir == dir.Name())
+			return user, nil
+		}
+	}
 
-  return nil, errors.New("User not found")
+	return nil, errors.New("User not found")
 }
 
 /**
@@ -131,25 +131,25 @@ func (userStore *UserStore) GetUserById(id string) (*User, error) {
  * Get all posts from all users.
  */
 func (userStore *UserStore) GetPosts() (*PostCollection, error) {
-  users, err := userStore.GetUsers()
-  if err != nil {
-    return nil, err
-  }
+	users, err := userStore.GetUsers()
+	if err != nil {
+		return nil, err
+	}
 
-  collection := make([]Post, 0)
-  for _, user := range users.Users {
-    userPosts, err := user.GetPosts()
-    if err != nil {
-      continue
-    }
+	collection := make([]Post, 0)
+	for _, user := range users.Users {
+		userPosts, err := user.GetPosts()
+		if err != nil {
+			continue
+		}
 
-    collection = append(collection, userPosts.Posts...)
-  }
+		collection = append(collection, userPosts.Posts...)
+	}
 
-  postCol := &PostCollection{collection}
-  sort.Sort(postCol)
+	postCol := &PostCollection{collection}
+	sort.Sort(postCol)
 
-  return postCol, nil
+	return postCol, nil
 }
 
 /**
@@ -158,10 +158,10 @@ func (userStore *UserStore) GetPosts() (*PostCollection, error) {
  * Set the 'my_user' file to point to the given user.
  */
 func (userStore *UserStore) SetMyUser(user *User) error {
-  if err := Write(path.Join(userStore.Path, "my_user"), []byte(user.DirName)); err != nil {
-    return err
-  }
-  return nil
+	if err := Write(path.Join(userStore.Path, "my_user"), []byte(user.DirName)); err != nil {
+		return err
+	}
+	return nil
 }
 
 /**
@@ -171,12 +171,12 @@ func (userStore *UserStore) SetMyUser(user *User) error {
  * the current user.
  */
 func (userStore *UserStore) getMyUserSubDir() (string, error) {
-  rawId, err := ReadFile(userStore.Path, "my_user")
-  if err != nil {
-    return "", err
-  }
-  subDir := strings.TrimSpace(string(rawId))
-  return subDir, nil
+	rawId, err := ReadFile(userStore.Path, "my_user")
+	if err != nil {
+		return "", err
+	}
+	subDir := strings.TrimSpace(string(rawId))
+	return subDir, nil
 }
 
 /**
@@ -185,15 +185,15 @@ func (userStore *UserStore) getMyUserSubDir() (string, error) {
  * Get the user from the given subdir
  */
 func (userStore *UserStore) getUserFromDir(subDir string) (*User, error) {
-  data, err := ReadFile(userStore.Path, "users", subDir, userStore.Version, "user", "user.json")
-  if err != nil {
-    return nil, err
-  }
+	data, err := ReadFile(userStore.Path, "users", subDir, userStore.Version, "user", "user.json")
+	if err != nil {
+		return nil, err
+	}
 
-  user := &User{}
-  if err := user.InitFromJson(data, subDir, userStore.Path, userStore.Version); err != nil {
-    return nil, errors.New("No user or invalid json.")
-  }
+	user := &User{}
+	if err := user.InitFromJson(data, subDir, userStore.Path, userStore.Version); err != nil {
+		return nil, errors.New("No user or invalid json.")
+	}
 
-  return user, nil
+	return user, nil
 }

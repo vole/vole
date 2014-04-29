@@ -1,29 +1,19 @@
-<div class="post row" data-id="{{ id }}">
-  <div class="span1">
-    <img class="avatar-img img-rounded" src="{{user_avatar}}" />
-    <ul class="post-actions">
-      {{#if is_my_post}}
-        <li>
-          <a class="post-action js-delete" href="#">
-            <i class="icon-trash"></i>
-          </a>
-        </li>
-      {{/if}}
-    </ul>
-  </div>
-  <div class="span6">
-    <div class="row">
-      <div class="span4 user-name">{{user_name}}</div>
-      <small class="span2 time text-right" data-time="{{created}}">
-        {{nanoDate created}}
-      </small>
-    </div>
-    <div class="row">
-      <div class="span6">
-        <span>
-          {{markdown title}}
-        </span>
-      </div>
-    </div>
-  </div>
+<img class="avatar" src="{{user_avatar}}">
+
+<div class="name">
+  {{user_name}}
 </div>
+
+<div class="date" data-time="{{created}}">
+  {{nanoDate created}}
+</div>
+
+<div class="body">
+  {{markdown title}}
+</div>
+
+{{#if is_my_post}}
+  <div class="actions">
+    <a href="#" class="js-delete">delete </div>
+  </div>
+{{/if}}

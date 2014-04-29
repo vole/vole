@@ -60,6 +60,11 @@ module.exports = function(grunt) {
           src: ['Gruntfile.js', 'static/js/*.js']
         }
       }
+    },
+
+    macgap: {
+      src: './build/osx/vole',
+      dest: './dist/'
     }
   });
 
@@ -69,5 +74,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-chmod');
   grunt.loadNpmTasks('grunt-exec');
 
+  grunt.loadTasks('./build/tasks');
+
   grunt.registerTask('default', ['jshint', 'clean', 'exec:install_vole', 'copy', 'chmod']);
+
+  grunt.registerTask('build:osx', ['macgap']);
+
+  grunt.registerTask('build', ['clean', 'build:osx']);
 };

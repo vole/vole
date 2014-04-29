@@ -1,0 +1,17 @@
+<h1>Preferences</h1>
+
+<fieldset>
+  <legend>Theme</legend>
+  <select class="js-theme">
+    <option value="default" {{#equal this.ui.theme 'default'}}selected{{/equal}}>
+      default
+    </option>
+    <option value="dark" {{#equal this.ui.theme 'dark'}}selected{{/equal}}>
+      dark
+    </option>
+    <option value="compact" {{#equal this.ui.theme 'compact'}}selected{{/equal}}>
+      compact
+    </option>
+  </select>
+</fieldset>
+

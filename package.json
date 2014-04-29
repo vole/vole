@@ -7,6 +7,8 @@
     "grunt-contrib-clean": "~0.4.1",
     "grunt-contrib-copy": "~0.4.1",
     "grunt-exec": "~0.4.1",
-    "grunt-chmod": "~1.0.3"
+    "grunt-chmod": "~1.0.3",
+    "shelljs": "^0.2.6",
+    "mkdirp": "^0.4.0"
   }
 }

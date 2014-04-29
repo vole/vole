@@ -1,9 +1,6 @@
+define(function(require) {
 
-define([
-  'app/config',
-  'jquery'
-],
-function (Config, $) {
+	var $ = require('jquery');
 
 	return {
 
@@ -74,6 +71,16 @@ function (Config, $) {
 			return $.ajax({
 				type: 'DELETE',
 				url: '/api/posts/' + id
+			});
+		},
+
+		addFriend: function(key) {
+			return $.ajax({
+				type: 'POST',
+				url: '/api/friend',
+				data: {
+					key: key
+				}
 			});
 		}
 

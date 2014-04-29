@@ -1,38 +1,33 @@
-{{#if myUser.isLoaded}}
-  {{#if myUser.length}}
-    <div id="above-posts" class="well clearfix">
-      <div class="pull-left">
-        <h3>
-          {{myUser.firstObject.name}}
-        </h3>
-      </div>
+
+<form>
+
+  <div class="row">
+    <div class="small-10 small-offset-1 columns">
+      <label>Avatar</label>
+      <img class="avatar" src="{{ avatar }}">
+      <input type="file">
     </div>
-    {{view "App.PostsView" controllerBinding="controllers.posts"}}
-  {{else}}
-    <h3>Profile not found</h3>
-    <p>Vole could not find your user profile. Would you like to create a new one?</p>
-    <form class="form-horizontal">
-      <div class="control-group">
-        <label class="control-label">Name:</label>
-        <div class="controls">
-          {{view Ember.TextField valueBinding="newName"}}
-        </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label">Email (for Gravatar):</label>
-        <div class="controls">
-          {{view Ember.TextField valueBinding="newEmail"}}
-        </div>
-      </div>
-      <div class="control-group">
-        <div class="controls">
-          <button {{action "createNew"}} class="btn" {{bindAttr disabled="createButtonDisabled"}}>Create</button>
-        </div>
-      </div>
-    </form>
-  {{/if}}
-{{else}}
-  <div class="progress progress-striped active">
-    <div class="bar" style="width: 100%;"></div>
   </div>
-{{/if}}
+
+  <div class="row">
+    <div class="small-10 small-offset-1 columns">
+      <label for="name">Name</label>
+      <input id="name" name="name" type="text" value="{{ name }}">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="small-10 small-offset-1 columns">
+      <label for="bio">Bio</label>
+      <textarea id="bio" name="bio">{{ bio }}</textarea>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="small-10 small-offset-1 columns">
+      <a class="button tiny alert" href="#">Cancel</a>
+      <a class="button tiny" href="#">Save</a>
+    </div>
+  </div>
+
+</form>

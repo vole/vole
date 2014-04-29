@@ -5,105 +5,11 @@
   <title>Vole</title>
   <meta name="description" content="Vole is a peer-to-peer social network">
   <link rel="icon" href="/img/favicon.png" type="image/png" />
-  <link rel="stylesheet" type="text/css" href="/css/vendor/bootstrap.min.css" />
-  <link rel="stylesheet" type="text/css" href="/css/main.css" />
 </head>
 <body>
-  <div id="container">
-    <header id="main-nav">
-      <div class="row">
-        <div class="span2 offset1">
-          <h2 id="logo">Vole</h2>
-        </div>
-        <div class="span7">
-          <div class="text-right">
-            <h3 id="my-username-title"></h3>
-          </div>
-        </div>
-      </div>
-    </header>
 
-    <main>
-      <div class="row">
-        <div id="sidebar" class="span2 offset1">
-          <ul class="nav nav-pills nav-stacked well">
-            <li class="active">
-              <a href="#" class="view-home">Home</a>
-            </li>
-            <li>
-              <a href="#" class="view-my-profile">My profile</a>
-            </li>
-          </ul>
-        </div>
-        <div class="span7 timeline">
-          <div id="above-posts">
-            <div class="row">
-              <div class="span7">
-                <textarea id="post-text" placeholder="Say something..." rows="3" class="span7"></textarea>
-              </div>
-              <div class="span7">
-                <p id="preview-text" class="invisible"></p>
-              </div>
-            </div>
-            <div class="row">
-              <div class="span2 offset5">
-                <button id="post-button" class="btn btn-primary pull-right" disabled="disabled">
-                  Post <i class="icon-share-alt icon-white"></i>
-                </button>
-              </div>
-            </div>
-          </div>
+  <div id="app"></div>
 
-          <div id="posts-list">
-            <div id="posts-loaded">
-
-            </div>
-            <button class="btn load-more" >Load More</button>
-          </div>
-        </div>
-      </div>
-    </main>
-
-    <footer class="footer">
-      <p>
-        Code licensed under
-        <a href="http://www.debian.org/legal/licenses/mit" target="_blank">MIT</a>
-      </p>
-      <ul class="footer-links">
-        <li><a href="http://vole.cc/">Site</a></li>
-        <li class="muted">·</li>
-        <li><a href="https://github.com/vole/vole/issues">Issues</a></li>
-      </ul>
-    </footer>
-
-    <div id="create-profile" class="modal hide fade">
-      <div class="modal-header">
-        <h3>Create Profile</h3>
-      </div>
-      <div class="modal-body">
-        <p>Vole could not find your user profile. Would you like to create a new one?</p>
-        <hr>
-        <form class="form-horizontal">
-          <div class="control-group">
-            <label class="control-label">Name:</label>
-            <div class="controls">
-              <input type="text" id="create-profile-name" />
-            </div>
-          </div>
-          <div class="control-group">
-            <label class="control-label">Email (for Gravatar):</label>
-            <div class="controls">
-              <input type="email" id="create-profile-email" />
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-primary" disabled="disabled">Create</button>
-      </div>
-    </div>
-
-  </div>
   <script data-main="/js/main" src="/js/lib/require-jquery.js"></script>
 </body>
 </html>

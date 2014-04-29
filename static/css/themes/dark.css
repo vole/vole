@@ -1,0 +1,26 @@
+body {
+  background-color: #222;
+  color: #fff;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #fff;
+}
+
+.nav a,
+.friends .actions .add,
+.timeline-header-actions a {
+  color: #fff;
+}
+
+.post {
+  border-top: 1px solid #444;
+}
+
+fieldset legend {
+  background-color: #222;
+}
+
+select {
+  color: #222;
+}
