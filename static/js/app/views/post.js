@@ -1,9 +1,9 @@
 define(function(require) {
 
-  var Backbone = require('backbone');
+  var BaseView = require('app/views/base');
   var Handlebars = require('handlebars');
 
-  return Backbone.View.extend({
+  return BaseView.extend({
 
     className: 'post',
 

@@ -2,9 +2,11 @@ define(function(require) {
 
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
+
+  var BaseView = require('app/views/base');
   var DraftView = require('app/views/draft')
 
-  return Backbone.View.extend({
+  return BaseView.extend({
 
     className: 'drafts',
 
@@ -19,12 +21,10 @@ define(function(require) {
       this.$el.html(this.template());
 
       this.collection.each(function(draft) {
-        this.$('ul').append(
-          new DraftView({
-            model: draft,
-            tagName: 'li'
-          }).render().el
-        );
+        this.subView('ul', new DraftView({
+          model: draft,
+          tagName: 'li'
+        }));
       }.bind(this));
 
       return this;

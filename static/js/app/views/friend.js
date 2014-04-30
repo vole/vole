@@ -1,8 +1,11 @@
 define(function(require) {
 
   var Backbone = require('backbone');
+  var BaseView = require('app/views/base');
 
-  return Backbone.View.extend({
+  return BaseView.extend({
+
+    className: 'friend',
 
     template: Handlebars.compile(require('text!tmpl/friend.hbs')),
 
@@ -10,6 +13,8 @@ define(function(require) {
       'click a': 'click'
     },
 
+    // TODO: Instead of navigating, just re-render the posts view.
+    // Maybe using events somehow?
     click: function(e) {
       e.preventDefault();
       Backbone.history.navigate(this.$('a').attr('href'), true);

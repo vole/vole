@@ -19,7 +19,7 @@ define(function(require) {
 
       var key = this.$('input').val();
 
-      // TODO: error handling.
+      // TODO: error handling!
       api.addFriend(key).always(this.close.bind(this));
 
       Backbone.history.navigate('/timeline', true);

@@ -13,34 +13,33 @@ define(function(require) {
     template: Handlebars.compile(require('text!tmpl/layouts/default.hbs')),
 
     initialize: function() {
-      this.model.on('change:btsync', this.alert.bind(this));
+      this.model.on('sync', this.alert.bind(this));
     },
 
     loadTheme: function() {
-      var theme = $('<link>', {
-        id: 'theme',
-        rel: 'stylesheet',
-        href: format('/css/themes/%s.css', vole.config.get('ui_theme'))
-      });
-
+      var href = format('/css/themes/%s.css', vole.config.get('ui_theme'));
+      var theme = $('<link id="theme" rel="stylesheet">').attr('href', href);
       $('head').append(theme);
     },
 
     // TODO: Make this its own view.
     alert: function() {
-      if (this.model.get('btsync')) {
-        this.$('.js-alert').show().text('Lost connection to Bittorrent Sync...');
+      if (!this.model.get('btsync')) {
+        this.$('.js-alert').slideDown();
       }
       else {
-        this.$('.js-alert').hide();
+        this.$('.js-alert').slideUp();
       }
     },
 
     render: function() {
-      this.$el.html(this.template());
+      this.$el.html(this.template(this.model.attributes));
 
-      new HeaderView().render().$el.appendTo('#header');
+      // Render the header. It's a persistant view, always visible.
+      var header = new HeaderView().render();
+      this.$('#header').append(header.el);
 
+      // Load the user's configured theme.
       this.loadTheme();
 
       vole.events.trigger('app.view.rendered');
@@ -48,14 +47,14 @@ define(function(require) {
 
     setContentView: function(contentView) {
       if (this.contentView && this.contentView._subViews) {
-        var toKill = _.values(this.contentView._subViews);
+        var toKill = this.contentView._subViews || [];
 
         while (toKill.length) {
           var view = toKill.shift();
           view.trigger('kill');
 
           if (view._subViews) {
-            toKill = toKill.concat(_.values(view._subViews));
+            toKill = toKill.concat(view._subViews || []);
           }
         }
       }

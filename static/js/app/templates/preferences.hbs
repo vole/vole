@@ -1,8 +1,9 @@
 <h1>Preferences</h1>
 
 <fieldset>
-  <legend>Theme</legend>
-  <select class="js-theme">
+  <legend>UI</legend>
+  <label for="theme">Theme</label>
+  <select name="theme" class="js-theme">
     <option value="default" {{#equal this.ui.theme 'default'}}selected{{/equal}}>
       default
     </option>

@@ -1,33 +1,24 @@
 define(function(require) {
 
   var _ = require('underscore');
-  var Backbone = require('backbone');
   var Handlebars = require('handlebars');
 
+  var BaseView = require('app/views/base');
   var FriendView = require('app/views/friend');
-  var Friends = require('app/collections/friend');
 
-  var api = require('app/api');
+  return BaseView.extend({
 
-  return Backbone.View.extend({
+    className: 'friends',
 
     template: Handlebars.compile(require('text!tmpl/friends.hbs')),
 
     events: {
-      'keyup .js-search': 'search',
-      'click .js-add': 'toggleAdd',
-      'click .js-add-button': 'add'
+      'keyup .js-search': 'search'
     },
 
     initialize: function() {
-      this.collection = new Friends();
       this.collection.on('sync', this.renderResults.bind(this));
-      //this.updateInterval = setInterval(this.search.bind(this), 5000);
-      this.search();
-    },
-
-    parse: function(response) {
-      return response.users;
+      this.collection.fetch();
     },
 
     search: _.debounce(function() {
@@ -38,29 +29,14 @@ define(function(require) {
       });
     }, 100),
 
-    toggleAdd: function() {
-      this.$('form').toggle();
-    },
-
-    add: function(e) {
-      e.preventDefault();
-
-      var key = this.$('#add-friend').val();
-
-      api.addFriend(key).done(this.search.bind(this));
-
-      this.toggleAdd();
-
-      this.$('#add-friend').val('');
-    },
-
     renderResults: function() {
       this.$('ul').empty();
 
       this.collection.each(function(user) {
-        this.$('ul').append(
-          new FriendView({ model: user, tagName: 'li' }).render().el
-        );
+        this.subView('ul', new FriendView({
+          model: user,
+          tagName: 'li'
+        }));
       }.bind(this));
     },
 

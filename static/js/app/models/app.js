@@ -11,6 +11,9 @@ define(function(require) {
     url: '/status',
 
     initialize: function() {
+      this.fetch();
+
+      // Check the status regularly.
       this.interval = setInterval(this.fetch.bind(this), 5000);
     }
 

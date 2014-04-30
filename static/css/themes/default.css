@@ -45,6 +45,12 @@ body {
 
 .app-alert {
   display: none;
+  margin-top: 40px;
+  margin-bottom: -40px;
+}
+
+.app-alert .close {
+  color: #fff;
 }
 
 /**
@@ -212,22 +218,19 @@ body {
  * Timeline.
  */
 .posts {
-  /*margin: 30px 0 0 0;*/
-  /*box-shadow: inset 7px 0 9px -7px rgba(0,0,0,0.4);*/
   padding-bottom: 100px;
   background-color: #fff;
   border-left: 1px solid #eee;
 }
 
-.posts .load-more {
-  width: 50%;
-  margin: 20px auto 0 auto;
-  display: block;
-}
-
 .posts .spinner {
   margin: 50px auto 0 auto;
   height: 50px;
+}
+
+.posts ul {
+  margin: 0;
+  list-style: none;
 }
 
 .post {
@@ -239,7 +242,7 @@ body {
 }
 
 .post:hover {
-  border-right: 3px solid #008BFF;
+  background-color: #fcfcfc;
 }
 
 .post:first-child {
@@ -264,10 +267,6 @@ body {
   font-size: 11px;
   color: #aaa;
   font-weight: 300;
-}
-
-.post:hover .date {
-  right: 17px;
 }
 
 .post .body img {
@@ -427,4 +426,22 @@ textarea.autosizejs {
 
 .add .button {
   margin-bottom: 0;
+}
+
+/**
+ * Preferences.
+ */
+.preferences {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 30px 15px;
+}
+
+.preferences h1 {
+  font-size: 24px;
+  font-weight: 300;
+}
+
+.preferences legend {
+  font-weight: 300;
 }
