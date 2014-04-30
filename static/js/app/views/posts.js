@@ -19,7 +19,12 @@ define(function(require) {
     initialize: function() {
       this.collection.on('sync', this.render.bind(this));
       this.collection.fetch();
-      this.interval = setInterval(this.checkForUpdates.bind(this), 5000);
+
+      var interval = setInterval(this.checkForUpdates.bind(this), 5000);
+
+      this.on('kill', function() {
+        clearInterval(interval);
+      });
     },
 
     checkForUpdates: function() {
@@ -59,7 +64,7 @@ define(function(require) {
     },
 
     renderPosts: function(collection) {
-      var loadMoreButton = this.$('.load-more');
+      var loadMoreButton = this.$('.load-more').show();
 
       this.$('.spinner').remove();
 

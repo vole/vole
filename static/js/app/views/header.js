@@ -3,6 +3,7 @@ define(function(require) {
   var Backbone = require('backbone');
 
   var Modal = require('app/views/modal');
+  var Add = require('app/views/add');
 
   return Backbone.View.extend({
 
@@ -12,13 +13,30 @@ define(function(require) {
 
     events: {
       'click a[href!=#]': 'navigate',
-      'click .js-info': 'info'
+      'click .js-info': 'info',
+      'click .js-add': 'add'
     },
 
     navigate: function(e) {
       e.preventDefault();
       var href = $(e.target).attr('href');
       Backbone.history.navigate(href, true);
+    },
+
+    add: function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (this.dropdown) {
+        return this.dropdown.toggle();
+      }
+
+      this.dropdown = new Add({
+        target: this.$('.js-add'),
+        template: require('text!tmpl/dropdowns/add.hbs')
+      });
+
+      this.dropdown.render().open();
     },
 
     info: function(e) {

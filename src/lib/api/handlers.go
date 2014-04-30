@@ -28,7 +28,7 @@ func setJsonHeaders(ctx *web.Context) {
 }
 
 func createJsonError(ctx *web.Context, message string) string {
-	ctx.ResponseWriter.WriteHeader(500)
+	//ctx.ResponseWriter.WriteHeader(500)
 	var err = Error{true, message}
 	bytes, _ := json.Marshal(err)
 	return string(bytes)

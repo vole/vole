@@ -22,7 +22,7 @@ body {
   color: #333;
 }
 
-#app {
+#content {
   margin-top: 40px;
 }
 
@@ -90,6 +90,20 @@ body {
   right: 25px;
   font-family: SSStandard;
   color: #008BFF;
+}
+
+/**
+ * Dropdowns
+ */
+.dropdown {
+  position: absolute;
+  z-index: 100;
+  background-color: #fff;
+}
+
+.dropdown-content {
+  padding: 15px;
+  border: 1px solid #ccc;
 }
 
 /**
@@ -393,49 +407,24 @@ textarea.autosizejs {
 }
 
 /**
- * Loading spinner.
+ * Add dropdown.
  */
-div.loading {
-  font-family: SSStandard;
-  height: 20px;
-  width: 20px;
-  font-size: 20px;
+.add {
+  width: 300px;
+}
 
-  -webkit-animation-name: spin;
-  -webkit-animation-duration: 4000ms;
-  -webkit-animation-iteration-count: infinite;
-  -webkit-animation-timing-function: linear;
-  -moz-animation-name: spin;
-  -moz-animation-duration: 4000ms;
-  -moz-animation-iteration-count: infinite;
-  -moz-animation-timing-function: linear;
-  -ms-animation-name: spin;
-  -ms-animation-duration: 4000ms;
-  -ms-animation-iteration-count: infinite;
-  -ms-animation-timing-function: linear;
+.add h2 {
+  font-size: 16px;
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+  font-weight: 300;
+}
 
-  animation-name: spin;
-  animation-duration: 4000ms;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
+.add .error {
+  display: none;
 }
-@-ms-keyframes spin {
-  from { -ms-transform: rotate(0deg); }
-  to { -ms-transform: rotate(360deg); }
-}
-@-moz-keyframes spin {
-  from { -moz-transform: rotate(0deg); }
-  to { -moz-transform: rotate(360deg); }
-}
-@-webkit-keyframes spin {
-  from { -webkit-transform: rotate(0deg); }
-  to { -webkit-transform: rotate(360deg); }
-}
-@keyframes spin {
-  from {
-    transform:rotate(0deg);
-  }
-  to {
-    transform:rotate(360deg);
-  }
+
+.add .button {
+  margin-bottom: 0;
 }

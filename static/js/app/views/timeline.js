@@ -3,13 +3,14 @@ define(function(require) {
   var Handlebars = require('handlebars');
   var Backbone = require('backbone');
 
+  var BaseView = require('app/views/base');
   var PostsView = require('app/views/posts');
   var FriendsView = require('app/views/friends');
 
   var Posts = require('app/collections/post');
   var Friends = require('app/collections/friend');
 
-  return Backbone.View.extend({
+  return BaseView.extend({
 
     template: Handlebars.compile(require('text!tmpl/timeline.hbs')),
 
@@ -24,15 +25,13 @@ define(function(require) {
     render: function() {
       this.$el.html(this.template());
 
-      new PostsView({
-        el: this.$('#posts'),
-        collection: new Posts([], this.options.user)
-      }).render();
+      this.subView('#posts', new PostsView({
+        collection: new Posts([], this.options)
+      }));
 
-      new FriendsView({
-        el: this.$('#friends'),
+      this.subView('#friends', new FriendsView({
         collection: new Friends()
-      }).render();
+      }));
 
       return this;
     }

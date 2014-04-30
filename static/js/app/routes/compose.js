@@ -4,9 +4,11 @@ define(function(require) {
   var ComposeView = require('app/views/compose');
 
   return function(id) {
-    $('#content').html(new ComposeView({
+    var view = new ComposeView({
       id: id
-    }).render().el);
+    });
+
+    vole.view.setContentView(view);
   };
 
 });

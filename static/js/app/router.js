@@ -5,7 +5,7 @@ define(function(require) {
   return Backbone.Router.extend({
 
     routes: {
-      '': require('app/routes/timeline'),
+      //'': require('app/routes/timeline'),
       'timeline': require('app/routes/timeline'),
       'timeline/:action': require('app/routes/timeline'),
       'timeline/friend/:friend': require('app/routes/timeline'),

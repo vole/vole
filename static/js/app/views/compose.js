@@ -6,10 +6,11 @@ define(function(require) {
   var Post = require('app/models/post');
   var Drafts = require('app/collections/draft');
 
+  var BaseView = require('app/views/base');
   var EditorView = require('app/views/editor');
   var DraftsView = require('app/views/drafts');
 
-  return Backbone.View.extend({
+  return BaseView.extend({
 
     className: 'compose',
 
@@ -30,13 +31,13 @@ define(function(require) {
         post.fetch();
       }
 
-      this.$('#editor').html(new EditorView({
+      this.subView('#editor', new EditorView({
         model: post
-      }).render().el);
+      }));
 
-      this.$('#drafts').html(new DraftsView({
+      this.subView('#drafts', new DraftsView({
         collection: new Drafts()
-      }).render().el);
+      }));
 
       return this;
     }

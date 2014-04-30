@@ -6,9 +6,9 @@ define(function(require) {
   return function(key) {
     var view = new ProfileView({
       model: vole.user
-    }).render();
+    });
 
-    $('#content').html(view.el);
+    vole.view.setContentView(view);
   };
 
 });

@@ -4,7 +4,9 @@ define(function(require) {
   var PreferencesView = require('app/views/preferences');
 
   return function(action) {
-    $('#content').html(new PreferencesView().render().el);
+    var view = new PreferencesView();
+
+    vole.view.setContentView(view);
   };
 
 });

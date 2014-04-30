@@ -8,6 +8,15 @@ define(function(require) {
 
     template: Handlebars.compile(require('text!tmpl/draft.hbs')),
 
+    events: {
+      'click a': 'click'
+    },
+
+    click: function(e) {
+      e.preventDefault();
+      Backbone.history.navigate(this.$('a').attr('href'), true);
+    },
+
     summary: function() {
       var html = marked(this.model.get('title'));
       return $('<div>').html(html).text().trim().substring(0, 30);
