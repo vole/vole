@@ -3,7 +3,7 @@ define(function(require) {
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
 
-  var Post = require('app/models/post');
+  var Draft = require('app/models/draft');
   var Drafts = require('app/collections/draft');
 
   var BaseView = require('app/views/base');
@@ -23,16 +23,15 @@ define(function(require) {
     render: function() {
       this.$el.html(this.template());
 
-      var post = new Post();
+      var draft = new Draft();
 
       if (this.options.id) {
-        post.set('draft', true);
-        post.set('id', this.options.id);
-        post.fetch();
+        draft.set('id', this.options.id);
+        draft.fetch();
       }
 
       this.subView('#editor', new EditorView({
-        model: post
+        model: draft
       }));
 
       this.subView('#drafts', new DraftsView({

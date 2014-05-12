@@ -13,6 +13,7 @@ type Config struct {
 	Install_Dir string `json:"install_dir"`
 
 	// UI configuration.
+	UI_Logging      string `json:"ui_logging"`
 	UI_Layout       string `json:"ui_layout"`
 	UI_Theme        string `json:"ui_theme"`
 	UI_Reverse      bool   `json:"ui_reverse"`
@@ -22,6 +23,11 @@ type Config struct {
 	// Server configuration.
 	Server_Listen string `json:"server_listen"`
 	Server_Debug  bool   `json:"server_debug"`
+	Server_Store  string `json:"store"`
+
+	BTSync_User string `json:"btsync_user"`
+	BTSync_Pass string `json:"btsync_pass"`
+	BTSync_Port int    `json:"btsync_port"`
 }
 
 var config = func() *Config {
@@ -31,13 +37,18 @@ var config = func() *Config {
 	// values.
 	config := Config{}
 	config.Install_Dir = "~/Vole"
+	config.UI_Logging = "info"
 	config.UI_Layout = "default"
 	config.UI_Theme = "default"
 	config.UI_Reverse = false
 	config.UI_PollInterval = 5000
+	config.UI_PageSize = 50
 	config.Server_Listen = "127.0.0.1:6789"
 	config.Server_Debug = false
-	config.UI_PageSize = 50
+	config.Server_Store = "BTSync"
+	config.BTSync_User = "vole"
+	config.BTSync_Pass = "vole"
+	config.BTSync_Port = 8888
 
 	// Now read config.json for any overrides of the defaults.
 	file, err := ioutil.ReadFile("config.json")

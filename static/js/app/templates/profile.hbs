@@ -1,33 +1,33 @@
+<h1>Profile</h1>
 
 <form>
-
   <div class="row">
-    <div class="small-10 small-offset-1 columns">
+    <div class="columns">
       <label>Avatar</label>
       <img class="avatar" src="{{ avatar }}">
+      <br><br>
       <input type="file">
     </div>
   </div>
 
   <div class="row">
-    <div class="small-10 small-offset-1 columns">
+    <div class="columns">
       <label for="name">Name</label>
       <input id="name" name="name" type="text" value="{{ name }}">
     </div>
   </div>
 
   <div class="row">
-    <div class="small-10 small-offset-1 columns">
+    <div class="columns">
       <label for="bio">Bio</label>
       <textarea id="bio" name="bio">{{ bio }}</textarea>
     </div>
   </div>
 
   <div class="row">
-    <div class="small-10 small-offset-1 columns">
+    <div class="columns">
       <a class="button tiny alert" href="#">Cancel</a>
       <a class="button tiny" href="#">Save</a>
     </div>
   </div>
-
 </form>

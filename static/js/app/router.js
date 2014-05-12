@@ -4,17 +4,18 @@ define(function(require) {
 
   return Backbone.Router.extend({
 
-    routes: {
-      //'': require('app/routes/timeline'),
-      'timeline': require('app/routes/timeline'),
-      'timeline/:action': require('app/routes/timeline'),
-      'timeline/friend/:friend': require('app/routes/timeline'),
+    initialize: function() {
+      this.route('install', 'install', require('app/routes/install'));
 
-      'compose': require('app/routes/compose'),
-      'compose/:id': require('app/routes/compose'),
+      this.route('timeline', 'timeline', require('app/routes/timeline'));
+      this.route('timeline/:friend', 'friend\'s timeline', require('app/routes/timeline'));
 
-      'profile': require('app/routes/profile'),
-      'preferences': require('app/routes/preferences')
+      this.route('compose', 'compose', require('app/routes/compose'));
+      this.route('compose/:id', 'edit', require('app/routes/compose'));
+
+      this.route('profile', 'profile', require('app/routes/profile'));
+      this.route('preferences', 'preferences', require('app/routes/preferences'));
+      this.route('error', 'error', require('app/routes/error'));
     }
 
   });

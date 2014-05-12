@@ -7,10 +7,6 @@ define(function(require) {
 
     url: '/api/users',
 
-    parse: function(response) {
-      return response.users;
-    },
-
     model: Friend
 
   });

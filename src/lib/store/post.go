@@ -1,118 +1,83 @@
 package store
 
-import (
-	"encoding/json"
-	"fmt"
-	"github.com/vole/gouuid"
-	"path"
-	"time"
-)
-
 /**
  * Post.
  */
 type Post struct {
 	// Properties that should be saved to disk.
-	Id      string `json:"id"`
-	Title   string `json:"title"`
-	Created int64  `json:"created"`
+	Id       string `json:"id"`
+	Body     string `json:"title"`
+	Created  int64  `json:"created"`
+	Modified int64  `json:"modified"`
 
 	// Properties that are used by Vole backend and frontend, but not saved to disk
 	// when the post is marshaled.
-	UserId     string `json:"user_id,omitempty"`
-	UserName   string `json:"user_name,omitempty"`
-	UserAvatar string `json:"user_avatar,omitempty"`
-	IsMyPost   bool   `json:"is_my_post,omitempty"`
-	Draft      bool   `json:"draft,omitempty"`
-
-	// Properties that are only used by the backend and thus don't have
-	// to be marshaled to JSON for either the frontend or disk.
-	FullPath string `json:"-"`
+	User  *User `json:"user,omitempty"`
+	Draft bool  `json:"draft,omitempty"`
 }
 
 /**
- * InitNew()
- *
- * Initialize a new post creating the id and other fields.
+ * PostCollection.
  */
-func (post *Post) InitNew(title, userPath, userId, userName, userAvatar string, isMyUser bool) {
-	// Create a new UUID
-	uuidBytes, _ := uuid.NewV4()
-	uuid := fmt.Sprintf("%s", uuidBytes)
+type PostCollection []Post
 
-	// Get the timestamp.
-	created := time.Now().UnixNano()
+/**
+ * For sorting.
+ */
+func (collection PostCollection) Len() int {
+	return len(collection)
+}
 
-	// The full path to the post.
-	fullPath := path.Join(userPath, "posts", fmt.Sprintf("%d-post-%s.json", created, uuid))
+func (collection PostCollection) Less(i, j int) bool {
+	return collection[i].Created > collection[j].Created
+}
 
-	post.Id = uuid
-	post.Title = title
-	post.Created = created
-	post.UserId = userId
-	post.UserName = userName
-	post.UserAvatar = userAvatar
-	post.IsMyPost = isMyUser
-	post.FullPath = fullPath
+func (collection PostCollection) Swap(i, j int) {
+	collection[i], collection[j] = collection[j], collection[i]
 }
 
 /**
- * InitFromJson()
+ * FindById()
  *
- * Initialize a new post from json data from disk.
+ * Find a post within a collection and return its index.
  */
-func (post *Post) InitFromJson(rawJson []byte, fullPath string, userId string, userName string, userAvatar string, isMyUser bool) error {
-	if err := json.Unmarshal(rawJson, post); err != nil {
-		return err
+func (collection *PostCollection) FindById(id string) int {
+	for i, post := range *collection {
+		if post.Id == id {
+			return i
+		}
 	}
-	post.UserId = userId
-	post.UserName = userName
-	post.UserAvatar = userAvatar
-	post.IsMyPost = isMyUser
-	post.FullPath = fullPath
-	return nil
+	return -1
 }
 
 /**
- * Save()
+ * Limit()
  *
- * Save post to disk.
+ * Reduce the post collection to the specified limit.
  */
-func (post *Post) Save() error {
-	// Before marshaling JSON for saving to disk, we set all properties
-	// that should not be saved to empty, so they are ignored by marshaller.
-	postClone := *post
-	postClone.UserId = ""
-	postClone.UserName = ""
-	postClone.UserAvatar = ""
-	postClone.IsMyPost = false
-
-	rawJson, err := json.Marshal(postClone)
-	if err != nil {
-		return err
+func (collection PostCollection) Limit(limit int) {
+	if limit > 0 && limit < collection.Len() {
+		collection = collection[0:limit]
 	}
-
-	return Write(postClone.FullPath, rawJson)
-}
-
-func (post *Post) Delete() error {
-	return Delete(post.FullPath)
 }
 
 /**
- * Collection()
+ * BeforeId()
  *
- * Return a post collection wrapping this user.
+ * Reduce the post collection to only posts before the specified ID.
  */
-func (post *Post) Collection() *PostCollection {
-	return &PostCollection{[]Post{*post}}
-}
-
-/**
- * Container()
- *
- * Return a post container wrapping this post.
- */
-func (post *Post) Container() *PostContainer {
-	return &PostContainer{*post}
+func (collection PostCollection) BeforeId(id string) {
+	if id == "" {
+		return
+	}
+	i := collection.FindById(id)
+	if i == -1 {
+		return
+	}
+	start := i + 1
+	if start == collection.Len() {
+		collection = collection[i:i]
+		return
+	}
+	collection = collection[start:]
 }

@@ -30,7 +30,7 @@ define(function(require) {
   var helpers = require('tmpl/helpers');
 
   var _ = require('underscore');
-  var Backbone = require('backbone');
+  var Backbone = require('backbone');;
 
   var ConfigModel = require('app/models/config');
   var UserModel = require('app/models/user');
@@ -40,7 +40,9 @@ define(function(require) {
 
   var Router = require('app/router');
 
-  window.vole = {};
+  vole = {};
+
+  vole.logger = require('lib/logger')('vole');
 
   // Create a global event bus.
   vole.events = _.extend({}, Backbone.Events);
@@ -60,29 +62,45 @@ define(function(require) {
   // Represents the current user.
   vole.user = new UserModel();
 
+  vole.logger.info('starting');
+  vole.logger.info('loading config');
+
   // Once the config has loaded, we can load the user's information.
   //
   // TODO: If the user hasn't been created, we need to kick off the
   // user creation flow.
   vole.config.on('sync', function() {
-    vole.events.trigger('app.config.loaded');
+    vole.logger.info('config loaded');
+
+    vole.view.render();
 
     // Fetch the current user.
     vole.user.fetch();
   });
 
+  vole.logger.info('loading user');
+
   // At this point, the configuration and the user have been fully
   // initialized, and it's safe to start the application.
   vole.user.on('sync', function() {
-    vole.events.trigger('app.user.loaded');
+    vole.logger.info('user loaded');
+    vole.logger.info('starting router');
 
-    // Render the main app view.
-    vole.view.render();
-  });
-
-  vole.events.on('app.view.rendered', function() {
     // Start the main app router.
     Backbone.history.start({ pushState: true });
+  });
+
+  vole.user.on('error', function(user, response, options) {
+    vole.logger.info('user not found');
+    vole.logger.info('starting router');
+
+    // Start the main app router.
+    Backbone.history.start({ pushState: true });
+    Backbone.history.navigate('install', { trigger: true });
+  });
+
+  vole.router.on('route', function(route, params) {
+    vole.logger.info('route:', route, 'params:', params.join(', '));
   });
 
   // Fetch the app config.

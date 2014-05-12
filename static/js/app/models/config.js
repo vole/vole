@@ -4,7 +4,11 @@ define(function(require) {
 
   return Backbone.Model.extend({
 
-    url: '/config'
+    url: '/config',
+
+    defaults: {
+      ui_logging: 'info'
+    }
 
   });
 

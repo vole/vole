@@ -43,6 +43,10 @@ body {
   background-color: #008BFF;
 }
 
+.button:hover {
+  background-color: #007AE0;
+}
+
 .app-alert {
   display: none;
   margin-top: 40px;
@@ -262,8 +266,8 @@ body {
 
 .post .date {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 10px;
+  right: 10px;
   font-size: 11px;
   color: #aaa;
   font-weight: 300;
@@ -443,5 +447,76 @@ textarea.autosizejs {
 }
 
 .preferences legend {
+  font-weight: 300;
+}
+
+/**
+ * Install.
+ */
+.install {
+  max-width: 600px;
+  border: 1px solid #ccc;
+  margin: 80px auto 0 auto;
+  border-radius: 10px;
+}
+
+.install h2,
+.install h3 {
+  font-weight: 300;
+}
+
+.install h2 {
+  font-size: 23px;
+  margin: 0;
+  padding: 10px 15px;
+  border-bottom: 1px solid #ccc;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  background-image: linear-gradient(#F5F5F7, #e9e9ea);
+}
+
+.install h3 {
+  font-size: 18px;
+  margin-bottom: 13px;
+  font-weight: 400;
+}
+
+.install p {
+  font-size: 16px;
+  font-weight: 300;
+  margin: 0px 0 23px 0;
+}
+
+.install .step {
+  background-color: #fafafa;
+  padding: 20px 20px 0 20px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.install .step button {
+  font-size: 15px;
+}
+
+.install .spin {
+  height: 50px;
+}
+
+.install .spin .spinner {
+  left: 20px;
+  top: 20px;
+}
+
+/**
+ * Profile.
+ */
+.profile {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 30px 15px;
+}
+
+.profile h1 {
+  font-size: 24px;
   font-weight: 300;
 }

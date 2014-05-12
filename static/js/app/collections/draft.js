@@ -1,13 +1,9 @@
 define(function(require) {
 
-  var Posts = require('app/collections/post');
+  var Backbone = require('backbone');
 
-  return Posts.extend({
-
-    url: function() {
-      return '/api/drafts';
-    }
-
+  return Backbone.Collection.extend({
+    url: '/api/drafts'
   });
 
 });

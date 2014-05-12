@@ -18,10 +18,6 @@ define(function(require) {
       this.user = options.user;
     },
 
-    parse: function(response) {
-      return response.posts;
-    },
-
     model: Post
 
   });

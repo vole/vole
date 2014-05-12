@@ -4,8 +4,11 @@ define(function(require) {
 
   return Backbone.Model.extend({
 
-    url: function() {
-      return '/api/posts' + (this.isNew() ? '' : '/' + this.get('id'));
+    defaults: {
+      step: 1,
+      name: null,
+      key: null,
+      avatar: null
     }
 
   });

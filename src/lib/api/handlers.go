@@ -4,12 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	btsync "github.com/vole/btsync-api"
+	"github.com/vole/gouuid"
 	"github.com/vole/web"
 	"io/ioutil"
 	"lib/config"
 	"lib/store"
 	"os"
 	"path"
+	"sort"
+	"strings"
+	"time"
 )
 
 type Error struct {
@@ -17,10 +21,7 @@ type Error struct {
 	Message string `json:"message"`
 }
 
-var userStore = &store.UserStore{
-	Path:    config.StorageDir(),
-	Version: config.Version(),
-}
+var dataStore = store.Load()
 
 func setJsonHeaders(ctx *web.Context) {
 	ctx.ContentType("json")
@@ -28,7 +29,6 @@ func setJsonHeaders(ctx *web.Context) {
 }
 
 func createJsonError(ctx *web.Context, message string) string {
-	//ctx.ResponseWriter.WriteHeader(500)
 	var err = Error{true, message}
 	bytes, _ := json.Marshal(err)
 	return string(bytes)
@@ -38,7 +38,11 @@ func Status(ctx *web.Context) string {
 	setJsonHeaders(ctx)
 
 	// TODO: Load from config.
-	api := btsync.New("vole", "vole", 8888, true)
+	api := btsync.New(
+		config.ReadString("BTSync_User"),
+		config.ReadString("BTSync_Pass"),
+		config.ReadInt("BTSync_Port"),
+		true)
 
 	_, err := api.GetVersion()
 	if err != nil {
@@ -65,29 +69,6 @@ func GetConfig(ctx *web.Context) string {
 }
 
 /**
- * GetDrafts()
- *
- * Get all of the user's drafts.
- */
-func GetDrafts(ctx *web.Context) string {
-	setJsonHeaders(ctx)
-
-	myUser, _ := userStore.GetMyUser()
-
-	allDrafts, err := myUser.GetDrafts()
-	if err != nil {
-		return createJsonError(ctx, "Error loading drafts.")
-	}
-
-	draftsJson, err := allDrafts.Json()
-	if err != nil {
-		return createJsonError(ctx, "Error getting posts as json.")
-	}
-
-	return draftsJson
-}
-
-/**
  * GetPosts()
  */
 func GetPosts(ctx *web.Context) string {
@@ -97,43 +78,36 @@ func GetPosts(ctx *web.Context) string {
 	before, _ := ctx.Params["before"]
 	userId, _ := ctx.Params["user"]
 
-	var allPosts *store.PostCollection
+	var posts *store.PostCollection
 	var err error
 
 	if userId != "" {
-		var user *store.User
-		if userId == "my_user" {
-			user, err = userStore.GetMyUser()
-		} else {
-			user, err = userStore.GetUserById(userId)
-		}
+		user, err := dataStore.GetUser(userId)
 		if err != nil {
-			return createJsonError(ctx, "User not found while getting posts.")
+			return createJsonError(ctx, "User not found")
 		}
-		allPosts, err = user.GetPosts()
-		if err != nil {
-			return createJsonError(ctx, "Error loading posts.")
-		}
+
+		posts, err = dataStore.GetPostsForUser(user)
 	} else {
-		allPosts, err = userStore.GetPosts()
-		if err != nil || len(allPosts.Posts) < 1 {
-			// Return a welcome post.
-			post := &store.Post{}
-			post.InitNew("Welcome to Vole. To start, create a new profile by clicking 'My Profile' on the left.", "none", "none", "Welcome", "", false)
-			post.Id = "none"
-			allPosts = post.Collection()
-		}
+		posts, err = dataStore.GetPosts()
 	}
 
-	allPosts.BeforeId(before)
-	allPosts.Limit(limit)
+	if err != nil {
+		return createJsonError(ctx, fmt.Sprintf("%s", err))
+	}
 
-	postsJson, err := allPosts.Json()
+	if before != "" {
+		posts.BeforeId(before)
+	}
+
+	posts.Limit(limit)
+
+	postsJson, err := json.MarshalIndent(posts, "", "  ")
 	if err != nil {
 		return createJsonError(ctx, "Error getting posts as json.")
 	}
 
-	return postsJson
+	return string(postsJson)
 }
 
 /**
@@ -147,30 +121,31 @@ func GetUsers(ctx *web.Context) string {
 
 	var users *store.UserCollection
 	var err error
+	var usersJson []byte
 
 	if isMyUserFilter {
-		myUser, _ := userStore.GetMyUser()
-		if myUser != nil {
-			users = myUser.Collection()
-		} else {
-			users = store.GetEmptyUserCollection()
+		user, _ := dataStore.GetVoleUser()
+
+		usersJson, err = json.MarshalIndent(user, "", "  ")
+		if err != nil {
+			return createJsonError(ctx, "Error getting users as json.")
 		}
 	} else {
-		users, err = userStore.GetUsers()
+		users, err = dataStore.GetUsers()
 		if hasQuery {
 			users.Filter(query)
 		}
 		if err != nil {
 			return createJsonError(ctx, "Error loading all users.")
 		}
+
+		usersJson, err = json.MarshalIndent(users, "", "  ")
+		if err != nil {
+			return createJsonError(ctx, "Error getting users as json.")
+		}
 	}
 
-	usersJson, err := users.Json()
-	if err != nil {
-		return createJsonError(ctx, "Error getting users as json.")
-	}
-
-	return usersJson
+	return string(usersJson)
 }
 
 /**
@@ -184,27 +159,24 @@ func SaveUser(ctx *web.Context) string {
 		return createJsonError(ctx, "Error reading request body.")
 	}
 
-	user, err := userStore.NewUserFromContainerJson(body)
-	if err != nil {
-		return createJsonError(ctx, "Invalid JSON")
+	fmt.Println(string(body))
+
+	var user = &store.User{}
+	if err := json.Unmarshal(body, user); err != nil {
+		fmt.Println(err)
+		return createJsonError(ctx, "Error unmarshalling user")
 	}
 
-	if err := user.Save(); err != nil {
+	if err := dataStore.SaveVoleUser(user); err != nil {
 		return createJsonError(ctx, "Error saving user")
 	}
 
-	if err := userStore.SetMyUser(user); err != nil {
-		return createJsonError(ctx, "Error setting my user")
-	}
-
-	container := user.Container()
-
-	userJson, err := container.Json()
+	userJson, err := json.MarshalIndent(user, "", "  ")
 	if err != nil {
-		return createJsonError(ctx, "Could not create container")
+		return createJsonError(ctx, "Could not create collection")
 	}
 
-	return userJson
+	return string(userJson)
 }
 
 /**
@@ -218,28 +190,28 @@ func SavePost(ctx *web.Context) string {
 		return createJsonError(ctx, "Error reading request body.")
 	}
 
-	user, err := userStore.GetMyUser()
+	user, err := dataStore.GetVoleUser()
 	if err != nil {
 		return createJsonError(ctx, "Error reading my user when posting.")
 	}
 
-	post, err := user.NewPostFromJson(body)
-	if err != nil {
+	post := &store.Post{}
+	if err := json.Unmarshal(body, post); err != nil {
 		return createJsonError(ctx, "Invalid JSON")
 	}
 
-	if err := post.Save(); err != nil {
+	post.User = user
+
+	if err := dataStore.SavePost(post); err != nil {
 		return createJsonError(ctx, "Error saving post")
 	}
 
-	container := post.Container()
-
-	postJson, err := container.Json()
+	postJson, err := json.MarshalIndent(post, "", "  ")
 	if err != nil {
 		return createJsonError(ctx, "Could not create container")
 	}
 
-	return postJson
+	return string(postJson)
 }
 
 /**
@@ -248,56 +220,17 @@ func SavePost(ctx *web.Context) string {
 func GetPost(ctx *web.Context, id string) string {
 	setJsonHeaders(ctx)
 
-	user, err := userStore.GetMyUser()
+	post, err := dataStore.GetPost(id)
 	if err != nil {
-		return createJsonError(ctx, "Error loading user.")
+		return createJsonError(ctx, "Error finding post")
 	}
 
-	posts, err := user.GetPosts()
+	postJson, err := json.MarshalIndent(post, "", "  ")
 	if err != nil {
-		return createJsonError(ctx, "Error loading posts.")
+		return createJsonError(ctx, "Error unmarshalling json")
 	}
 
-	for _, post := range posts.Posts {
-		if post.Id == id {
-			rawJson, err := json.Marshal(post)
-			if err != nil {
-				return createJsonError(ctx, "Error parsing JSON.")
-			}
-			return string(rawJson)
-		}
-	}
-
-	return createJsonError(ctx, "Error finding post.")
-}
-
-/**
- * GetDraft()
- */
-func GetDraft(ctx *web.Context, id string) string {
-	setJsonHeaders(ctx)
-
-	user, err := userStore.GetMyUser()
-	if err != nil {
-		return createJsonError(ctx, "Error loading user.")
-	}
-
-	posts, err := user.GetDrafts()
-	if err != nil {
-		return createJsonError(ctx, "Error loading posts.")
-	}
-
-	for _, post := range posts.Posts {
-		if post.Id == id {
-			rawJson, err := json.Marshal(post)
-			if err != nil {
-				return createJsonError(ctx, "Error parsing JSON.")
-			}
-			return string(rawJson)
-		}
-	}
-
-	return createJsonError(ctx, "Error finding post.")
+	return string(postJson)
 }
 
 /**
@@ -306,19 +239,19 @@ func GetDraft(ctx *web.Context, id string) string {
 func DeletePost(ctx *web.Context, id string) string {
 	setJsonHeaders(ctx)
 
-	user, err := userStore.GetMyUser()
+	user, err := dataStore.GetVoleUser()
 	if err != nil {
 		return createJsonError(ctx, "Error loading user.")
 	}
 
-	posts, err := user.GetPosts()
+	posts, err := dataStore.GetPostsForUser(user)
 	if err != nil {
 		return createJsonError(ctx, "Error loading posts.")
 	}
 
-	for _, post := range posts.Posts {
+	for _, post := range *posts {
 		if post.Id == id {
-			err := post.Delete()
+			err := dataStore.DeletePost(&post)
 			if err != nil {
 				return createJsonError(ctx, "Error deleting post.")
 			} else {
@@ -354,4 +287,120 @@ func SaveFriend(ctx *web.Context) string {
 
 	responseJson, err := json.Marshal(response)
 	return string(responseJson)
+}
+
+func GetDraft(ctx *web.Context, id string) string {
+	setJsonHeaders(ctx)
+
+	post := store.Post{}
+
+	data, err := ioutil.ReadFile(path.Join(config.StorageDir(), "drafts", id+".json"))
+	if err != nil {
+		return createJsonError(ctx, "Error reading draft.")
+	}
+
+	if err := json.Unmarshal(data, &post); err != nil {
+		return createJsonError(ctx, "No post or invalid json.")
+	}
+
+	rawJson, err := json.Marshal(post)
+	return string(rawJson)
+}
+
+func CreateDraft(ctx *web.Context) string {
+	setJsonHeaders(ctx)
+
+	body, err := ioutil.ReadAll(ctx.Request.Body)
+	if err != nil {
+		return createJsonError(ctx, "Error reading request body.")
+	}
+
+	draft := &store.Post{}
+	if err := json.Unmarshal(body, draft); err != nil {
+		return createJsonError(ctx, "Invalid JSON.")
+	}
+
+	uuidBytes, _ := uuid.NewV4()
+	draft.Id = fmt.Sprintf("%s", uuidBytes)
+
+	draftPath := path.Join(config.StorageDir(), "drafts", fmt.Sprintf("%s.json", draft.Id))
+
+	draft.Created = time.Now().UnixNano()
+	draft.Modified = time.Now().UnixNano()
+
+	rawJson, err := json.MarshalIndent(draft, "", "  ")
+	if err != nil {
+		return createJsonError(ctx, "Error saving draft.")
+	}
+
+	store.Write(draftPath, rawJson)
+
+	return string(rawJson)
+}
+
+func SaveDraft(ctx *web.Context, id string) string {
+	setJsonHeaders(ctx)
+
+	body, err := ioutil.ReadAll(ctx.Request.Body)
+	if err != nil {
+		return createJsonError(ctx, "Error reading request body.")
+	}
+
+	draft := &store.Post{}
+	if err := json.Unmarshal(body, draft); err != nil {
+		return createJsonError(ctx, "Invalid JSON.")
+	}
+
+	draftPath := path.Join(config.StorageDir(), "drafts", fmt.Sprintf("%s.json", draft.Id))
+
+	draft.Modified = time.Now().UnixNano()
+
+	rawJson, err := json.MarshalIndent(draft, "", "  ")
+	if err != nil {
+		return createJsonError(ctx, "Error saving draft.")
+	}
+
+	store.Write(draftPath, rawJson)
+
+	return string(rawJson)
+}
+
+// TODO(aaron): Handle errors.
+func DeleteDraft(ctx *web.Context, id string) string {
+	fullPath := path.Join(config.StorageDir(), "drafts", id+".json")
+	store.Delete(fullPath)
+	return "OK"
+}
+
+func GetDrafts(ctx *web.Context) string {
+	setJsonHeaders(ctx)
+
+	collection := make(store.PostCollection, 0)
+
+	draftsPath := path.Join(config.StorageDir(), "drafts")
+	postFiles, _ := ioutil.ReadDir(draftsPath)
+
+	for _, postFile := range postFiles {
+		if !strings.HasSuffix(postFile.Name(), ".json") {
+			continue
+		}
+
+		fullPath := path.Join(draftsPath, postFile.Name())
+		data, err := ioutil.ReadFile(fullPath)
+		if err != nil {
+			continue
+		}
+
+		post := store.Post{}
+		if err := json.Unmarshal(data, &post); err != nil {
+			return createJsonError(ctx, "No post or invalid json.")
+		}
+
+		collection = append(collection, post)
+	}
+
+	sort.Sort(collection)
+
+	rawJson, _ := json.Marshal(collection)
+	return string(rawJson)
 }

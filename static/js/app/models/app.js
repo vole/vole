@@ -14,7 +14,7 @@ define(function(require) {
       this.fetch();
 
       // Check the status regularly.
-      this.interval = setInterval(this.fetch.bind(this), 5000);
+      // this.interval = setInterval(this.fetch.bind(this), 5000);
     }
 
   });

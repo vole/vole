@@ -7,6 +7,8 @@ define(function(require) {
   var Handlebars = require('handlebars');
   var marked = require('lib/marked');
 
+  var Post = require('app/models/post');
+
   return Backbone.View.extend({
 
     className: 'editor',
@@ -40,7 +42,6 @@ define(function(require) {
         return;
       }
 
-      this.model.set('draft', true);
       this.model.set('title', body);
       this.model.save();
     },
@@ -54,9 +55,13 @@ define(function(require) {
         return;
       }
 
-      this.model.set('draft', false);
-      this.model.set('title', body);
-      this.model.save();
+      var post = new Post({
+        title: body
+      });
+
+      post.save();
+
+      this.model.destroy();
 
       Backbone.history.navigate('/timeline', true);
     },

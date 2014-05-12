@@ -1,5 +1,6 @@
 {
   "install_dir": "~/Vole",
+  "ui_logging": "info",
   "ui_theme": "default",
   "ui_layout": "default",
   "ui_reverse": false,
