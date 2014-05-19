@@ -25,9 +25,10 @@ type Config struct {
 	Server_Debug  bool   `json:"server_debug"`
 	Server_Store  string `json:"store"`
 
-	BTSync_User string `json:"btsync_user"`
-	BTSync_Pass string `json:"btsync_pass"`
-	BTSync_Port int    `json:"btsync_port"`
+	BTSync_User  string `json:"btsync_user"`
+	BTSync_Pass  string `json:"btsync_pass"`
+	BTSync_Port  int    `json:"btsync_port"`
+	BTSync_Watch bool   `json:"btsync_watch"`
 }
 
 var config = func() *Config {
@@ -49,6 +50,7 @@ var config = func() *Config {
 	config.BTSync_User = "vole"
 	config.BTSync_Pass = "vole"
 	config.BTSync_Port = 8888
+	config.BTSync_Watch = false
 
 	// Now read config.json for any overrides of the defaults.
 	file, err := ioutil.ReadFile("config.json")

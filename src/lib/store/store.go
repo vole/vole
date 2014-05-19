@@ -26,28 +26,22 @@ type Store interface {
 
 	// Gets the current Vole user.
 	GetVoleUser() (*User, error)
-	// Saves the current Vole user.
-	SaveVoleUser(user *User) error
+	// Creates a new Vole user.
+	CreateVoleUser(user *User) error
 
 	// Get a user.
 	GetUser(id string) (*User, error)
-	// Save a user.
-	SaveUser(user *User) error
+	// Create a new user.
+	CreateUser(id string) error
 	// Get a list of all users.
 	GetUsers() (*UserCollection, error)
 
 	// Get a post.
 	GetPost(id string) (*Post, error)
-	// Save a post.
-	SavePost(post *Post) error
+	// Create a post.
+	CreatePost(post *Post) error
 	// Delete a post.
 	DeletePost(post *Post) error
 	// Get a list of all posts.
-	GetPosts() (*PostCollection, error)
-	// Get a list of all posts for a user.
-	GetPostsForUser(user *User) (*PostCollection, error)
-	// Get a list of all posts before a specific post.
-	GetPostsBefore(id string) (*PostCollection, error)
-	// Get a list of all posts after a specific post.
-	GetPostsAfter(id string) (*PostCollection, error)
+	GetPosts(userId string, postWatermark string, limit int) (*PostCollection, error)
 }

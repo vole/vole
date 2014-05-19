@@ -8,7 +8,7 @@ define(function(require) {
       step: 1,
       name: null,
       key: null,
-      avatar: null
+      email: null
     }
 
   });

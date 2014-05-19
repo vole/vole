@@ -14,14 +14,19 @@ import (
 
 func main() {
 	logger := log.New(os.Stdout, "[Vole] ", log.Ldate|log.Ltime)
-	web.SetLogger(log.New(os.Stdout, "[Web] ", log.Ldate|log.Ltime))
+	web.SetLogger(log.New(os.Stdout, "[Web]  ", log.Ldate|log.Ltime))
 
-	logger.Printf("vole startup\n")
+	logger.Printf("Vole server is starting\n")
 
 	web.Config.StaticDir = "./does-not-exist"
 
-	web.Get("/status", api.Status)
+	web.Get("/status", api.GetStatus)
 	web.Get("/config", api.GetConfig)
+
+	web.Get("/me", api.GetVoleUser)
+	web.Post("/me", api.CreateVoleUser)
+	web.Put("/me", api.UpdateVoleUser)
+	web.Delete("/me", api.DeleteVoleUser)
 
 	web.Get("/api/drafts", api.GetDrafts)
 	web.Get("/api/drafts/(.*)", api.GetDraft)
@@ -31,14 +36,15 @@ func main() {
 
 	web.Get("/api/posts", api.GetPosts)
 	web.Get("/api/posts/(.*)", api.GetPost)
-	web.Post("/api/posts", api.SavePost)
+	web.Post("/api/posts", api.CreatePost)
 	web.Delete("/api/posts/(.*)", api.DeletePost)
 
 	web.Get("/api/users", api.GetUsers)
-	web.Post("/api/users", api.SaveUser)
+	web.Get("/api/users/(.*)", api.GetUser)
+	web.Put("/api/users/(.*)", api.SaveUser)
+	web.Delete("/api/users/(.*)", api.DeleteUser)
 
-	web.Post("/api/friend", api.SaveFriend)
-
+	// Serve static files using the asset manifest.
 	web.Get("/.*", func(ctx *web.Context) []byte {
 		filePath := strings.TrimLeft(ctx.Request.URL.Path, "/")
 

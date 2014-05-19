@@ -3,13 +3,21 @@ define(function(require) {
   require('lib/jquery.autosize');
 
   var _ = require('underscore');
-  var Backbone = require('backbone');
+  var BaseView = require('app/views/base');
   var Handlebars = require('handlebars');
   var marked = require('lib/marked');
-
+  var highlight = require('highlight');
   var Post = require('app/models/post');
 
-  return Backbone.View.extend({
+  marked.setOptions({
+    sanitize: true,
+    gfm: true,
+    highlight: function (code) {
+      return highlight.highlightAuto(code).value;
+    }
+  });
+
+  return BaseView.extend({
 
     className: 'editor',
 
@@ -37,20 +45,34 @@ define(function(require) {
       e.preventDefault();
 
       var body = this.body();
-
       if (!body) {
         return;
       }
 
-      this.model.set('title', body);
-      this.model.save();
+      this.showLoading();
+
+      this.model.save({
+        title: body
+      }, {
+        // On successful save, redirect to the draft view. This intuitively
+        // updates the route and sidebar.
+        success: function(draft) {
+          this.hideLoading();
+          Backbone.history.navigate('/compose/' + draft.get('id'), true);
+        }.bind(this),
+
+        // TODO(aaron): Handle draft save error.
+        error: function() {
+          this.hideLoading();
+        }.bind(this)
+      });
     },
 
+    // TODO(aaron): Handle errors.
     post: function(e) {
       e.preventDefault();
 
       var body = this.body();
-
       if (!body) {
         return;
       }

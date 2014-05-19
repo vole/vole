@@ -55,10 +55,18 @@ func (collection *PostCollection) FindById(id string) int {
  *
  * Reduce the post collection to the specified limit.
  */
-func (collection PostCollection) Limit(limit int) {
+func (collection *PostCollection) Limit(limit int) *PostCollection {
+	newCollection := make(PostCollection, 0)
 	if limit > 0 && limit < collection.Len() {
-		collection = collection[0:limit]
+		for index, post := range *collection {
+			if index < limit {
+				newCollection = append(newCollection, post)
+			} else {
+				return &newCollection
+			}
+		}
 	}
+	return collection
 }
 
 /**

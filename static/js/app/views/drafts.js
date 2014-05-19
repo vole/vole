@@ -27,6 +27,10 @@ define(function(require) {
         }));
       }.bind(this));
 
+      if (this.collection.length) {
+        this.$('.empty').hide();
+      }
+
       return this;
     }
 

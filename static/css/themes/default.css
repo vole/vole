@@ -1,5 +1,6 @@
 @import '../normalize.css';
 @import '../foundation.css';
+@import '../tomorrow-night.css';
 
 /**
  * Fonts
@@ -55,6 +56,14 @@ body {
 
 .app-alert .close {
   color: #fff;
+}
+
+/**
+ * Loading overlay
+ */
+.loading {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 /**
@@ -227,14 +236,30 @@ body {
   border-left: 1px solid #eee;
 }
 
+.posts .empty {
+  padding: 50px;
+  font-size: 24px;
+  text-align: center;
+}
+
+.posts .empty a {
+  display: block;
+  margin: 20px auto;
+  font-size: 14px;
+}
+
 .posts .spinner {
   margin: 50px auto 0 auto;
   height: 50px;
 }
 
-.posts ul {
+.posts ul.posts-list {
   margin: 0;
   list-style: none;
+}
+
+.posts .load-more {
+  outline: none;
 }
 
 .post {
@@ -272,6 +297,17 @@ body {
   color: #aaa;
   font-weight: 300;
 }
+
+/**
+ * TODO(aaron): Since a post body is rendered markdown, it would
+ * be a good exercise to define good default styles for posts.
+ */
+.post .body h1 { font-size: 36px; }
+.post .body h2 { font-size: 30px; }
+.post .body h3 { font-size: 26px; }
+.post .body h4 { font-size: 22px; }
+.post .body h5 { font-size: 18px; }
+.post .body h6 { font-size: 16px; }
 
 .post .body img {
   max-width: 400px;
@@ -342,6 +378,8 @@ textarea.autosizejs {
 }
 
 .drafts {
+  margin-top: 20px;
+  border-top: 1px solid #eee;
   border-right: 1px solid #eee;
   border-bottom: 1px solid #eee;
 }
@@ -357,6 +395,13 @@ textarea.autosizejs {
 
 .drafts ul li:first-child {
   border: none;
+}
+
+.drafts .empty {
+  padding: 20px;
+  text-align: center;
+  color: #555;
+  font-size: 14px;
 }
 
 .draft {
@@ -424,7 +469,7 @@ textarea.autosizejs {
   font-weight: 300;
 }
 
-.add .error {
+.add small.error {
   display: none;
 }
 

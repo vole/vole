@@ -1,8 +1,6 @@
 define(function(require) {
 
-  var _ = require('underscore');
   var Handlebars = require('handlebars');
-
   var BaseView = require('app/views/base');
   var FriendView = require('app/views/friend');
 
@@ -17,31 +15,31 @@ define(function(require) {
     },
 
     initialize: function() {
-      this.collection.on('sync', this.renderResults.bind(this));
+      this.collection.on('sync', this.render, this);
       this.collection.fetch();
     },
 
-    search: _.debounce(function() {
-      this.collection.fetch({
-        data: {
-          query: this.$('#query').val()
-        }
+    search: function() {
+      var query = this.$('#query').val();
+
+      this.subViews().forEach(function(view) {
+        var name = view.model.get('name').toLowerCase();
+        view.$el.toggle(name.indexOf(query) > -1);
       });
-    }, 100),
-
-    renderResults: function() {
-      this.$('ul').empty();
-
-      this.collection.each(function(user) {
-        this.subView('ul', new FriendView({
-          model: user,
-          tagName: 'li'
-        }));
-      }.bind(this));
     },
 
     render: function() {
       this.$el.html(this.template);
+
+      this.collection.forEach(function(user) {
+        var view = new FriendView({
+          model: user,
+          tagName: 'li'
+        });
+
+        this.subView('ul', view);
+      }, this);
+
       return this;
     }
 

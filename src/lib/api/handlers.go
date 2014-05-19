@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"lib/config"
 	"lib/store"
+	"log"
 	"os"
 	"path"
 	"sort"
@@ -21,23 +22,29 @@ type Error struct {
 	Message string `json:"message"`
 }
 
+var logger = log.New(os.Stdout, "[Vole] ", log.Ldate|log.Ltime)
+
 var dataStore = store.Load()
 
+// Set the correct HTTP headers for a JSON response.
 func setJsonHeaders(ctx *web.Context) {
 	ctx.ContentType("json")
 	ctx.SetHeader("Cache-Control", "no-cache, no-store", true)
 }
 
-func createJsonError(ctx *web.Context, message string) string {
+// Create a JSON error response.
+func createJsonError(ctx *web.Context, status int, message string) string {
+	ctx.ResponseWriter.WriteHeader(status)
 	var err = Error{true, message}
 	bytes, _ := json.Marshal(err)
 	return string(bytes)
 }
 
-func Status(ctx *web.Context) string {
+// Get the current status of the backend. Intended to report
+// connectivity to various services, like BTSync, etc.
+func GetStatus(ctx *web.Context) string {
 	setJsonHeaders(ctx)
 
-	// TODO: Load from config.
 	api := btsync.New(
 		config.ReadString("BTSync_User"),
 		config.ReadString("BTSync_Pass"),
@@ -52,243 +59,251 @@ func Status(ctx *web.Context) string {
 	return "{ \"btsync\": true }"
 }
 
-/**
- * GetConfig()
- *
- * Fetch the app config.
- */
+// Fetch the app config.
+// TODO(aaron): Remove sensitive data from the config
+// before sending it to the UI.
 func GetConfig(ctx *web.Context) string {
 	setJsonHeaders(ctx)
 
 	configJson, err := config.Json()
 	if err != nil {
-		return createJsonError(ctx, "Error loading config.")
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 500, "Error loading config.")
 	}
 
 	return configJson
 }
 
-/**
- * GetPosts()
- */
-func GetPosts(ctx *web.Context) string {
-	setJsonHeaders(ctx)
-
-	limit := config.ReadInt("UI_PageSize")
-	before, _ := ctx.Params["before"]
-	userId, _ := ctx.Params["user"]
-
-	var posts *store.PostCollection
-	var err error
-
-	if userId != "" {
-		user, err := dataStore.GetUser(userId)
-		if err != nil {
-			return createJsonError(ctx, "User not found")
-		}
-
-		posts, err = dataStore.GetPostsForUser(user)
-	} else {
-		posts, err = dataStore.GetPosts()
-	}
-
-	if err != nil {
-		return createJsonError(ctx, fmt.Sprintf("%s", err))
-	}
-
-	if before != "" {
-		posts.BeforeId(before)
-	}
-
-	posts.Limit(limit)
-
-	postsJson, err := json.MarshalIndent(posts, "", "  ")
-	if err != nil {
-		return createJsonError(ctx, "Error getting posts as json.")
-	}
-
-	return string(postsJson)
-}
-
-/**
- * GetUsers()
- */
-func GetUsers(ctx *web.Context) string {
-	setJsonHeaders(ctx)
-
-	_, isMyUserFilter := ctx.Params["is_my_user"]
-	query, hasQuery := ctx.Params["query"]
-
-	var users *store.UserCollection
-	var err error
-	var usersJson []byte
-
-	if isMyUserFilter {
-		user, _ := dataStore.GetVoleUser()
-
-		usersJson, err = json.MarshalIndent(user, "", "  ")
-		if err != nil {
-			return createJsonError(ctx, "Error getting users as json.")
-		}
-	} else {
-		users, err = dataStore.GetUsers()
-		if hasQuery {
-			users.Filter(query)
-		}
-		if err != nil {
-			return createJsonError(ctx, "Error loading all users.")
-		}
-
-		usersJson, err = json.MarshalIndent(users, "", "  ")
-		if err != nil {
-			return createJsonError(ctx, "Error getting users as json.")
-		}
-	}
-
-	return string(usersJson)
-}
-
-/**
- * SaveUser()
- */
-func SaveUser(ctx *web.Context) string {
+// Create the Vole user.
+func CreateVoleUser(ctx *web.Context) string {
 	setJsonHeaders(ctx)
 
 	body, err := ioutil.ReadAll(ctx.Request.Body)
 	if err != nil {
-		return createJsonError(ctx, "Error reading request body.")
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 500, "Error reading request body.")
 	}
-
-	fmt.Println(string(body))
 
 	var user = &store.User{}
 	if err := json.Unmarshal(body, user); err != nil {
-		fmt.Println(err)
-		return createJsonError(ctx, "Error unmarshalling user")
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 500, "Error unmarshalling user.")
 	}
 
-	if err := dataStore.SaveVoleUser(user); err != nil {
-		return createJsonError(ctx, "Error saving user")
+	if err := dataStore.CreateVoleUser(user); err != nil {
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 500, "Error saving user.")
 	}
 
 	userJson, err := json.MarshalIndent(user, "", "  ")
 	if err != nil {
-		return createJsonError(ctx, "Could not create collection")
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 500, "Error marshalling user.")
 	}
 
 	return string(userJson)
 }
 
-/**
- * SavePost()
- */
-func SavePost(ctx *web.Context) string {
+// Get the current Vole user.
+func GetVoleUser(ctx *web.Context) string {
+	setJsonHeaders(ctx)
+
+	user, err := dataStore.GetVoleUser()
+	if err != nil {
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 404, "User not found.")
+	}
+
+	userJson, err := json.MarshalIndent(user, "", "  ")
+	if err != nil {
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 500, "Error marshalling user.")
+	}
+
+	return string(userJson)
+}
+
+// Update the current Vole user.
+// TODO(aaron): UpdateVoleUser()
+func UpdateVoleUser(ctx *web.Context) string {
+	return ""
+}
+
+// Delete the current Vole user.
+// TODO(aaron): DeleteVoleUser()
+func DeleteVoleUser(ctx *web.Context) string {
+	return ""
+}
+
+// Get all posts. Available parameters:
+// before - Get posts before the specified time.
+// limit - Maximum number of posts to return.
+// user - Only get the specific user's posts.
+func GetPosts(ctx *web.Context) string {
+	setJsonHeaders(ctx)
+
+	before, _ := ctx.Params["before"]
+	userId, _ := ctx.Params["user"]
+
+	posts, err := dataStore.GetPosts(userId, before, config.ReadInt("UI_PageSize"))
+	if err != nil {
+		return createJsonError(ctx, 500, fmt.Sprintf("%s", err))
+	}
+
+	postsJson, err := json.MarshalIndent(posts, "", "  ")
+	if err != nil {
+		return createJsonError(ctx, 500, "Error getting posts as json.")
+	}
+
+	return string(postsJson)
+}
+
+// Get a list of all users.
+func GetUsers(ctx *web.Context) string {
+	setJsonHeaders(ctx)
+
+	query, hasQuery := ctx.Params["query"]
+
+	users, err := dataStore.GetUsers()
+	if err != nil {
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 500, "Error getting users.")
+	}
+
+	if hasQuery {
+		users = users.Filter(query)
+	}
+
+	usersJson, err := json.MarshalIndent(users, "", "  ")
+	if err != nil {
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 500, "Error marshalling users.")
+	}
+
+	return string(usersJson)
+}
+
+// Get a user.
+func GetUser(ctx *web.Context, id string) string {
+	setJsonHeaders(ctx)
+
+	user, err := dataStore.GetUser(id)
+	if err != nil {
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 404, "Error finding user.")
+	}
+
+	userJson, err := json.MarshalIndent(user, "", "  ")
+	if err != nil {
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 500, "Error unmarshalling user.")
+	}
+
+	return string(userJson)
+}
+
+// Create a user.
+func SaveUser(ctx *web.Context, id string) string {
+	setJsonHeaders(ctx)
+
+	// TODO(aaron): Error validation on the id.
+
+	if err := dataStore.CreateUser(id); err != nil {
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 500, "Error creating user.")
+	}
+
+	return "{}"
+}
+
+// Delete a user.
+func DeleteUser(ctx *web.Context, id string) string {
+	setJsonHeaders(ctx)
+
+	return "OK"
+}
+
+// Create a new post.
+func CreatePost(ctx *web.Context) string {
 	setJsonHeaders(ctx)
 
 	body, err := ioutil.ReadAll(ctx.Request.Body)
 	if err != nil {
-		return createJsonError(ctx, "Error reading request body.")
-	}
-
-	user, err := dataStore.GetVoleUser()
-	if err != nil {
-		return createJsonError(ctx, "Error reading my user when posting.")
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 500, "Error reading request body.")
 	}
 
 	post := &store.Post{}
 	if err := json.Unmarshal(body, post); err != nil {
-		return createJsonError(ctx, "Invalid JSON")
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 500, "Error unmarshalling post.")
 	}
 
-	post.User = user
-
-	if err := dataStore.SavePost(post); err != nil {
-		return createJsonError(ctx, "Error saving post")
+	if err := dataStore.CreatePost(post); err != nil {
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 500, "Error saving post.")
 	}
 
 	postJson, err := json.MarshalIndent(post, "", "  ")
 	if err != nil {
-		return createJsonError(ctx, "Could not create container")
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 500, "Error marshalling post.")
 	}
 
 	return string(postJson)
 }
 
-/**
- * GetPost()
- */
+// Get a post.
 func GetPost(ctx *web.Context, id string) string {
 	setJsonHeaders(ctx)
 
 	post, err := dataStore.GetPost(id)
 	if err != nil {
-		return createJsonError(ctx, "Error finding post")
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 404, "Error finding post.")
 	}
 
 	postJson, err := json.MarshalIndent(post, "", "  ")
 	if err != nil {
-		return createJsonError(ctx, "Error unmarshalling json")
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 500, "Error unmarshalling user.")
 	}
 
 	return string(postJson)
 }
 
-/**
- * DeletePost()
- */
+// Delete a post.
 func DeletePost(ctx *web.Context, id string) string {
 	setJsonHeaders(ctx)
 
 	user, err := dataStore.GetVoleUser()
 	if err != nil {
-		return createJsonError(ctx, "Error loading user.")
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 500, "Error loading user.")
 	}
 
-	posts, err := dataStore.GetPostsForUser(user)
+	posts, err := dataStore.GetPosts(user.Id, "", config.ReadInt("UI_PageSize"))
 	if err != nil {
-		return createJsonError(ctx, "Error loading posts.")
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 500, "Error loading posts.")
 	}
 
 	for _, post := range *posts {
 		if post.Id == id {
 			err := dataStore.DeletePost(&post)
 			if err != nil {
-				return createJsonError(ctx, "Error deleting post.")
+				logger.Printf("%s", err)
+				return createJsonError(ctx, 500, "Error deleting post.")
 			} else {
-				return "OK"
+				return ""
 			}
 		}
 	}
 
-	return "OK"
+	return ""
 }
 
-/**
- * SaveFriend()
- */
-func SaveFriend(ctx *web.Context) string {
-	setJsonHeaders(ctx)
-
-	key, _ := ctx.Params["key"]
-
-	if key == "" {
-		return createJsonError(ctx, "Key is empty")
-	}
-
-	os.Mkdir(path.Join(config.StorageDir(), "users", key), 0700)
-
-	// TODO: Load from config.
-	api := btsync.New("vole", "vole", 8888, true)
-
-	response, err := api.AddFolderWithSecret(path.Join(config.StorageDir(), "users", key), key)
-	if err != nil {
-		return createJsonError(ctx, fmt.Sprintf("add_folder: %s", err))
-	}
-
-	responseJson, err := json.Marshal(response)
-	return string(responseJson)
-}
-
+// Get a draft.
 func GetDraft(ctx *web.Context, id string) string {
 	setJsonHeaders(ctx)
 
@@ -296,59 +311,69 @@ func GetDraft(ctx *web.Context, id string) string {
 
 	data, err := ioutil.ReadFile(path.Join(config.StorageDir(), "drafts", id+".json"))
 	if err != nil {
-		return createJsonError(ctx, "Error reading draft.")
+		return createJsonError(ctx, 404, "Error loading draft.")
 	}
 
 	if err := json.Unmarshal(data, &post); err != nil {
-		return createJsonError(ctx, "No post or invalid json.")
+		return createJsonError(ctx, 500, "No post or invalid json.")
 	}
 
 	rawJson, err := json.Marshal(post)
 	return string(rawJson)
 }
 
+// Create a new draft.
 func CreateDraft(ctx *web.Context) string {
 	setJsonHeaders(ctx)
 
 	body, err := ioutil.ReadAll(ctx.Request.Body)
 	if err != nil {
-		return createJsonError(ctx, "Error reading request body.")
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 500, "Error reading request body.")
 	}
 
 	draft := &store.Post{}
 	if err := json.Unmarshal(body, draft); err != nil {
-		return createJsonError(ctx, "Invalid JSON.")
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 500, "Error marshalling draft.")
 	}
 
+	// Create a new UUID for this draft.
 	uuidBytes, _ := uuid.NewV4()
 	draft.Id = fmt.Sprintf("%s", uuidBytes)
 
-	draftPath := path.Join(config.StorageDir(), "drafts", fmt.Sprintf("%s.json", draft.Id))
+	// Drafts are just posts that aren't shared with other users.
+	draftPath := path.Join(config.StorageDir(), "drafts", draft.Id+".json")
 
 	draft.Created = time.Now().UnixNano()
 	draft.Modified = time.Now().UnixNano()
 
 	rawJson, err := json.MarshalIndent(draft, "", "  ")
 	if err != nil {
-		return createJsonError(ctx, "Error saving draft.")
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 500, "Error marshalling draft.")
 	}
 
-	store.Write(draftPath, rawJson)
+	if err := store.Write(draftPath, rawJson); err != nil {
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 500, "Error saving draft.")
+	}
 
 	return string(rawJson)
 }
 
+// Save a draft.
 func SaveDraft(ctx *web.Context, id string) string {
 	setJsonHeaders(ctx)
 
 	body, err := ioutil.ReadAll(ctx.Request.Body)
 	if err != nil {
-		return createJsonError(ctx, "Error reading request body.")
+		return createJsonError(ctx, 500, "Error reading request body.")
 	}
 
 	draft := &store.Post{}
 	if err := json.Unmarshal(body, draft); err != nil {
-		return createJsonError(ctx, "Invalid JSON.")
+		return createJsonError(ctx, 500, "Invalid JSON.")
 	}
 
 	draftPath := path.Join(config.StorageDir(), "drafts", fmt.Sprintf("%s.json", draft.Id))
@@ -357,7 +382,7 @@ func SaveDraft(ctx *web.Context, id string) string {
 
 	rawJson, err := json.MarshalIndent(draft, "", "  ")
 	if err != nil {
-		return createJsonError(ctx, "Error saving draft.")
+		return createJsonError(ctx, 500, "Error saving draft.")
 	}
 
 	store.Write(draftPath, rawJson)
@@ -365,13 +390,19 @@ func SaveDraft(ctx *web.Context, id string) string {
 	return string(rawJson)
 }
 
-// TODO(aaron): Handle errors.
+// Delete a draft.
 func DeleteDraft(ctx *web.Context, id string) string {
 	fullPath := path.Join(config.StorageDir(), "drafts", id+".json")
-	store.Delete(fullPath)
-	return "OK"
+
+	if err := store.Delete(fullPath); err != nil {
+		logger.Printf("%s", err)
+		return createJsonError(ctx, 500, "Error deleting draft.")
+	}
+
+	return ""
 }
 
+// Get the full list of the user's drafts.
 func GetDrafts(ctx *web.Context) string {
 	setJsonHeaders(ctx)
 
@@ -382,18 +413,21 @@ func GetDrafts(ctx *web.Context) string {
 
 	for _, postFile := range postFiles {
 		if !strings.HasSuffix(postFile.Name(), ".json") {
+			logger.Printf("Unexpected file: %s", postFile.Name())
 			continue
 		}
 
 		fullPath := path.Join(draftsPath, postFile.Name())
 		data, err := ioutil.ReadFile(fullPath)
 		if err != nil {
+			logger.Printf("%s", err)
 			continue
 		}
 
 		post := store.Post{}
 		if err := json.Unmarshal(data, &post); err != nil {
-			return createJsonError(ctx, "No post or invalid json.")
+			logger.Printf("%s", err)
+			return createJsonError(ctx, 500, "Error unmarshalling post.")
 		}
 
 		collection = append(collection, post)

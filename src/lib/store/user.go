@@ -16,14 +16,7 @@ type User struct {
 	Online bool   `json:"online"`
 
 	// Properties that are used by Vole backend and frontend, but not saved to disk.
-	IsMyUser bool   `json:"is_my_user,omitempty"`
-	Email    string `json:"email,omitempty"`
-
-	// Properties that are only used by the backend and thus don't have
-	// to be marshaled to JSON for either the frontend or disk.
-	DirName      string `json:"-"`
-	FullPath     string `json:"-"`
-	UserJsonPath string `json:"-"`
+	IsMyUser bool `json:"is_my_user,omitempty"`
 }
 
 /**

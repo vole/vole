@@ -3,6 +3,7 @@ define(function(require) {
   var Handlebars = require('handlebars');
   var Backbone = require('backbone');
   var Spin = require('lib/spin');
+  var gravatar = require('lib/gravatar');
   var logger = require('lib/logger')('install');
   var User = require('app/models/user');
 
@@ -18,7 +19,7 @@ define(function(require) {
       'click .js-returning-user': 'returningUser',
       'click .js-set-key': 'setKey',
       'click .js-set-name': 'setName',
-      'click .js-set-avatar': 'setAvatar'
+      'click .js-set-email': 'setEmail'
     },
 
     initialize: function() {
@@ -49,11 +50,11 @@ define(function(require) {
       }
     },
 
-    setAvatar: function() {
-      var avatar = this.$('.js-avatar').val();
+    setEmail: function() {
+      var email = this.$('.js-email').val();
 
-      if (avatar) {
-        this.model.set('avatar', avatar).set('step', '4');
+      if (email) {
+        this.model.set('email', email).set('step', '4');
       }
     },
 
@@ -92,7 +93,7 @@ define(function(require) {
 
       var user = new User();
       user.set('name', this.model.get('name'));
-      user.set('email', this.model.get('avatar'));
+      user.set('avatar', gravatar(this.model.get('email')));
 
       user.save({}, {
         success: function() {
@@ -107,16 +108,15 @@ define(function(require) {
       });
     },
 
-    spinner: function() {
+    render: function() {
+      this.$el.html(this.template(this.model.attributes));
+
       this.$('.spin').append(new Spin({
         width: 2
       }).spin().el);
-    },
 
-    render: function() {
-      this.$el.html(this.template(this.model.attributes));
-      this.spinner();
       this.step();
+
       return this;
     }
 
