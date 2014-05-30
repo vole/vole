@@ -2,15 +2,24 @@ package store
 
 import (
 	"lib/config"
+	"log"
+	"os"
+)
+
+var (
+	logger    = log.New(os.Stdout, "[Vole] ", log.Ldate|log.Ltime)
+	dataStore Store
 )
 
 func Load() Store {
-	// TODO(aaron): Add others :P
-	return NewBTSyncStore(config.StorageDir())
+	if dataStore == nil {
+		dataStore = NewBTSyncStore(config.StorageDir())
+	}
+
+	return dataStore
 }
 
-type StoreConfig struct {
-}
+type StoreConfig struct{}
 
 type Store interface {
 	// Returns the name of the interface.

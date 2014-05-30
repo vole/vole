@@ -1,5 +1,7 @@
 module.exports = function(grunt) {
+
   grunt.initConfig({
+
     clean: ['dist/', 'bin/vole', 'bin/vole.exe'],
 
     copy: {
@@ -66,6 +68,7 @@ module.exports = function(grunt) {
       src: './build/osx/vole',
       dest: './dist/'
     }
+
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -77,8 +80,7 @@ module.exports = function(grunt) {
   grunt.loadTasks('./build/tasks');
 
   grunt.registerTask('default', ['jshint', 'clean', 'exec:install_vole', 'copy', 'chmod']);
-
   grunt.registerTask('build:osx', ['macgap']);
-
   grunt.registerTask('build', ['clean', 'build:osx']);
+
 };

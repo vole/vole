@@ -7,6 +7,7 @@ define(function(require) {
     initialize: function() {
       this.route('install', 'install', require('app/routes/install'));
 
+      this.route('', 'timeline', require('app/routes/timeline'));
       this.route('timeline', 'timeline', require('app/routes/timeline'));
       this.route('timeline/:friend', 'friend\'s timeline', require('app/routes/timeline'));
 

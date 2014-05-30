@@ -1,7 +1,6 @@
 package store
 
 import (
-	"code.google.com/p/go.exp/fsnotify"
 	"container/list"
 	"encoding/json"
 	"errors"
@@ -9,7 +8,6 @@ import (
 	btsync "github.com/vole/btsync-api"
 	"github.com/vole/gouuid"
 	"lib/config"
-	"log"
 	"os"
 	"path"
 	"regexp"
@@ -17,8 +15,6 @@ import (
 	"strings"
 	"time"
 )
-
-var logger = log.New(os.Stdout, "[Vole] ", log.Ldate|log.Ltime)
 
 // Create a new BTSyncStore.
 func NewBTSyncStore(path string) Store {
@@ -28,8 +24,9 @@ func NewBTSyncStore(path string) Store {
 	store.Path = path
 
 	// Index of store's files.
-	// TODO(aaron): Handle errors creating the index.
 	store.Index = new(BTSyncStoreIndex)
+	store.Index.Posts = list.New()
+	store.Index.Start()
 
 	// Client for connecting to the BT Sync API.
 	store.Client = btsync.New(
@@ -44,113 +41,7 @@ func NewBTSyncStore(path string) Store {
 	return store
 }
 
-// An index of the file system
-//
-// TODO(aaron): The fsnotify approach is problematic with a large
-// number of files. The file system's file descriptor limit can
-// easily be reached, especially on OSX where the default is low.
-// An option is to detect the file descriptor limit error, and fallback
-// to polling.
-// https://github.com/howeyc/fsnotify/issues/89#issuecomment-43451454
-type BTSyncStoreIndex struct {
-	Posts   *list.List
-	Watcher *fsnotify.Watcher
-}
-
-// Start the indexer.
-func (index *BTSyncStoreIndex) Start() error {
-	watcher, err := fsnotify.NewWatcher()
-	if err != nil {
-		return err
-	}
-
-	go func() {
-		for {
-			select {
-			case ev := <-watcher.Event:
-				if ev.IsCreate() {
-					index.Add(ev.Name)
-				} else if ev.IsDelete() || ev.IsRename() {
-					index.Remove(ev.Name)
-				} else {
-					logger.Print(ev)
-				}
-			case err := <-watcher.Error:
-				logger.Println("Index Error:", err)
-			}
-		}
-	}()
-
-	index.Watcher = watcher
-
-	return nil
-}
-
-// Adds a directory to the index's file system monitor.
-func (index *BTSyncStoreIndex) Watch(dir string) error {
-	if index.Watcher == nil {
-		err := index.Start()
-		if err != nil {
-			logger.Print(err)
-			return err
-		}
-	}
-
-	err := index.Watcher.Watch(dir)
-	if err != nil {
-		logger.Print(err)
-		return err
-	}
-
-	return nil
-}
-
-// Add a post to the index.
-func (index *BTSyncStoreIndex) Add(file string) error {
-	data, err := ReadFile(file)
-	if err != nil {
-		return err
-	}
-
-	post := Post{}
-	if err := json.Unmarshal(data, &post); err != nil {
-		return errors.New("No post or invalid json.")
-	}
-
-	for e := index.Posts.Front(); e != nil; e = e.Next() {
-		if post.Created > e.Value.(Post).Created {
-			index.Posts.InsertBefore(post, e)
-			logger.Printf("Adding new post %s before %s", post.Id, e.Value.(Post).Id)
-			break
-		}
-	}
-
-	return nil
-}
-
-// Remove a post from the index.
-func (index *BTSyncStoreIndex) Remove(file string) error {
-	re := regexp.MustCompile("[0-9]+-post-(.*).json")
-	match := re.FindStringSubmatch(file)
-
-	if match == nil {
-		return errors.New("Error parsing Id from file name: " + file)
-	}
-
-	id := match[1]
-
-	for e := index.Posts.Front(); e != nil; e = e.Next() {
-		if id > e.Value.(Post).Id {
-			index.Posts.Remove(e)
-			logger.Printf("Removing post %s from index", id)
-			break
-		}
-	}
-
-	return nil
-}
-
-// A Vole store for Bittorrent Sync.
+// Bittorrent Sync-based backend for Vole.
 type BTSyncStore struct {
 	Path   string
 	Client *btsync.BTSyncAPI
@@ -158,34 +49,16 @@ type BTSyncStore struct {
 	Store
 }
 
-// Name of the store.
 func (store *BTSyncStore) Name() string {
 	return "Bittorrent Sync Store"
 }
 
-// Version of the store.
 func (store *BTSyncStore) Version() string {
 	return "v1"
 }
 
 // Initialize the data store.
 func (store *BTSyncStore) Initialize() error {
-	// If BTSync_Watch is disabled, we dumbly rebuild the index
-	// every few seconds.
-	// TODO(aaron): Use a smarter polling mechanism.
-	if !config.ReadBool("BTSync_Watch") {
-		ticker := time.NewTicker(time.Minute)
-		go func() {
-			for _ = range ticker.C {
-				store.BuildIndex()
-			}
-		}()
-	} else {
-		logger.Print("BTSync_Watch is enabled, using fsnotify!")
-	}
-
-	// If BTSync_Watch is enabled, we can depend on the index
-	// to watch the file system.
 	return store.BuildIndex()
 }
 
@@ -241,9 +114,7 @@ func (store *BTSyncStore) BuildIndex() error {
 			}
 		}
 
-		if config.ReadBool("BTSync_Watch") {
-			store.Index.Watch(path.Join(userPath, "posts"))
-		}
+		store.Index.Watch(path.Join(userPath, "posts"))
 	}
 
 	elapsed := time.Since(now)
@@ -251,7 +122,6 @@ func (store *BTSyncStore) BuildIndex() error {
 
 	sort.Sort(collection)
 
-	store.Index.Posts = list.New()
 	for _, post := range collection {
 		store.Index.Posts.PushBack(post)
 	}
@@ -444,8 +314,9 @@ func (store *BTSyncStore) CreatePost(post *Post) error {
 
 	// Someday if we allow editing of posts, the Modified date
 	// won't be useless.
-	post.Created = time.Now().UnixNano()
-	post.Modified = time.Now().UnixNano()
+	now := time.Now().UnixNano()
+	post.Created = now
+	post.Modified = now
 	post.User = user
 
 	store.Index.Posts.PushFront(*post)

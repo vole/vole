@@ -11,3 +11,4 @@ config.json
 /dist
 *.sublime-project
 *.sublime-workspace
+src/lib/assets/

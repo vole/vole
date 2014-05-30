@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"github.com/vole/web"
 	"lib/api"
 	"lib/assets"
@@ -12,11 +13,16 @@ import (
 	"strings"
 )
 
+var configFile = flag.String("config", "config.json", "Path to the Vole config file.")
+
 func main() {
+	flag.Parse()
+	config.Load(*configFile)
+
 	logger := log.New(os.Stdout, "[Vole] ", log.Ldate|log.Ltime)
 	web.SetLogger(log.New(os.Stdout, "[Web]  ", log.Ldate|log.Ltime))
 
-	logger.Printf("Vole server is starting\n")
+	logger.Printf("Server is starting\n")
 
 	web.Config.StaticDir = "./does-not-exist"
 
@@ -54,8 +60,7 @@ func main() {
 			ctx.SetHeader("Content-Type", "text/html", true)
 			file, _ = assets.Asset("index.html")
 		} else {
-			fileExt := filepath.Ext(filePath)
-			mimeType := mime.TypeByExtension(fileExt)
+			mimeType := mime.TypeByExtension(filepath.Ext(filePath))
 			ctx.SetHeader("Content-Type", mimeType, true)
 		}
 

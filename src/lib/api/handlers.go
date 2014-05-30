@@ -22,9 +22,9 @@ type Error struct {
 	Message string `json:"message"`
 }
 
-var logger = log.New(os.Stdout, "[Vole] ", log.Ldate|log.Ltime)
-
-var dataStore = store.Load()
+var (
+	logger = log.New(os.Stdout, "[Vole] ", log.Ldate|log.Ltime)
+)
 
 // Set the correct HTTP headers for a JSON response.
 func setJsonHeaders(ctx *web.Context) {
@@ -90,7 +90,7 @@ func CreateVoleUser(ctx *web.Context) string {
 		return createJsonError(ctx, 500, "Error unmarshalling user.")
 	}
 
-	if err := dataStore.CreateVoleUser(user); err != nil {
+	if err := store.Load().CreateVoleUser(user); err != nil {
 		logger.Printf("%s", err)
 		return createJsonError(ctx, 500, "Error saving user.")
 	}
@@ -108,7 +108,7 @@ func CreateVoleUser(ctx *web.Context) string {
 func GetVoleUser(ctx *web.Context) string {
 	setJsonHeaders(ctx)
 
-	user, err := dataStore.GetVoleUser()
+	user, err := store.Load().GetVoleUser()
 	if err != nil {
 		logger.Printf("%s", err)
 		return createJsonError(ctx, 404, "User not found.")
@@ -145,7 +145,7 @@ func GetPosts(ctx *web.Context) string {
 	before, _ := ctx.Params["before"]
 	userId, _ := ctx.Params["user"]
 
-	posts, err := dataStore.GetPosts(userId, before, config.ReadInt("UI_PageSize"))
+	posts, err := store.Load().GetPosts(userId, before, config.ReadInt("UI_PageSize"))
 	if err != nil {
 		return createJsonError(ctx, 500, fmt.Sprintf("%s", err))
 	}
@@ -164,7 +164,7 @@ func GetUsers(ctx *web.Context) string {
 
 	query, hasQuery := ctx.Params["query"]
 
-	users, err := dataStore.GetUsers()
+	users, err := store.Load().GetUsers()
 	if err != nil {
 		logger.Printf("%s", err)
 		return createJsonError(ctx, 500, "Error getting users.")
@@ -187,7 +187,7 @@ func GetUsers(ctx *web.Context) string {
 func GetUser(ctx *web.Context, id string) string {
 	setJsonHeaders(ctx)
 
-	user, err := dataStore.GetUser(id)
+	user, err := store.Load().GetUser(id)
 	if err != nil {
 		logger.Printf("%s", err)
 		return createJsonError(ctx, 404, "Error finding user.")
@@ -208,7 +208,7 @@ func SaveUser(ctx *web.Context, id string) string {
 
 	// TODO(aaron): Error validation on the id.
 
-	if err := dataStore.CreateUser(id); err != nil {
+	if err := store.Load().CreateUser(id); err != nil {
 		logger.Printf("%s", err)
 		return createJsonError(ctx, 500, "Error creating user.")
 	}
@@ -239,7 +239,7 @@ func CreatePost(ctx *web.Context) string {
 		return createJsonError(ctx, 500, "Error unmarshalling post.")
 	}
 
-	if err := dataStore.CreatePost(post); err != nil {
+	if err := store.Load().CreatePost(post); err != nil {
 		logger.Printf("%s", err)
 		return createJsonError(ctx, 500, "Error saving post.")
 	}
@@ -257,7 +257,7 @@ func CreatePost(ctx *web.Context) string {
 func GetPost(ctx *web.Context, id string) string {
 	setJsonHeaders(ctx)
 
-	post, err := dataStore.GetPost(id)
+	post, err := store.Load().GetPost(id)
 	if err != nil {
 		logger.Printf("%s", err)
 		return createJsonError(ctx, 404, "Error finding post.")
@@ -276,13 +276,13 @@ func GetPost(ctx *web.Context, id string) string {
 func DeletePost(ctx *web.Context, id string) string {
 	setJsonHeaders(ctx)
 
-	user, err := dataStore.GetVoleUser()
+	user, err := store.Load().GetVoleUser()
 	if err != nil {
 		logger.Printf("%s", err)
 		return createJsonError(ctx, 500, "Error loading user.")
 	}
 
-	posts, err := dataStore.GetPosts(user.Id, "", config.ReadInt("UI_PageSize"))
+	posts, err := store.Load().GetPosts(user.Id, "", config.ReadInt("UI_PageSize"))
 	if err != nil {
 		logger.Printf("%s", err)
 		return createJsonError(ctx, 500, "Error loading posts.")
@@ -290,7 +290,7 @@ func DeletePost(ctx *web.Context, id string) string {
 
 	for _, post := range *posts {
 		if post.Id == id {
-			err := dataStore.DeletePost(&post)
+			err := store.Load().DeletePost(&post)
 			if err != nil {
 				logger.Printf("%s", err)
 				return createJsonError(ctx, 500, "Error deleting post.")

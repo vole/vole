@@ -1,6 +1,5 @@
 define(function(require) {
 
-  var $ = require('jquery');
   var TimelineView = require('app/views/timeline');
 
   return function(user) {

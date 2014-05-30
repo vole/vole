@@ -42,6 +42,8 @@ define(function(require) {
   var AppView = require('app/views/app');
   var Router = require('app/router');
 
+  var Cache = require('lib/cache').Memory;
+
   // Global namespace.
   vole = {};
 
@@ -58,6 +60,8 @@ define(function(require) {
     el: '#app'
   });
 
+  vole.cache = new Cache();
+
   // Create the main app router.
   vole.router = new Router();
 
@@ -67,6 +71,12 @@ define(function(require) {
   // Represents the current user.
   vole.user = new UserModel();
 
+  // Log router events.
+  vole.router.on('route', function(route, params) {
+    vole.logger.info('route:', route, 'params:', params.join(', '));
+  });
+
+  // This is important.
   console.log(
     '\n' +
     ' _    __      __\n' +
@@ -83,13 +93,14 @@ define(function(require) {
   vole.config.on('sync', function() {
     vole.logger.info('config loaded');
 
+    // Once we have the config we can safely render the app view.
     vole.view.render();
+
+    vole.logger.info('loading user');
 
     // Fetch the current user.
     vole.user.fetch();
   });
-
-  vole.logger.info('loading user');
 
   // At this point, the configuration and the user have been fully
   // initialized, and it's safe to start the application.
@@ -110,11 +121,6 @@ define(function(require) {
     // Start the main app router.
     Backbone.history.start({ pushState: true });
     Backbone.history.navigate('install', { trigger: true });
-  });
-
-  // Log router events.
-  vole.router.on('route', function(route, params) {
-    vole.logger.info('route:', route, 'params:', params.join(', '));
   });
 
   // Fetch the app config.

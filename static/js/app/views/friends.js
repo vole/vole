@@ -20,7 +20,7 @@ define(function(require) {
     },
 
     search: function() {
-      var query = this.$('#query').val();
+      var query = this.$('#query').val().toLowerCase();
 
       this.subViews().forEach(function(view) {
         var name = view.model.get('name').toLowerCase();
