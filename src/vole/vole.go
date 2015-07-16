@@ -13,17 +13,18 @@ import (
 	"strings"
 )
 
-var configFile = flag.String("config", "config.json", "Path to the Vole config file.")
+var (
+	configFile = flag.String("config", "config.json", "Path to the Vole config file.")
+	logger     = log.New(os.Stdout, "[Vole] ", log.Ldate|log.Ltime)
+)
 
 func main() {
 	flag.Parse()
 	config.Load(*configFile)
-
-	logger := log.New(os.Stdout, "[Vole] ", log.Ldate|log.Ltime)
 	web.SetLogger(log.New(os.Stdout, "[Web]  ", log.Ldate|log.Ltime))
 
-	logger.Printf("Server is starting\n")
-
+	// Terrible hack for preventing web.go from serving static
+	// files since we're using go-bindata.
 	web.Config.StaticDir = "./does-not-exist"
 
 	web.Get("/status", api.GetStatus)
@@ -66,6 +67,8 @@ func main() {
 
 		return file
 	})
+
+	logger.Printf("Server is starting\n")
 
 	web.Run(config.ReadString("Server_Listen"))
 }

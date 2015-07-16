@@ -33,7 +33,7 @@ type Config struct {
 	Server_Store  string `json:"store"`
 
 	BTSync_User string `json:"btsync_user"`
-	BTSync_Pass string `json:"btsync_pass"`
+	BTSync_Pass string `json:"-"`
 	BTSync_Port int    `json:"btsync_port"`
 }
 

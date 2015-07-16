@@ -249,6 +249,9 @@ func (store *BTSyncStore) CreateUser(id string) error {
 		return errors.New(response.Message)
 	}
 
+	// Start watching the newly created user directory.
+	store.Index.Watch(path.Join(userDir, store.Version(), "posts"))
+
 	return nil
 }
 

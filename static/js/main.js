@@ -86,12 +86,11 @@ define(function(require) {
     '|___/\\____/_/\\___/\n\n'
   );
 
-  vole.logger.info('starting');
   vole.logger.info('loading config');
 
   // Once the config has loaded, we can load the user's information.
   vole.config.on('sync', function() {
-    vole.logger.info('config loaded');
+    vole.logger.info('config', vole.config.attributes);
 
     // Once we have the config we can safely render the app view.
     vole.view.render();
@@ -105,7 +104,7 @@ define(function(require) {
   // At this point, the configuration and the user have been fully
   // initialized, and it's safe to start the application.
   vole.user.on('sync', function() {
-    vole.logger.info('user loaded');
+    vole.logger.info('user', vole.user.attributes);
     vole.logger.info('starting router');
 
     // Start the main app router.
